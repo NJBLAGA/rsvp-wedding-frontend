@@ -1,4 +1,5 @@
 import { useState, useEffect } from "react";
+import { EyeIcon, EyeSlashIcon } from "@heroicons/react/24/outline";
 
 export default function LoginModal({ isOpen, onSubmit }) {
   const [passphrase, setPassphrase] = useState("");
@@ -60,11 +61,15 @@ export default function LoginModal({ isOpen, onSubmit }) {
             />
             <button
               type="button"
-              className="absolute right-2 top-1/2 -translate-y-1/2 text-gray-500"
+              className="absolute right-2 top-1/2 -translate-y-1/2 text-gray-500 hover:text-gray-700"
               onClick={() => setShowPass(!showPass)}
               disabled={isProcessing}
             >
-              {showPass ? "👁" : "🔒"}
+              {showPass ? (
+                <EyeSlashIcon className="h-5 w-5" />
+              ) : (
+                <EyeIcon className="h-5 w-5" />
+              )}
             </button>
           </div>
 
@@ -92,7 +97,7 @@ export default function LoginModal({ isOpen, onSubmit }) {
             href="mailto:nathanblaga90@gmail.com?cc=nicole.camilleri44@gmail.com&subject=Passphrase%20Request&body=Hi%20Nathan%20%26%20Nicole,%0D%0A%0D%0ACould%20you%20please%20send%20me%20the%20passphrase%20again,%20I%20am%20having%20trouble%20unlocking%20the%20RSVP%20page.%0D%0A%0D%0AKind%20Regards"
             className="text-blue-600 hover:underline break-words"
           >
-            Ask the Host
+            Request Passphrase
           </a>
         </div>
       </div>
