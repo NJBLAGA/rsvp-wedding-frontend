@@ -2,11 +2,10 @@ import { useState, useEffect } from "react";
 import Home from "./components/Home";
 import Rsvp from "./components/RSVP";
 import Schedule from "./components/Schedule";
-import QandA from "./components/QandA";
+import FAQ from "./components/FAQ";
 import LoginModal from "./components/LoginModal";
 
 export default function App() {
-  // Initialize from localStorage
   const storedPass = localStorage.getItem("passphrase");
   const storedTab = localStorage.getItem("activeTab");
 
@@ -15,7 +14,6 @@ export default function App() {
   const [activeTab, setActiveTab] = useState(storedTab || "Home");
   const [menuOpen, setMenuOpen] = useState(false);
 
-  // Save tab when it changes
   useEffect(() => {
     if (isLoggedIn) {
       localStorage.setItem("activeTab", activeTab);
@@ -52,19 +50,20 @@ export default function App() {
     setMenuOpen(false);
   };
 
+  const tabs = ["Home", "RSVP", "Schedule", "FAQ"]; // updated to match component
+
   return (
     <div className="min-h-screen bg-gray-50">
       {/* Modal */}
       <LoginModal isOpen={!isLoggedIn} onSubmit={handleLogin} />
 
-      {/* Only show app if logged in */}
       {isLoggedIn && (
         <>
           {/* Navigation */}
           <nav className="border-b p-4 bg-white shadow-sm">
-            {/* Desktop Nav */}
+            {/* Desktop */}
             <div className="hidden md:flex justify-center space-x-6">
-              {["Home", "RSVP", "Schedule", "Q&A"].map((tab) => (
+              {tabs.map((tab) => (
                 <button
                   key={tab}
                   className={`pb-1 ${
@@ -77,7 +76,6 @@ export default function App() {
                   {tab}
                 </button>
               ))}
-
               <button
                 onClick={handleLogout}
                 className="pb-1 text-gray-600 hover:text-blue-600"
@@ -86,7 +84,7 @@ export default function App() {
               </button>
             </div>
 
-            {/* Mobile Nav */}
+            {/* Mobile */}
             <div className="md:hidden flex justify-between items-center">
               <span className="font-semibold text-blue-600">
                 Nicole & Nathan
@@ -95,7 +93,6 @@ export default function App() {
                 onClick={() => setMenuOpen(!menuOpen)}
                 className="text-gray-600 hover:text-blue-600 focus:outline-none"
               >
-                {/* Hamburger Icon */}
                 <svg
                   className="w-6 h-6"
                   fill="none"
@@ -104,7 +101,6 @@ export default function App() {
                   xmlns="http://www.w3.org/2000/svg"
                 >
                   {menuOpen ? (
-                    // X (close icon)
                     <path
                       strokeLinecap="round"
                       strokeLinejoin="round"
@@ -112,7 +108,6 @@ export default function App() {
                       d="M6 18L18 6M6 6l12 12"
                     />
                   ) : (
-                    // Hamburger
                     <path
                       strokeLinecap="round"
                       strokeLinejoin="round"
@@ -124,10 +119,9 @@ export default function App() {
               </button>
             </div>
 
-            {/* Mobile Dropdown */}
             {menuOpen && (
               <div className="md:hidden mt-2 flex flex-col space-y-2">
-                {["Home", "RSVP", "Schedule", "Q&A"].map((tab) => (
+                {tabs.map((tab) => (
                   <button
                     key={tab}
                     className={`text-left px-2 py-1 ${
@@ -153,12 +147,12 @@ export default function App() {
             )}
           </nav>
 
-          {/* Content */}
+          {/* Main content */}
           <main>
             {activeTab === "Home" && <Home />}
             {activeTab === "RSVP" && <Rsvp passphrase={passphrase} />}
             {activeTab === "Schedule" && <Schedule />}
-            {activeTab === "Q&A" && <QandA />}
+            {activeTab === "FAQ" && <FAQ />}
           </main>
         </>
       )}

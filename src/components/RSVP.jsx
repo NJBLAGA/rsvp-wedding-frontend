@@ -1,4 +1,4 @@
-import { useState, useEffect } from "react";
+import { useState, useEffect, useRef } from "react";
 import { CheckCircleIcon } from "@heroicons/react/24/solid";
 import Confetti from "react-confetti";
 
@@ -11,6 +11,10 @@ export default function Rsvp({ passphrase }) {
   const [error, setError] = useState("");
   const [showSuccess, setShowSuccess] = useState(false);
   const [windowSize, setWindowSize] = useState({ width: 0, height: 0 });
+
+  // Refs for guest inputs
+  const firstNameRef = useRef(null);
+  const lastNameRef = useRef(null);
 
   // Track window size for Confetti
   useEffect(() => {
@@ -66,19 +70,38 @@ export default function Rsvp({ passphrase }) {
     if (value.length > maxLength) value = value.slice(0, maxLength);
     setFormData((prev) => ({ ...prev, [field]: value }));
 
-    setErrors((prev) => ({
-      ...prev,
-      [field]: value.length >= maxLength ? "Max character limit reached" : "",
-    }));
+    setErrors((prev) => {
+      let msg = "";
+      if (["first_name", "last_name"].includes(field) && !value.trim()) {
+        msg = "This field is required";
+      } else if (value.length >= maxLength) {
+        msg = "Max character limit reached";
+      }
+      return { ...prev, [field]: msg };
+    });
   };
 
   const handleSubmit = async (id, isGuest) => {
-    if (
-      isGuest &&
-      (!formData.first_name.trim() || !formData.last_name.trim())
-    ) {
-      alert("Guests must have both First Name and Last Name.");
-      return;
+    const record = records.find((r) => r.id === id);
+
+    if (isGuest) {
+      let newErrors = {};
+      if (!formData.first_name.trim()) {
+        newErrors.first_name = "This field is required";
+      }
+      if (!formData.last_name.trim()) {
+        newErrors.last_name = "This field is required";
+      }
+      if (Object.keys(newErrors).length > 0) {
+        setErrors((prev) => ({ ...prev, ...newErrors }));
+        // Auto-focus first missing field
+        if (newErrors.first_name && firstNameRef.current) {
+          firstNameRef.current.focus();
+        } else if (newErrors.last_name && lastNameRef.current) {
+          lastNameRef.current.focus();
+        }
+        return;
+      }
     }
 
     if (
@@ -86,17 +109,21 @@ export default function Rsvp({ passphrase }) {
         (err) => err && !err.includes("Max character limit"),
       )
     ) {
-      alert("Please fix validation errors before submitting.");
-      return;
+      return; // stop if other validation errors exist
     }
 
     try {
+      const payload = { ...formData };
+      if (record.rsvp_expired) {
+        delete payload.rsvp_status;
+      }
+
       const response = await fetch(
         `https://rsvp-wedding-backend.onrender.com/rsvp/${id}`,
         {
           method: "PATCH",
           headers: { "Content-Type": "application/json" },
-          body: JSON.stringify(formData),
+          body: JSON.stringify(payload),
         },
       );
       if (!response.ok) throw new Error("Failed to update RSVP");
@@ -224,6 +251,40 @@ export default function Rsvp({ passphrase }) {
               </div>
             ) : (
               <div className="flex flex-col space-y-3 mt-3">
+                {/* RSVP Status */}
+                <label className="font-semibold">RSVP Status</label>
+                <div className="flex space-x-4 items-center">
+                  <label className="flex items-center space-x-1">
+                    <input
+                      type="radio"
+                      name={`rsvp-${record.id}`}
+                      value="Attending"
+                      checked={formData.rsvp_status === "Attending"}
+                      onChange={(e) =>
+                        handleChange("rsvp_status", e.target.value)
+                      }
+                      className="accent-blue-500"
+                      disabled={record.rsvp_expired}
+                    />
+                    <span>Attending</span>
+                  </label>
+                  <label className="flex items-center space-x-1">
+                    <input
+                      type="radio"
+                      name={`rsvp-${record.id}`}
+                      value="Not Attending"
+                      checked={formData.rsvp_status === "Not Attending"}
+                      onChange={(e) =>
+                        handleChange("rsvp_status", e.target.value)
+                      }
+                      className="accent-blue-500"
+                      disabled={record.rsvp_expired}
+                    />
+                    <span>Not Attending</span>
+                  </label>
+                </div>
+
+                {/* Guest names (required) */}
                 {isGuest && (
                   <>
                     <div className="relative">
@@ -232,6 +293,7 @@ export default function Rsvp({ passphrase }) {
                         {formData.first_name.length}/25
                       </span>
                       <input
+                        ref={firstNameRef}
                         type="text"
                         value={formData.first_name}
                         onChange={(e) =>
@@ -257,6 +319,7 @@ export default function Rsvp({ passphrase }) {
                         {formData.last_name.length}/25
                       </span>
                       <input
+                        ref={lastNameRef}
                         type="text"
                         value={formData.last_name}
                         onChange={(e) =>
@@ -278,19 +341,19 @@ export default function Rsvp({ passphrase }) {
                   </>
                 )}
 
+                {/* Dietary */}
                 <div className="relative">
                   <label className="font-semibold">Dietary Requirements</label>
                   <span className="absolute right-2 top-1 text-xs font-bold text-red-600">
                     {formData.dietary_requirements.length}/100
                   </span>
-                  <input
-                    type="text"
+                  <textarea
                     value={formData.dietary_requirements}
                     onChange={(e) =>
                       handleChange("dietary_requirements", e.target.value)
                     }
-                    placeholder="Dietary Requirements"
-                    className="border px-3 py-2 rounded w-full focus:outline-none focus:ring-2 border-gray-300 focus:ring-blue-400"
+                    placeholder="Let us know your dietary requirements..."
+                    className="border px-3 py-2 rounded w-full focus:outline-none focus:ring-2 resize-none border-gray-300 focus:ring-blue-400"
                   />
                   {errors.dietary_requirements && (
                     <p className="text-red-600 font-bold text-sm">
@@ -299,6 +362,7 @@ export default function Rsvp({ passphrase }) {
                   )}
                 </div>
 
+                {/* Song Requests */}
                 <div className="relative">
                   <label className="font-semibold">Song Requests</label>
                   <span className="absolute right-2 top-1 text-xs font-bold text-red-600">
@@ -309,7 +373,7 @@ export default function Rsvp({ passphrase }) {
                     onChange={(e) =>
                       handleChange("song_requests", e.target.value)
                     }
-                    placeholder="Song Requests"
+                    placeholder="Let us know what bangers you want to listen to..."
                     className="border px-3 py-2 rounded w-full focus:outline-none focus:ring-2 resize-none border-gray-300 focus:ring-blue-400"
                   />
                   {errors.song_requests && (
@@ -319,49 +383,19 @@ export default function Rsvp({ passphrase }) {
                   )}
                 </div>
 
-                <label className="font-semibold">RSVP Status</label>
-                <div className="flex space-x-4 items-center">
-                  <label className="flex items-center space-x-1">
-                    <input
-                      type="radio"
-                      name={`rsvp-${record.id}`}
-                      value="Attending"
-                      checked={formData.rsvp_status === "Attending"}
-                      onChange={(e) =>
-                        handleChange("rsvp_status", e.target.value)
-                      }
-                      className="accent-blue-500"
-                    />
-                    <span>Attending</span>
-                  </label>
-                  <label className="flex items-center space-x-1">
-                    <input
-                      type="radio"
-                      name={`rsvp-${record.id}`}
-                      value="Not Attending"
-                      checked={formData.rsvp_status === "Not Attending"}
-                      onChange={(e) =>
-                        handleChange("rsvp_status", e.target.value)
-                      }
-                      className="accent-blue-500"
-                    />
-                    <span>Not Attending</span>
-                  </label>
-                </div>
-
+                {/* Optional Comments */}
                 <div className="relative">
                   <label className="font-semibold">Optional Comments</label>
                   <span className="absolute right-2 top-1 text-xs font-bold text-red-600">
                     {formData.optional_comments.length}/100
                   </span>
-                  <input
-                    type="text"
+                  <textarea
                     value={formData.optional_comments}
                     onChange={(e) =>
                       handleChange("optional_comments", e.target.value)
                     }
-                    placeholder="Optional Comments"
-                    className="border px-3 py-2 rounded w-full focus:outline-none focus:ring-2 border-gray-300 focus:ring-blue-400"
+                    placeholder="Leave a cute message for the bride and groom..."
+                    className="border px-3 py-2 rounded w-full focus:outline-none focus:ring-2 resize-none border-gray-300 focus:ring-blue-400"
                   />
                   {errors.optional_comments && (
                     <p className="text-red-600 font-bold text-sm">
@@ -370,6 +404,7 @@ export default function Rsvp({ passphrase }) {
                   )}
                 </div>
 
+                {/* Buttons */}
                 <div className="flex space-x-3 mt-3">
                   <button
                     onClick={() => handleSubmit(record.id, isGuest)}
