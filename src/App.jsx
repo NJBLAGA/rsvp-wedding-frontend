@@ -2,7 +2,7 @@ import { useState, useEffect } from "react";
 import Home from "./components/Home";
 import Rsvp from "./components/RSVP";
 import Schedule from "./components/Schedule";
-import FAQ from "./components/FAQ";
+import QandA from "./components/FAQ.jsx";
 import LoginModal from "./components/LoginModal";
 
 export default function App() {
@@ -15,9 +15,7 @@ export default function App() {
   const [menuOpen, setMenuOpen] = useState(false);
 
   useEffect(() => {
-    if (isLoggedIn) {
-      localStorage.setItem("activeTab", activeTab);
-    }
+    if (isLoggedIn) localStorage.setItem("activeTab", activeTab);
   }, [activeTab, isLoggedIn]);
 
   const handleLogin = async (inputPass) => {
@@ -50,10 +48,19 @@ export default function App() {
     setMenuOpen(false);
   };
 
-  const tabs = ["Home", "RSVP", "Schedule", "FAQ"]; // updated to match component
+  const PETAL_PINK = "#d38c8c";
 
   return (
-    <div className="min-h-screen bg-gray-50">
+    <div
+      className="min-h-screen bg-gray-50"
+      style={{ fontFamily: "'Poppins', sans-serif" }}
+    >
+      {/* Google Fonts */}
+      <link
+        href="https://fonts.googleapis.com/css2?family=Dancing+Script:wght@400;700&family=Poppins:wght@300;400;500;600;700&display=swap"
+        rel="stylesheet"
+      />
+
       {/* Modal */}
       <LoginModal isOpen={!isLoggedIn} onSubmit={handleLogin} />
 
@@ -61,37 +68,64 @@ export default function App() {
         <>
           {/* Navigation */}
           <nav className="border-b p-4 bg-white shadow-sm">
-            {/* Desktop */}
-            <div className="hidden md:flex justify-center space-x-6">
-              {tabs.map((tab) => (
+            {/* Desktop Nav */}
+            <div className="hidden md:flex justify-center space-x-8">
+              {["Home", "RSVP", "Schedule", "Q&A"].map((tab) => (
                 <button
                   key={tab}
-                  className={`pb-1 ${
-                    activeTab === tab
-                      ? "border-b-2 border-blue-600 text-blue-600"
-                      : "text-gray-600 hover:text-blue-600"
-                  }`}
+                  className="pb-1 font-normal"
+                  style={{
+                    fontSize: "1.1rem",
+                    borderBottom:
+                      activeTab === tab ? `2px solid ${PETAL_PINK}` : "none",
+                    color: activeTab === tab ? PETAL_PINK : "#000",
+                    fontFamily: "'Poppins', sans-serif",
+                  }}
                   onClick={() => setActiveTab(tab)}
+                  onMouseOver={(e) => {
+                    if (activeTab !== tab)
+                      e.currentTarget.style.color = PETAL_PINK;
+                  }}
+                  onMouseOut={(e) => {
+                    if (activeTab !== tab)
+                      e.currentTarget.style.color =
+                        activeTab === tab ? PETAL_PINK : "#000";
+                  }}
                 >
                   {tab}
                 </button>
               ))}
+
               <button
                 onClick={handleLogout}
-                className="pb-1 text-gray-600 hover:text-blue-600"
+                className="pb-1 font-normal"
+                style={{
+                  fontSize: "1.1rem",
+                  color: "#000",
+                  fontFamily: "'Poppins', sans-serif",
+                }}
+                onMouseOver={(e) => (e.currentTarget.style.color = PETAL_PINK)}
+                onMouseOut={(e) => (e.currentTarget.style.color = "#000")}
               >
                 Logout
               </button>
             </div>
 
-            {/* Mobile */}
+            {/* Mobile Nav */}
             <div className="md:hidden flex justify-between items-center">
-              <span className="font-semibold text-blue-600">
+              <span
+                style={{
+                  color: "#000",
+                  fontWeight: 400,
+                  fontSize: "1.6rem",
+                  fontFamily: "'Dancing Script', cursive",
+                }}
+              >
                 Nicole & Nathan
               </span>
               <button
                 onClick={() => setMenuOpen(!menuOpen)}
-                className="text-gray-600 hover:text-blue-600 focus:outline-none"
+                className="text-black focus:outline-none"
               >
                 <svg
                   className="w-6 h-6"
@@ -119,16 +153,18 @@ export default function App() {
               </button>
             </div>
 
+            {/* Mobile Dropdown */}
             {menuOpen && (
               <div className="md:hidden mt-2 flex flex-col space-y-2">
-                {tabs.map((tab) => (
+                {["Home", "RSVP", "Schedule", "Q&A"].map((tab) => (
                   <button
                     key={tab}
-                    className={`text-left px-2 py-1 ${
-                      activeTab === tab
-                        ? "text-blue-600 font-semibold"
-                        : "text-gray-600 hover:text-blue-600"
-                    }`}
+                    className="text-left font-normal px-2 py-1"
+                    style={{
+                      fontSize: "1.1rem",
+                      color: activeTab === tab ? PETAL_PINK : "#000",
+                      fontFamily: "'Poppins', sans-serif",
+                    }}
                     onClick={() => {
                       setActiveTab(tab);
                       setMenuOpen(false);
@@ -139,7 +175,16 @@ export default function App() {
                 ))}
                 <button
                   onClick={handleLogout}
-                  className="text-left px-2 py-1 text-gray-600 hover:text-blue-600"
+                  className="text-left font-normal px-2 py-1"
+                  style={{
+                    fontSize: "1.1rem",
+                    color: "#000",
+                    fontFamily: "'Poppins', sans-serif",
+                  }}
+                  onMouseOver={(e) =>
+                    (e.currentTarget.style.color = PETAL_PINK)
+                  }
+                  onMouseOut={(e) => (e.currentTarget.style.color = "#000")}
                 >
                   Logout
                 </button>
@@ -147,12 +192,18 @@ export default function App() {
             )}
           </nav>
 
-          {/* Main content */}
-          <main>
+          {/* Main content with Home styling */}
+          <main
+            className="min-h-screen"
+            style={{
+              fontFamily: "'Poppins', sans-serif",
+              color: "#000",
+            }}
+          >
             {activeTab === "Home" && <Home />}
             {activeTab === "RSVP" && <Rsvp passphrase={passphrase} />}
             {activeTab === "Schedule" && <Schedule />}
-            {activeTab === "FAQ" && <FAQ />}
+            {activeTab === "Q&A" && <QandA />}
           </main>
         </>
       )}
