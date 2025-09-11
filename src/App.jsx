@@ -2,7 +2,7 @@ import { useState, useEffect } from "react";
 import Home from "./components/Home";
 import Rsvp from "./components/RSVP";
 import Schedule from "./components/Schedule";
-import FAQ from "./components/FAQ.jsx";
+import Details from "./components/Details.jsx";
 import LoginModal from "./components/LoginModal";
 
 export default function App() {
@@ -74,7 +74,7 @@ export default function App() {
           <nav className="border-b p-4 bg-white shadow-sm">
             {/* Desktop Nav */}
             <div className="hidden md:flex justify-center space-x-8">
-              {["Home", "RSVP", "Schedule", "FAQ"].map((tab) => (
+              {["Home", "RSVP", "Schedule", "Details"].map((tab) => (
                 <button
                   key={tab}
                   className="pb-1 font-normal"
@@ -160,7 +160,7 @@ export default function App() {
             {/* Mobile Dropdown */}
             {menuOpen && (
               <div className="md:hidden mt-2 flex flex-col space-y-2">
-                {["Home", "RSVP", "Schedule", "FAQ"].map((tab) => (
+                {["Home", "RSVP", "Schedule", "Details"].map((tab) => (
                   <button
                     key={tab}
                     className="text-left font-normal px-2 py-1"
@@ -201,7 +201,7 @@ export default function App() {
             {activeTab === "Home" && <Home />}
             {activeTab === "RSVP" && <Rsvp token={token} />}
             {activeTab === "Schedule" && <Schedule />}
-            {activeTab === "FAQ" && <FAQ />}
+            {activeTab === "Details" && <Details />}
           </main>
         </>
       )}
