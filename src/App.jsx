@@ -2,15 +2,15 @@ import { useState, useEffect } from "react";
 import Home from "./components/Home";
 import Rsvp from "./components/RSVP";
 import Schedule from "./components/Schedule";
-import QandA from "./components/FAQ.jsx";
+import FAQ from "./components/FAQ.jsx";
 import LoginModal from "./components/LoginModal";
 
 export default function App() {
-  const storedPass = localStorage.getItem("passphrase");
+  const storedToken = localStorage.getItem("token");
   const storedTab = localStorage.getItem("activeTab");
 
-  const [passphrase, setPassphrase] = useState(storedPass || "");
-  const [isLoggedIn, setIsLoggedIn] = useState(!!storedPass);
+  const [token, setToken] = useState(storedToken || "");
+  const [isLoggedIn, setIsLoggedIn] = useState(!!storedToken);
   const [activeTab, setActiveTab] = useState(storedTab || "Home");
   const [menuOpen, setMenuOpen] = useState(false);
 
@@ -21,14 +21,20 @@ export default function App() {
   const handleLogin = async (inputPass) => {
     try {
       const res = await fetch(
-        `https://rsvp-wedding-backend.onrender.com/family/${inputPass}`,
+        "https://rsvp-wedding-backend.onrender.com/login",
+        {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({ pass_key: inputPass }),
+        },
       );
+
       if (!res.ok) return false;
 
       const data = await res.json();
-      if (Array.isArray(data) && data.length > 0) {
-        setPassphrase(inputPass);
-        localStorage.setItem("passphrase", inputPass);
+      if (data.token) {
+        setToken(data.token);
+        localStorage.setItem("token", data.token);
         setIsLoggedIn(true);
         return true;
       }
@@ -41,8 +47,8 @@ export default function App() {
 
   const handleLogout = () => {
     setIsLoggedIn(false);
-    setPassphrase("");
-    localStorage.removeItem("passphrase");
+    setToken("");
+    localStorage.removeItem("token");
     localStorage.removeItem("activeTab");
     setActiveTab("Home");
     setMenuOpen(false);
@@ -55,13 +61,11 @@ export default function App() {
       className="min-h-screen bg-gray-50"
       style={{ fontFamily: "'Poppins', sans-serif" }}
     >
-      {/* Google Fonts */}
       <link
         href="https://fonts.googleapis.com/css2?family=Dancing+Script:wght@400;700&family=Poppins:wght@300;400;500;600;700&display=swap"
         rel="stylesheet"
       />
 
-      {/* Modal */}
       <LoginModal isOpen={!isLoggedIn} onSubmit={handleLogin} />
 
       {isLoggedIn && (
@@ -70,7 +74,7 @@ export default function App() {
           <nav className="border-b p-4 bg-white shadow-sm">
             {/* Desktop Nav */}
             <div className="hidden md:flex justify-center space-x-8">
-              {["Home", "RSVP", "Schedule", "Q&A"].map((tab) => (
+              {["Home", "RSVP", "Schedule", "FAQ"].map((tab) => (
                 <button
                   key={tab}
                   className="pb-1 font-normal"
@@ -156,7 +160,7 @@ export default function App() {
             {/* Mobile Dropdown */}
             {menuOpen && (
               <div className="md:hidden mt-2 flex flex-col space-y-2">
-                {["Home", "RSVP", "Schedule", "Q&A"].map((tab) => (
+                {["Home", "RSVP", "Schedule", "FAQ"].map((tab) => (
                   <button
                     key={tab}
                     className="text-left font-normal px-2 py-1"
@@ -192,18 +196,12 @@ export default function App() {
             )}
           </nav>
 
-          {/* Main content with Home styling */}
-          <main
-            className="min-h-screen"
-            style={{
-              fontFamily: "'Poppins', sans-serif",
-              color: "#000",
-            }}
-          >
+          {/* Main content */}
+          <main className="min-h-screen" style={{ color: "#000" }}>
             {activeTab === "Home" && <Home />}
-            {activeTab === "RSVP" && <Rsvp passphrase={passphrase} />}
+            {activeTab === "RSVP" && <Rsvp token={token} />}
             {activeTab === "Schedule" && <Schedule />}
-            {activeTab === "Q&A" && <QandA />}
+            {activeTab === "FAQ" && <FAQ />}
           </main>
         </>
       )}

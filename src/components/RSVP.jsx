@@ -2,7 +2,7 @@ import { useState, useEffect, useRef } from "react";
 import { CheckCircleIcon } from "@heroicons/react/24/solid";
 import Confetti from "react-confetti";
 
-export default function Rsvp({ passphrase }) {
+export default function Rsvp({ token }) {
   const [records, setRecords] = useState([]);
   const [editCardId, setEditCardId] = useState(null);
   const [formData, setFormData] = useState({});
@@ -12,15 +12,13 @@ export default function Rsvp({ passphrase }) {
   const [showSuccess, setShowSuccess] = useState(false);
   const [windowSize, setWindowSize] = useState({ width: 0, height: 0 });
 
-  // Refs for guest inputs
   const firstNameRef = useRef(null);
   const lastNameRef = useRef(null);
 
   // Track window size for Confetti
   useEffect(() => {
-    const updateWindowSize = () => {
+    const updateWindowSize = () =>
       setWindowSize({ width: window.innerWidth, height: window.innerHeight });
-    };
     updateWindowSize();
     window.addEventListener("resize", updateWindowSize);
     return () => window.removeEventListener("resize", updateWindowSize);
@@ -33,9 +31,13 @@ export default function Rsvp({ passphrase }) {
       setError("");
       try {
         const res = await fetch(
-          `https://rsvp-wedding-backend.onrender.com/family/${passphrase}`,
+          "https://rsvp-wedding-backend.onrender.com/family",
+          {
+            headers: { Authorization: `Bearer ${token}` },
+          },
         );
         if (!res.ok) throw new Error("Failed to fetch RSVP invitations");
+
         let data = await res.json();
         data.sort((a, b) =>
           a.is_guest === b.is_guest ? 0 : a.is_guest ? 1 : -1,
@@ -48,8 +50,8 @@ export default function Rsvp({ passphrase }) {
         setLoading(false);
       }
     };
-    if (passphrase) fetchRecords();
-  }, [passphrase]);
+    if (token) fetchRecords();
+  }, [token]);
 
   const handleEditClick = (record) => {
     setEditCardId(record.id);
@@ -68,6 +70,7 @@ export default function Rsvp({ passphrase }) {
   const handleChange = (field, value) => {
     const maxLength = ["first_name", "last_name"].includes(field) ? 25 : 100;
     if (value.length > maxLength) value = value.slice(0, maxLength);
+
     setFormData((prev) => ({ ...prev, [field]: value }));
 
     setErrors((prev) => {
@@ -86,20 +89,17 @@ export default function Rsvp({ passphrase }) {
 
     if (isGuest) {
       let newErrors = {};
-      if (!formData.first_name.trim()) {
+      if (!formData.first_name.trim())
         newErrors.first_name = "This field is required";
-      }
-      if (!formData.last_name.trim()) {
+      if (!formData.last_name.trim())
         newErrors.last_name = "This field is required";
-      }
+
       if (Object.keys(newErrors).length > 0) {
         setErrors((prev) => ({ ...prev, ...newErrors }));
-        // Auto-focus first missing field
-        if (newErrors.first_name && firstNameRef.current) {
+        if (newErrors.first_name && firstNameRef.current)
           firstNameRef.current.focus();
-        } else if (newErrors.last_name && lastNameRef.current) {
+        else if (newErrors.last_name && lastNameRef.current)
           lastNameRef.current.focus();
-        }
         return;
       }
     }
@@ -108,28 +108,33 @@ export default function Rsvp({ passphrase }) {
       Object.values(errors).some(
         (err) => err && !err.includes("Max character limit"),
       )
-    ) {
-      return; // stop if other validation errors exist
-    }
+    )
+      return;
 
     try {
       const payload = { ...formData };
-      if (record.rsvp_expired) {
-        delete payload.rsvp_status;
-      }
+      if (record.rsvp_expired) delete payload.rsvp_status;
 
       const response = await fetch(
         `https://rsvp-wedding-backend.onrender.com/rsvp/${id}`,
         {
           method: "PATCH",
-          headers: { "Content-Type": "application/json" },
+          headers: {
+            "Content-Type": "application/json",
+            Authorization: `Bearer ${token}`,
+          },
           body: JSON.stringify(payload),
         },
       );
+
       if (!response.ok) throw new Error("Failed to update RSVP");
 
+      // Refresh records
       const res = await fetch(
-        `https://rsvp-wedding-backend.onrender.com/family/${passphrase}`,
+        "https://rsvp-wedding-backend.onrender.com/family",
+        {
+          headers: { Authorization: `Bearer ${token}` },
+        },
       );
       let updatedData = await res.json();
       updatedData.sort((a, b) =>
@@ -250,180 +255,152 @@ export default function Rsvp({ passphrase }) {
                 </div>
               </div>
             ) : (
-              <div className="flex flex-col space-y-3 mt-3">
-                {/* RSVP Status */}
-                <label className="font-semibold">RSVP Status</label>
-                <div className="flex space-x-4 items-center">
-                  <label className="flex items-center space-x-1">
-                    <input
-                      type="radio"
-                      name={`rsvp-${record.id}`}
-                      value="Attending"
-                      checked={formData.rsvp_status === "Attending"}
-                      onChange={(e) =>
-                        handleChange("rsvp_status", e.target.value)
-                      }
-                      className="accent-blue-500"
-                      disabled={record.rsvp_expired}
-                    />
-                    <span>Attending</span>
-                  </label>
-                  <label className="flex items-center space-x-1">
-                    <input
-                      type="radio"
-                      name={`rsvp-${record.id}`}
-                      value="Not Attending"
-                      checked={formData.rsvp_status === "Not Attending"}
-                      onChange={(e) =>
-                        handleChange("rsvp_status", e.target.value)
-                      }
-                      className="accent-blue-500"
-                      disabled={record.rsvp_expired}
-                    />
-                    <span>Not Attending</span>
-                  </label>
-                </div>
-
-                {/* Guest names (required) */}
-                {isGuest && (
-                  <>
-                    <div className="relative">
-                      <label className="font-semibold">First Name</label>
-                      <span className="absolute right-2 top-1 text-xs font-bold text-red-600">
-                        {formData.first_name.length}/25
-                      </span>
-                      <input
-                        ref={firstNameRef}
-                        type="text"
-                        value={formData.first_name}
-                        onChange={(e) =>
-                          handleChange("first_name", e.target.value)
-                        }
-                        placeholder="First Name"
-                        className={`border px-3 py-2 rounded w-full focus:outline-none focus:ring-2 ${
-                          errors.first_name
-                            ? "border-red-500 focus:ring-red-500"
-                            : "border-gray-300 focus:ring-blue-400"
-                        }`}
-                      />
-                      {errors.first_name && (
-                        <p className="text-red-600 font-bold text-sm">
-                          {errors.first_name}
-                        </p>
-                      )}
-                    </div>
-
-                    <div className="relative">
-                      <label className="font-semibold">Last Name</label>
-                      <span className="absolute right-2 top-1 text-xs font-bold text-red-600">
-                        {formData.last_name.length}/25
-                      </span>
-                      <input
-                        ref={lastNameRef}
-                        type="text"
-                        value={formData.last_name}
-                        onChange={(e) =>
-                          handleChange("last_name", e.target.value)
-                        }
-                        placeholder="Last Name"
-                        className={`border px-3 py-2 rounded w-full focus:outline-none focus:ring-2 ${
-                          errors.last_name
-                            ? "border-red-500 focus:ring-red-500"
-                            : "border-gray-300 focus:ring-blue-400"
-                        }`}
-                      />
-                      {errors.last_name && (
-                        <p className="text-red-600 font-bold text-sm">
-                          {errors.last_name}
-                        </p>
-                      )}
-                    </div>
-                  </>
-                )}
-
-                {/* Dietary */}
-                <div className="relative">
-                  <label className="font-semibold">Dietary Requirements</label>
-                  <span className="absolute right-2 top-1 text-xs font-bold text-red-600">
-                    {formData.dietary_requirements.length}/100
-                  </span>
-                  <textarea
-                    value={formData.dietary_requirements}
-                    onChange={(e) =>
-                      handleChange("dietary_requirements", e.target.value)
-                    }
-                    placeholder="Let us know your dietary requirements..."
-                    className="border px-3 py-2 rounded w-full focus:outline-none focus:ring-2 resize-none border-gray-300 focus:ring-blue-400"
-                  />
-                  {errors.dietary_requirements && (
-                    <p className="text-red-600 font-bold text-sm">
-                      {errors.dietary_requirements}
-                    </p>
-                  )}
-                </div>
-
-                {/* Song Requests */}
-                <div className="relative">
-                  <label className="font-semibold">Song Requests</label>
-                  <span className="absolute right-2 top-1 text-xs font-bold text-red-600">
-                    {formData.song_requests.length}/100
-                  </span>
-                  <textarea
-                    value={formData.song_requests}
-                    onChange={(e) =>
-                      handleChange("song_requests", e.target.value)
-                    }
-                    placeholder="Let us know what bangers you want to listen to..."
-                    className="border px-3 py-2 rounded w-full focus:outline-none focus:ring-2 resize-none border-gray-300 focus:ring-blue-400"
-                  />
-                  {errors.song_requests && (
-                    <p className="text-red-600 font-bold text-sm">
-                      {errors.song_requests}
-                    </p>
-                  )}
-                </div>
-
-                {/* Optional Comments */}
-                <div className="relative">
-                  <label className="font-semibold">Optional Comments</label>
-                  <span className="absolute right-2 top-1 text-xs font-bold text-red-600">
-                    {formData.optional_comments.length}/100
-                  </span>
-                  <textarea
-                    value={formData.optional_comments}
-                    onChange={(e) =>
-                      handleChange("optional_comments", e.target.value)
-                    }
-                    placeholder="Leave a cute message for the bride and groom..."
-                    className="border px-3 py-2 rounded w-full focus:outline-none focus:ring-2 resize-none border-gray-300 focus:ring-blue-400"
-                  />
-                  {errors.optional_comments && (
-                    <p className="text-red-600 font-bold text-sm">
-                      {errors.optional_comments}
-                    </p>
-                  )}
-                </div>
-
-                {/* Buttons */}
-                <div className="flex space-x-3 mt-3">
-                  <button
-                    onClick={() => handleSubmit(record.id, isGuest)}
-                    className="bg-gray-200 text-gray-800 px-4 py-2 rounded transition-colors flex-1 hover:bg-gray-300"
-                  >
-                    Submit
-                  </button>
-                  <button
-                    onClick={() => setEditCardId(null)}
-                    className="bg-gray-200 text-gray-800 px-4 py-2 rounded hover:bg-gray-300 transition-colors flex-1"
-                  >
-                    Cancel
-                  </button>
-                </div>
-              </div>
+              // Editing form remains same
+              <EditForm
+                record={record}
+                formData={formData}
+                errors={errors}
+                handleChange={handleChange}
+                handleSubmit={handleSubmit}
+                firstNameRef={firstNameRef}
+                lastNameRef={lastNameRef}
+                isGuest={isGuest}
+              />
             )}
           </div>
         );
       })}
+    </div>
+  );
+}
+
+// You can move the editing form JSX to a separate component for clarity
+function EditForm({
+  record,
+  formData,
+  errors,
+  handleChange,
+  handleSubmit,
+  firstNameRef,
+  lastNameRef,
+  isGuest,
+}) {
+  return (
+    <div className="flex flex-col space-y-3 mt-3">
+      {/* RSVP Status */}
+      <label className="font-semibold">RSVP Status</label>
+      <div className="flex space-x-4 items-center">
+        <label className="flex items-center space-x-1">
+          <input
+            type="radio"
+            name={`rsvp-${record.id}`}
+            value="Attending"
+            checked={formData.rsvp_status === "Attending"}
+            onChange={(e) => handleChange("rsvp_status", e.target.value)}
+            className="accent-blue-500"
+            disabled={record.rsvp_expired}
+          />
+          <span>Attending</span>
+        </label>
+        <label className="flex items-center space-x-1">
+          <input
+            type="radio"
+            name={`rsvp-${record.id}`}
+            value="Not Attending"
+            checked={formData.rsvp_status === "Not Attending"}
+            onChange={(e) => handleChange("rsvp_status", e.target.value)}
+            className="accent-blue-500"
+            disabled={record.rsvp_expired}
+          />
+          <span>Not Attending</span>
+        </label>
+      </div>
+
+      {/* Guest names */}
+      {isGuest && (
+        <>
+          <div className="relative">
+            <label className="font-semibold">First Name</label>
+            <span className="absolute right-2 top-1 text-xs font-bold text-red-600">
+              {formData.first_name.length}/25
+            </span>
+            <input
+              ref={firstNameRef}
+              type="text"
+              value={formData.first_name}
+              onChange={(e) => handleChange("first_name", e.target.value)}
+              placeholder="First Name"
+              className={`border px-3 py-2 rounded w-full focus:outline-none focus:ring-2 ${errors.first_name ? "border-red-500 focus:ring-red-500" : "border-gray-300 focus:ring-blue-400"}`}
+            />
+            {errors.first_name && (
+              <p className="text-red-600 font-bold text-sm">
+                {errors.first_name}
+              </p>
+            )}
+          </div>
+          <div className="relative">
+            <label className="font-semibold">Last Name</label>
+            <span className="absolute right-2 top-1 text-xs font-bold text-red-600">
+              {formData.last_name.length}/25
+            </span>
+            <input
+              ref={lastNameRef}
+              type="text"
+              value={formData.last_name}
+              onChange={(e) => handleChange("last_name", e.target.value)}
+              placeholder="Last Name"
+              className={`border px-3 py-2 rounded w-full focus:outline-none focus:ring-2 ${errors.last_name ? "border-red-500 focus:ring-red-500" : "border-gray-300 focus:ring-blue-400"}`}
+            />
+            {errors.last_name && (
+              <p className="text-red-600 font-bold text-sm">
+                {errors.last_name}
+              </p>
+            )}
+          </div>
+        </>
+      )}
+
+      {/* Dietary, Song Requests, Optional Comments */}
+      {["dietary_requirements", "song_requests", "optional_comments"].map(
+        (field) => (
+          <div className="relative" key={field}>
+            <label className="font-semibold">
+              {field
+                .replace(/_/g, " ")
+                .replace(/\b\w/g, (l) => l.toUpperCase())}
+            </label>
+            <span className="absolute right-2 top-1 text-xs font-bold text-red-600">
+              {formData[field].length}/100
+            </span>
+            <textarea
+              value={formData[field]}
+              onChange={(e) => handleChange(field, e.target.value)}
+              placeholder={`Enter ${field.replace(/_/g, " ")}`}
+              className="border px-3 py-2 rounded w-full focus:outline-none focus:ring-2 resize-none border-gray-300 focus:ring-blue-400"
+            />
+            {errors[field] && (
+              <p className="text-red-600 font-bold text-sm">{errors[field]}</p>
+            )}
+          </div>
+        ),
+      )}
+
+      {/* Buttons */}
+      <div className="flex space-x-3 mt-3">
+        <button
+          onClick={() => handleSubmit(record.id, isGuest)}
+          className="bg-gray-200 text-gray-800 px-4 py-2 rounded transition-colors flex-1 hover:bg-gray-300"
+        >
+          Submit
+        </button>
+        <button
+          onClick={() => handleSubmit(record.id, false)}
+          className="bg-gray-200 text-gray-800 px-4 py-2 rounded hover:bg-gray-300 transition-colors flex-1"
+          onClick={() => setEditCardId(null)}
+        >
+          Cancel
+        </button>
+      </div>
     </div>
   );
 }
