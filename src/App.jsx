@@ -1,3 +1,4 @@
+// App.jsx
 import { useState, useEffect } from "react";
 import Home from "./components/Home";
 import Rsvp from "./components/RSVP";
@@ -13,6 +14,7 @@ export default function App() {
   const [isLoggedIn, setIsLoggedIn] = useState(!!storedToken);
   const [activeTab, setActiveTab] = useState(storedTab || "Home");
   const [menuOpen, setMenuOpen] = useState(false);
+  const [sessionExpired, setSessionExpired] = useState(false);
 
   useEffect(() => {
     if (isLoggedIn) localStorage.setItem("activeTab", activeTab);
@@ -36,6 +38,7 @@ export default function App() {
         setToken(data.token);
         localStorage.setItem("token", data.token);
         setIsLoggedIn(true);
+        setSessionExpired(false);
         return true;
       }
       return false;
@@ -54,6 +57,11 @@ export default function App() {
     setMenuOpen(false);
   };
 
+  const handleSessionExpired = () => {
+    handleLogout();
+    setSessionExpired(true);
+  };
+
   const PETAL_PINK = "#d38c8c";
 
   return (
@@ -66,13 +74,29 @@ export default function App() {
         rel="stylesheet"
       />
 
-      <LoginModal isOpen={!isLoggedIn} onSubmit={handleLogin} />
+      {/* Login Modal for normal login */}
+      <LoginModal
+        isOpen={!isLoggedIn && !sessionExpired}
+        onSubmit={handleLogin}
+      />
+
+      {/* Session Expired Modal */}
+      {sessionExpired && (
+        <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/40">
+          <div className="bg-white rounded-lg p-6 max-w-sm text-center shadow-lg">
+            <h2 className="text-xl font-semibold mb-4">Session Expired</h2>
+            <p className="mb-4">
+              Your session has expired. Please log in again.
+            </p>
+            <LoginModal isOpen={true} onSubmit={handleLogin} />
+          </div>
+        </div>
+      )}
 
       {isLoggedIn && (
         <>
           {/* Navigation */}
           <nav className="border-b p-4 bg-white shadow-sm">
-            {/* Desktop Nav */}
             <div className="hidden md:flex justify-center space-x-8">
               {["Home", "RSVP", "Schedule", "Details"].map((tab) => (
                 <button
@@ -99,7 +123,6 @@ export default function App() {
                   {tab}
                 </button>
               ))}
-
               <button
                 onClick={handleLogout}
                 className="pb-1 font-normal"
@@ -115,7 +138,6 @@ export default function App() {
               </button>
             </div>
 
-            {/* Mobile Nav */}
             <div className="md:hidden flex justify-between items-center">
               <span
                 style={{
@@ -132,7 +154,7 @@ export default function App() {
                 className="text-black focus:outline-none"
               >
                 <svg
-                  className="w-6 h-6"
+                  className="w-6 h-6 transform scale-100"
                   fill="none"
                   stroke="currentColor"
                   viewBox="0 0 24 24"
@@ -157,7 +179,6 @@ export default function App() {
               </button>
             </div>
 
-            {/* Mobile Dropdown */}
             {menuOpen && (
               <div className="md:hidden mt-2 flex flex-col space-y-2">
                 {["Home", "RSVP", "Schedule", "Details"].map((tab) => (
@@ -196,10 +217,11 @@ export default function App() {
             )}
           </nav>
 
-          {/* Main content */}
           <main className="min-h-screen" style={{ color: "#000" }}>
             {activeTab === "Home" && <Home />}
-            {activeTab === "RSVP" && <Rsvp token={token} />}
+            {activeTab === "RSVP" && (
+              <Rsvp token={token} onLogout={handleSessionExpired} />
+            )}
             {activeTab === "Schedule" && <Schedule />}
             {activeTab === "Details" && <Details />}
           </main>

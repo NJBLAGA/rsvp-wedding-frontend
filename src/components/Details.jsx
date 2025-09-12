@@ -39,7 +39,7 @@ const faqData = [
   { question: "Do you love the puppies?", answer: "They are cute" },
 ];
 
-export default function Schedule() {
+export default function Details() {
   const PETAL_COUNT = 25;
   const PETAL_COLOR = "#f28ca0";
   const LINK_COLOR = "#c87878";
@@ -95,86 +95,48 @@ export default function Schedule() {
         `,
           )
           .join("\n")}
-        .bg-center {
-          background-size: cover;
-          background-position: center;
-        }
-        @media (min-width: 1024px) {
-          .bg-center {
-            background-size: contain !important;
-            background-repeat: no-repeat;
-            background-position: top center;
-          }
-        }
-
-        h1 {
-          font-family: 'Dancing Script', cursive;
-          text-align: center;
-          font-size: 4.5rem;
-          margin-top: 10rem;
-        }
+        .bg-center { background-size: cover; background-position: center; }
+        @media (min-width: 1024px) { .bg-center { background-size: contain !important; background-repeat: no-repeat; background-position: top center; } }
+        h1 { font-family: 'Dancing Script', cursive; text-align: center; font-size: 4.5rem; margin-top: 10rem; }
 
         .faq-question { 
-          color: black; 
-          cursor: pointer;
-          display: flex; 
-          justify-content: flex-start; 
-          align-items: center; 
-          width: 100%; 
-          max-width: 700px;
-          padding: 0.5rem 0.75rem; 
-          border-bottom: 1px solid #d1d5db; 
-          transition: color 0.2s, border-color 0.2s;
+          color: black; cursor: pointer; display: flex; justify-content: flex-start; align-items: center; width: 100%; max-width: 700px;
+          padding: 0.5rem 0.75rem; border-bottom: 1px solid #d1d5db; transition: color 0.2s, border-color 0.2s; font-size: 1rem;
         }
-        .faq-question:hover { 
-          color: ${HOVER_COLOR}; 
-          border-color: ${HOVER_COLOR};
-        }
-        .faq-cross { 
-          font-weight: bold; 
-          font-size: 1.25rem; 
-          margin-right: 0.5rem; 
-          transition: color 0.2s, transform 0.3s;
-        }
+        .faq-question:hover { color: ${HOVER_COLOR}; border-color: ${HOVER_COLOR}; }
+        .faq-cross { font-weight: bold; font-size: 1.25rem; margin-right: 0.5rem; transition: color 0.2s, transform 0.3s; }
         .faq-question:hover .faq-cross { color: ${HOVER_COLOR}; }
-
         a { color: ${LINK_COLOR}; }
 
         /* Modal */
         .modal-border { border: 3px solid ${PETAL_COLOR}; }
-        .modal-close { 
-          font-size: 1.25rem; 
-          font-weight: bold; 
-          margin-bottom: 2rem; /* extra bottom margin for cross */
-          transition: transform 0.3s;
-        }
-        .modal-question { 
-          text-align: left; 
-          margin-top: 1.5rem; /* space between cross and question */
-        }
-        .modal-content { max-height: 80vh; overflow-y: auto; }
+        .modal-close { font-size: 1.5rem; font-weight: bold; transition: transform 0.3s; }
+        .modal-question { text-align: right; font-size: 1.25rem; }
+        .modal-content { max-height: 80vh; overflow-y: auto; display: flex; flex-direction: column; }
 
         /* Responsive adjustments */
         @media (max-width: 1023px) {
           h1 { font-size: 3rem; margin-top: 6rem; }
-          .faq-question { max-width: 90%; padding: 0.4rem 0.5rem; font-size: 0.9rem; }
+          .faq-question { max-width: 90%; padding: 0.4rem 0.5rem; font-size: 0.8rem; }
           .faq-cross { font-size: 1rem; margin-right: 0.4rem; }
           .modal-border { max-width: 90%; margin: 0 5%; padding: 1.5rem; }
-          .modal-question { font-size: 1.2rem; }
-          .modal-close { font-size: 1.1rem; margin-bottom: 1.5rem; }
-          a { font-size: 0.9rem; }
-          svg { width: 16px; height: 16px; }
-        }
-
-        @media (max-width: 400px) {
-          h1 { font-size: 2rem; margin-top: 5rem; }
-          .faq-question { max-width: 95%; padding: 0.3rem 0.4rem; font-size: 0.85rem; }
-          .faq-cross { font-size: 0.9rem; margin-right: 0.3rem; }
-          .modal-border { max-width: 95%; margin: 0 5%; padding: 1rem; }
           .modal-question { font-size: 1rem; }
-          .modal-close { font-size: 1rem; margin-bottom: 1.5rem; }
+          .modal-close { font-size: 1.2rem; }
+          .modal-content > div.mt-4 { margin-top: 0.5rem; } /* reduce space between question and answer */
           a { font-size: 0.85rem; }
           svg { width: 14px; height: 14px; }
+        }
+
+        @media (max-width: 500px) {
+          h1 { font-size: 2.5rem; margin-top: 5rem; }
+          .faq-question { max-width: 95%; padding: 0.3rem 0.4rem; font-size: 0.7rem; }
+          .faq-cross { font-size: 0.9rem; margin-right: 0.3rem; }
+          .modal-border { max-width: 95%; margin: 0 5%; padding: 1rem; }
+          .modal-question { font-size: 0.9rem; }
+          .modal-close { font-size: 1.2rem; margin-bottom: 1rem; }
+          .modal-content > div.mt-4 { margin-top: 0.4rem; }
+          a { font-size: 0.8rem; }
+          svg { width: 12px; height: 12px; }
         }
       `}</style>
 
@@ -213,17 +175,22 @@ export default function Schedule() {
             className="absolute inset-0 backdrop-blur-sm"
             onClick={() => setModalData(null)}
           />
-          <div className="bg-white rounded-xl shadow-xl max-w-lg w-full p-6 relative space-y-4 z-10 modal-border modal-content">
-            <button
-              onClick={() => setModalData(null)}
-              className="absolute top-4 right-4 modal-close"
-            >
-              ×
-            </button>
-            <h2 className="text-2xl font-semibold modal-question">
-              {modalData.question}
-            </h2>
-            <div className="space-y-2">
+          <div className="bg-white rounded-xl shadow-xl max-w-lg w-full p-6 relative z-10 modal-border modal-content">
+            {/* Top row: Question + Close button */}
+            <div className="flex justify-between items-start">
+              <h2 className="text-xl font-semibold modal-question">
+                {modalData.question}
+              </h2>
+              <button
+                onClick={() => setModalData(null)}
+                className="modal-close -translate-y-1"
+              >
+                ×
+              </button>
+            </div>
+
+            {/* Answer below */}
+            <div className="mt-4 space-y-2 text-base font-normal">
               {Array.isArray(modalData.answer) ? (
                 modalData.answer.map((ans, idx) => (
                   <div key={idx} className="flex flex-col space-y-1">
