@@ -18,6 +18,8 @@
     "@mui/lab": "^7.0.0-beta.17",
     "@mui/material": "^7.3.2",
     "@tailwindcss/vite": "^4.1.12",
+    "daisyui": "^5.1.10",
+    "partycles": "^1.2.6",
     "react": "^19.1.1",
     "react-confetti": "^6.4.0",
     "react-dom": "^19.1.1"

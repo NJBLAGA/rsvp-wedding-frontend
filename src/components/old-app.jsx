@@ -1,4 +1,4 @@
-import { useState, useEffect, useCallback } from "react";
+import { useState, useEffect } from "react";
 import Home from "./components/Home";
 import Rsvp from "./components/RSVP";
 import Schedule from "./components/Schedule";
@@ -6,53 +6,19 @@ import Details from "./components/Details.jsx";
 import LoginModal from "./components/LoginModal";
 
 export default function App() {
-  const storedAccessToken = localStorage.getItem("accessToken");
-  const storedRefreshToken = localStorage.getItem("refreshToken");
+  const storedToken = localStorage.getItem("token");
   const storedTab = localStorage.getItem("activeTab");
 
-  const [accessToken, setAccessToken] = useState(storedAccessToken || "");
-  const [refreshToken, setRefreshToken] = useState(storedRefreshToken || "");
-  const [isLoggedIn, setIsLoggedIn] = useState(!!storedAccessToken);
+  const [token, setToken] = useState(storedToken || "");
+  const [isLoggedIn, setIsLoggedIn] = useState(!!storedToken);
   const [activeTab, setActiveTab] = useState(storedTab || "Home");
   const [menuOpen, setMenuOpen] = useState(false);
   const [sessionExpired, setSessionExpired] = useState(false);
 
-  const PETAL_PINK = "#d38c8c";
-
-  // Save active tab to localStorage
   useEffect(() => {
     if (isLoggedIn) localStorage.setItem("activeTab", activeTab);
   }, [activeTab, isLoggedIn]);
 
-  // Refresh access token
-  const refreshAccessToken = useCallback(async () => {
-    if (!refreshToken) return false;
-    try {
-      const res = await fetch(
-        "https://rsvp-wedding-backend.onrender.com/refresh_token",
-        {
-          method: "POST",
-          headers: { "Content-Type": "application/json" },
-          body: JSON.stringify({ token: refreshToken }),
-        },
-      );
-
-      if (!res.ok) return false;
-
-      const data = await res.json();
-      if (data.accessToken) {
-        setAccessToken(data.accessToken);
-        localStorage.setItem("accessToken", data.accessToken);
-        return true;
-      }
-      return false;
-    } catch (err) {
-      console.error("Refresh token failed:", err);
-      return false;
-    }
-  }, [refreshToken]);
-
-  // Login
   const handleLogin = async (inputPass) => {
     try {
       const res = await fetch(
@@ -67,11 +33,9 @@ export default function App() {
       if (!res.ok) return false;
 
       const data = await res.json();
-      if (data.accessToken && data.refreshToken) {
-        setAccessToken(data.accessToken);
-        setRefreshToken(data.refreshToken);
-        localStorage.setItem("accessToken", data.accessToken);
-        localStorage.setItem("refreshToken", data.refreshToken);
+      if (data.token) {
+        setToken(data.token);
+        localStorage.setItem("token", data.token);
         setIsLoggedIn(true);
         setSessionExpired(false);
         return true;
@@ -83,26 +47,21 @@ export default function App() {
     }
   };
 
-  // Logout
   const handleLogout = () => {
     setIsLoggedIn(false);
-    setAccessToken("");
-    setRefreshToken("");
-    localStorage.removeItem("accessToken");
-    localStorage.removeItem("refreshToken");
+    setToken("");
+    localStorage.removeItem("token");
     localStorage.removeItem("activeTab");
     setActiveTab("Home");
     setMenuOpen(false);
   };
 
-  // Handle expired session
-  const handleSessionExpired = async () => {
-    const refreshed = await refreshAccessToken();
-    if (!refreshed) {
-      handleLogout();
-      setSessionExpired(true);
-    }
+  const handleSessionExpired = () => {
+    handleLogout();
+    setSessionExpired(true);
   };
+
+  const PETAL_PINK = "#d38c8c";
 
   return (
     <div
@@ -114,7 +73,7 @@ export default function App() {
         rel="stylesheet"
       />
 
-      {/* Login Modal */}
+      {/* Login Modal for normal login */}
       <LoginModal
         isOpen={!isLoggedIn && !sessionExpired}
         onSubmit={handleLogin}
@@ -260,11 +219,7 @@ export default function App() {
           <main className="min-h-screen" style={{ color: "#000" }}>
             {activeTab === "Home" && <Home />}
             {activeTab === "RSVP" && (
-              <Rsvp
-                token={accessToken}
-                onLogout={handleSessionExpired}
-                refreshAccessToken={refreshAccessToken}
-              />
+              <Rsvp token={token} onLogout={handleSessionExpired} />
             )}
             {activeTab === "Schedule" && <Schedule />}
             {activeTab === "Details" && <Details />}

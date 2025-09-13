@@ -1,38 +1,103 @@
-import { useState, useEffect } from "react";
+import { useState, useEffect, useRef } from "react";
 import { EyeIcon, EyeSlashIcon } from "@heroicons/react/24/outline";
 import BackgroundImage from "../assets/16264603_v839-my-10a.svg";
 
 export default function LoginModal({ isOpen, onSubmit }) {
-  const [passphrase, setPassphrase] = useState("");
+  const [password, setPassword] = useState("");
   const [error, setError] = useState("");
   const [showPass, setShowPass] = useState(false);
   const [isProcessing, setIsProcessing] = useState(false);
+  const canvasRef = useRef(null);
 
-  const PETAL_COUNT = 25;
   const PINK_COLOR = "#eda5a5";
-  const [petals, setPetals] = useState([]);
 
-  // Generate petals once
-  useEffect(() => {
-    const generatedPetals = [...Array(PETAL_COUNT)].map((_, i) => {
-      const randomLeft = Math.random() * 100;
-      const randomDuration = 15 + Math.random() * 20;
-      const randomDelay = Math.random() * 12;
-      const randomSize = 16 + Math.random() * 14;
-      const path = (i % 6) + 1;
-      return { randomLeft, randomDuration, randomDelay, randomSize, path };
-    });
-    setPetals(generatedPetals);
-  }, []);
+  const animationIdRef = useRef(null); // store animation frame ID
+  const petalArrayRef = useRef([]); // store petals persistently
 
-  // Reset modal state when closed
   useEffect(() => {
     if (!isOpen) {
-      setPassphrase("");
+      setPassword("");
       setError("");
       setShowPass(false);
       setIsProcessing(false);
     }
+  }, [isOpen]);
+
+  // Petal animation
+  useEffect(() => {
+    const canvas = canvasRef.current;
+    if (!canvas) return;
+    const ctx = canvas.getContext("2d");
+    canvas.width = window.innerWidth;
+    canvas.height = window.innerHeight;
+
+    if (!petalArrayRef.current.length) {
+      const TOTAL = 100;
+      const petalImg = new Image();
+      petalImg.src = "https://djjjk9bjm164h.cloudfront.net/petal.png";
+
+      class Petal {
+        constructor() {
+          this.x = Math.random() * canvas.width;
+          this.y = Math.random() * canvas.height * 2 - canvas.height;
+          this.w = 25 + Math.random() * 15;
+          this.h = 20 + Math.random() * 10;
+          this.opacity = this.w / 50;
+          this.flip = Math.random();
+          this.xSpeed = 0.1 + Math.random() * 0.15; // slowed down
+          this.ySpeed = 0.05 + Math.random() * 0.15; // slowed down
+          this.flipSpeed = Math.random() * 0.01;
+        }
+        draw() {
+          if (this.y > canvas.height || this.x > canvas.width) {
+            this.x = -25;
+            this.y = Math.random() * canvas.height * 2 - canvas.height;
+            this.xSpeed = 0.1 + Math.random() * 0.15;
+            this.ySpeed = 0.05 + Math.random() * 0.15;
+            this.flip = Math.random();
+          }
+          ctx.globalAlpha = this.opacity;
+          ctx.drawImage(
+            petalImg,
+            this.x,
+            this.y,
+            this.w * (0.6 + Math.abs(Math.cos(this.flip)) / 3),
+            this.h * (0.8 + Math.abs(Math.sin(this.flip)) / 5),
+          );
+        }
+        animate() {
+          this.x += this.xSpeed;
+          this.y += this.ySpeed;
+          this.flip += this.flipSpeed;
+          this.draw();
+        }
+      }
+
+      petalImg.addEventListener("load", () => {
+        for (let i = 0; i < TOTAL; i++) {
+          petalArrayRef.current.push(new Petal());
+        }
+
+        const render = () => {
+          ctx.clearRect(0, 0, canvas.width, canvas.height);
+          petalArrayRef.current.forEach((p) => p.animate());
+          animationIdRef.current = requestAnimationFrame(render);
+        };
+        render();
+      });
+    }
+
+    const handleResize = () => {
+      canvas.width = window.innerWidth;
+      canvas.height = window.innerHeight;
+    };
+
+    window.addEventListener("resize", handleResize);
+
+    return () => {
+      window.removeEventListener("resize", handleResize);
+      if (animationIdRef.current) cancelAnimationFrame(animationIdRef.current);
+    };
   }, [isOpen]);
 
   if (!isOpen) return null;
@@ -40,10 +105,10 @@ export default function LoginModal({ isOpen, onSubmit }) {
   const handleSubmit = async (e) => {
     e.preventDefault();
     setIsProcessing(true);
-    const success = await onSubmit(passphrase);
+    const success = await onSubmit(password);
     if (!success) {
-      setError("Incorrect passphrase.\nPlease try again.");
-      setPassphrase("");
+      setError("Incorrect password. Please try again.");
+      setPassword("");
     } else {
       setError("");
     }
@@ -60,120 +125,49 @@ export default function LoginModal({ isOpen, onSubmit }) {
         rel="stylesheet"
       />
 
-      <style>{`
-        .petal {
-          position: absolute;
-          background: radial-gradient(circle at 50% 50%, #ffe4e1 0%, ${PINK_COLOR} 100%);
-          border-radius: 50% 50% 50% 50% / 60% 60% 40% 40%;
-          opacity: 0.4;
-          transform: rotate(0deg);
-          animation: sparkle 3s infinite alternate;
-        }
+      {/* Background Image */}
+      <div
+        className="absolute inset-0 z-0 bg-cover bg-center"
+        style={{ backgroundImage: `url(${BackgroundImage})` }}
+      />
 
-        @keyframes sparkle { 0% { opacity:0.2 } 50% { opacity:0.35 } 100% { opacity:0.8 } }
+      {/* Petals Canvas */}
+      <canvas
+        ref={canvasRef}
+        className="absolute top-0 left-0 w-full h-full z-10 pointer-events-none"
+      />
 
-        /* Float paths */
-        @keyframes floatPetal-1 { 0%{transform:translateY(0) translateX(0) rotate(0deg);} 50%{transform:translateY(50vh) translateX(20px) rotate(160deg);} 100%{transform:translateY(100vh) translateX(-20px) rotate(320deg);} }
-        @keyframes floatPetal-2 { 0%{transform:translateY(0) translateX(0) rotate(0deg);} 50%{transform:translateY(60vh) translateX(-40px) rotate(-200deg);} 100%{transform:translateY(100vh) translateX(40px) rotate(-360deg);} }
-        @keyframes floatPetal-3 { 0%{transform:translateY(0) translateX(0) rotate(0deg);} 33%{transform:translateY(33vh) translateX(30px) rotate(120deg);} 66%{transform:translateY(66vh) translateX(-30px) rotate(240deg);} 100%{transform:translateY(100vh) translateX(30px) rotate(360deg);} }
-        @keyframes floatPetal-4 { 0%{transform:translateY(0) translateX(0) rotate(0deg) scale(1);} 50%{transform:translateY(70vh) translateX(50px) rotate(180deg) scale(1.2);} 100%{transform:translateY(100vh) translateX(-50px) rotate(360deg) scale(1);} }
-        @keyframes floatPetal-5 { 0%{transform:translateY(0) translateX(0) rotate(0deg);} 25%{transform:translateY(25vh) translateX(-25px) rotate(-90deg);} 50%{transform:translateY(50vh) translateX(25px) rotate(90deg);} 75%{transform:translateY(75vh) translateX(-25px) rotate(-270deg);} 100%{transform:translateY(100vh) translateX(25px) rotate(360deg);} }
-        @keyframes floatPetal-6 { 0%{transform:translateY(0) translateX(0) rotate(0deg) scale(1);} 50%{transform:translateY(55vh) translateX(60px) rotate(200deg) scale(0.9);} 100%{transform:translateY(100vh) translateX(-60px) rotate(400deg) scale(1.1);} }
-
-        /* Petal positions from state */
-        ${petals
-          .map(
-            (p, i) => `
-          .petal-${i} {
-            left: ${p.randomLeft}%;
-            width: ${p.randomSize}px;
-            height: ${p.randomSize * 1.4}px;
-            animation:
-              floatPetal-${p.path} ${p.randomDuration}s linear infinite,
-              sparkle 3s infinite alternate;
-            animation-delay: ${p.randomDelay}s;
-          }
-        `,
-          )
-          .join("\n")}
-
-        /* Background responsive */
-        .modal-background {
-          position: absolute;
-          top: 0; left: 0;
-          width: 100vw;
-          height: 100vh;
-          background-image: url(${BackgroundImage});
-          background-repeat: no-repeat;
-          background-position: center top;
-          z-index: 0;
-        }
-
-        @media (max-width: 639px) { .modal-background { background-size: cover; } }
-        @media (min-width: 640px) and (max-width: 1023px) { .modal-background { background-size: contain; background-position: top center; } }
-        @media (min-width: 1024px) { .modal-background { background-size: contain; background-position: top center; } }
-
-        /* Focus & pulse */
-        @keyframes pinkPulse { 0%{box-shadow:0 0 6px rgba(237,165,165,0.6);} 50%{box-shadow:0 0 12px rgba(237,165,165,0.8);} 100%{box-shadow:0 0 6px rgba(237,165,165,0.6);} }
-        .modal-input:focus { outline:none !important; border-color:${PINK_COLOR}; background-color:#fff9f9; animation:pinkPulse 1.8s ease-in-out infinite; }
-        .modal-button:hover,.modal-button:focus { outline:none !important; animation:pinkPulse 1.8s ease-in-out infinite; }
-
-        /* Modal container transparent */
-        .modal-card { width: 90%; max-width: 360px; padding: 1.5rem; margin-top:2rem; text-align:center; background:transparent; box-shadow:none; }
-
-        /* Header scaling */
-        @media (max-width: 639px) { .modal-header { font-size: 2.2rem; color: #000; } }
-        @media (min-width: 640px) and (max-width:1023px) { .modal-header { font-size: 2.5rem; color: #000; } }
-        @media (min-width: 1024px) { .modal-header { font-size: 3rem; color: #000; } }
-      `}</style>
-
-      {/* Background */}
-      <div className="modal-background" />
-
-      {/* Animated Petals */}
-      <div className="absolute inset-0 pointer-events-none">
-        {petals.map((_, i) => (
-          <div key={i} className={`petal petal-${i}`} />
-        ))}
-      </div>
-
-      {/* Transparent container */}
-      <div className="relative z-10 modal-card">
+      {/* Centered UI */}
+      <div className="relative z-20 w-full max-w-sm text-center px-4">
         <h2
-          className="modal-header mb-2"
-          style={{ fontFamily: "'Dancing Script', cursive" }}
+          className="text-3xl sm:text-4xl mb-4"
+          style={{ fontFamily: "'Dancing Script', cursive", color: "#000" }}
         >
           Welcome to our Wedding
         </h2>
 
-        <p
-          className="text-xs sm:text-sm text-gray-600 mb-4 sm:mb-6"
-          style={{ fontFamily: "'Poppins', sans-serif'" }}
-        >
-          Please enter your passphrase
-        </p>
-
         <form
           onSubmit={handleSubmit}
-          className="flex flex-col items-center space-y-2 sm:space-y-3 w-full"
+          className="flex flex-col items-center space-y-2 w-full"
         >
+          {/* Password Input */}
           <div className="relative w-full">
             <input
               type={showPass ? "text" : "password"}
-              placeholder="Enter passphrase"
-              value={passphrase}
-              onChange={(e) => setPassphrase(e.target.value)}
+              placeholder="Enter password"
+              value={password}
+              onChange={(e) => setPassword(e.target.value)}
               required
-              className="modal-input w-full px-3 py-2 text-sm sm:text-base border rounded-lg focus:outline-none"
+              disabled={isProcessing}
+              className="w-full px-3 py-2 border rounded-lg focus:outline-none text-sm text-black"
               style={{
                 borderColor: PINK_COLOR,
                 fontFamily: "'Poppins', sans-serif'",
               }}
-              disabled={isProcessing}
             />
             <button
               type="button"
-              className="absolute right-2 top-1/2 -translate-y-1/2 hover:text-pink-700"
+              className="absolute right-2 top-1/2 -translate-y-1/2"
               style={{ color: PINK_COLOR }}
               onClick={() => setShowPass(!showPass)}
               disabled={isProcessing}
@@ -186,19 +180,11 @@ export default function LoginModal({ isOpen, onSubmit }) {
             </button>
           </div>
 
-          {error && (
-            <p
-              className="text-center text-xs sm:text-sm whitespace-pre-line"
-              style={{ color: "red", fontFamily: "'Poppins', sans-serif'" }}
-            >
-              {error}
-            </p>
-          )}
-
+          {/* Unlock Button */}
           <button
             type="submit"
             disabled={isProcessing}
-            className="modal-button w-full py-2 text-sm sm:text-base rounded-lg transition text-white"
+            className="w-full py-2 text-white rounded-lg text-sm"
             style={{
               backgroundColor: isProcessing ? "#f7bfc1" : PINK_COLOR,
               cursor: isProcessing ? "not-allowed" : "pointer",
@@ -207,22 +193,84 @@ export default function LoginModal({ isOpen, onSubmit }) {
           >
             {isProcessing ? "Processing..." : "Unlock"}
           </button>
-        </form>
 
-        <div className="mt-4 sm:mt-6 text-center text-xs sm:text-sm">
-          <a
-            href="mailto:nathanblaga90@gmail.com?cc=nicole.camilleri44@gmail.com&subject=Passphrase%20Request"
-            className="request-link break-words"
-            style={{
-              color: "#6b6b6b",
-              textDecoration: "none",
-              fontFamily: "'Poppins', sans-serif'",
-            }}
-          >
-            Request Passphrase
-          </a>
-        </div>
+          {/* Error Alert with X icon */}
+          {error && (
+            <div
+              role="alert"
+              onClick={() => setError("")}
+              className="alert alert-error mt-2 text-xs sm:text-sm w-full cursor-pointer flex items-center justify-center space-x-2"
+              style={{ padding: "0.5rem" }}
+            >
+              <svg
+                xmlns="http://www.w3.org/2000/svg"
+                className="h-6 w-6 shrink-0 text-black"
+                fill="none"
+                viewBox="0 0 24 24"
+                stroke="currentColor"
+                strokeWidth={2}
+              >
+                <path
+                  strokeLinecap="round"
+                  strokeLinejoin="round"
+                  d="M10 14l2-2m0 0l2-2m-2 2l-2-2m2 2l2 2m7-2a9 9 0 11-18 0 9 9 0 0118 0z"
+                />
+              </svg>
+              <span className="text-black">{error}</span>
+            </div>
+          )}
+
+          {/* Request Password Link */}
+          <div className="mt-4 sm:mt-6 text-center text-xs sm:text-sm w-full">
+            <a
+              href="mailto:nathanblaga90@gmail.com?cc=nicole.camilleri44@gmail.com&subject=Password%20Request"
+              className="request-link break-words"
+              style={{
+                color: "#6b6b6b",
+                textDecoration: "none",
+                fontFamily: "'Poppins', sans-serif'",
+              }}
+            >
+              Request Password
+            </a>
+          </div>
+        </form>
       </div>
+
+      <style>{`
+        .bg-cover {
+          background-size: cover;
+          background-position: center;
+          background-repeat: no-repeat;
+        }
+
+        @media (min-width: 640px) and (max-width: 1023px) {
+          .bg-cover {
+            background-size: contain;
+            background-position: center;
+            background-repeat: no-repeat;
+          }
+        }
+
+        @media (min-width: 1024px) {
+          .bg-cover {
+            background-size: contain;
+            background-position: top center;
+            background-repeat: no-repeat;
+          }
+        }
+
+        input:focus {
+          outline: none !important;
+          border-color: ${PINK_COLOR};
+          background-color: #fff9f9;
+        }
+
+        /* Request link highlight pink on hover/focus */
+        .request-link:hover, .request-link:focus {
+          color: ${PINK_COLOR};
+        }
+      `}</style>
     </div>
   );
 }
