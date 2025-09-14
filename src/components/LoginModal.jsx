@@ -1,6 +1,7 @@
 import { useState, useEffect, useRef } from "react";
 import { EyeIcon, EyeSlashIcon } from "@heroicons/react/24/outline";
 import BackgroundImage from "../assets/16264603_v839-my-10a.svg";
+import Alert from "@mui/material/Alert";
 
 export default function LoginModal({ isOpen, onSubmit }) {
   const [password, setPassword] = useState("");
@@ -11,8 +12,8 @@ export default function LoginModal({ isOpen, onSubmit }) {
 
   const PINK_COLOR = "#eda5a5";
 
-  const animationIdRef = useRef(null); // store animation frame ID
-  const petalArrayRef = useRef([]); // store petals persistently
+  const animationIdRef = useRef(null);
+  const petalArrayRef = useRef([]);
 
   useEffect(() => {
     if (!isOpen) {
@@ -32,7 +33,7 @@ export default function LoginModal({ isOpen, onSubmit }) {
     canvas.height = window.innerHeight;
 
     if (!petalArrayRef.current.length) {
-      const TOTAL = 100;
+      const TOTAL = 30;
       const petalImg = new Image();
       petalImg.src = "https://djjjk9bjm164h.cloudfront.net/petal.png";
 
@@ -44,16 +45,16 @@ export default function LoginModal({ isOpen, onSubmit }) {
           this.h = 20 + Math.random() * 10;
           this.opacity = this.w / 50;
           this.flip = Math.random();
-          this.xSpeed = 0.1 + Math.random() * 0.15; // slowed down
-          this.ySpeed = 0.05 + Math.random() * 0.15; // slowed down
+          this.xSpeed = 0.2 + Math.random() * 0.15;
+          this.ySpeed = 0.1 + Math.random() * 0.15;
           this.flipSpeed = Math.random() * 0.01;
         }
         draw() {
           if (this.y > canvas.height || this.x > canvas.width) {
             this.x = -25;
             this.y = Math.random() * canvas.height * 2 - canvas.height;
-            this.xSpeed = 0.1 + Math.random() * 0.15;
-            this.ySpeed = 0.05 + Math.random() * 0.15;
+            this.xSpeed = 0.2 + Math.random() * 0.15;
+            this.ySpeed = 0.1 + Math.random() * 0.15;
             this.flip = Math.random();
           }
           ctx.globalAlpha = this.opacity;
@@ -107,7 +108,7 @@ export default function LoginModal({ isOpen, onSubmit }) {
     setIsProcessing(true);
     const success = await onSubmit(password);
     if (!success) {
-      setError("Incorrect password. Please try again.");
+      setError("Incorrect password.\nPlease try again."); // line break
       setPassword("");
     } else {
       setError("");
@@ -194,43 +195,70 @@ export default function LoginModal({ isOpen, onSubmit }) {
             {isProcessing ? "Processing..." : "Unlock"}
           </button>
 
-          {/* Error Alert with X icon */}
+          {/* Error Alert */}
           {error && (
-            <div
-              role="alert"
-              onClick={() => setError("")}
-              className="alert alert-error mt-2 text-xs sm:text-sm w-full cursor-pointer flex items-center justify-center space-x-2"
-              style={{ padding: "0.5rem" }}
+            <Alert
+              severity="error"
+              onClose={() => setError("")}
+              className="w-full mt-2"
+              style={{
+                fontSize: "0.85rem",
+                display: "flex",
+                justifyContent: "center",
+              }}
+              sx={{
+                "& .MuiAlert-message": {
+                  width: "100%",
+                  textAlign: "center",
+                  display: "block",
+                  lineHeight: 1.3,
+                },
+                "& .MuiAlert-action": {
+                  alignSelf: "center",
+                  color: "#d32f2f",
+                  fontSize: "0.85rem",
+                },
+                "& .MuiAlert-icon": {
+                  fontSize: "1.2rem",
+                  alignSelf: "center",
+                },
+              }}
             >
-              <svg
-                xmlns="http://www.w3.org/2000/svg"
-                className="h-6 w-6 shrink-0 text-black"
-                fill="none"
-                viewBox="0 0 24 24"
-                stroke="currentColor"
-                strokeWidth={2}
-              >
-                <path
-                  strokeLinecap="round"
-                  strokeLinejoin="round"
-                  d="M10 14l2-2m0 0l2-2m-2 2l-2-2m2 2l2 2m7-2a9 9 0 11-18 0 9 9 0 0118 0z"
-                />
-              </svg>
-              <span className="text-black">{error}</span>
-            </div>
+              {error.split("\n").map((line, index) => (
+                <span key={index}>
+                  {line}
+                  <br />
+                </span>
+              ))}
+            </Alert>
           )}
 
           {/* Request Password Link */}
-          <div className="mt-4 sm:mt-6 text-center text-xs sm:text-sm w-full">
+          <div className="mt-4 sm:mt-6 text-center w-full">
             <a
-              href="mailto:nathanblaga90@gmail.com?cc=nicole.camilleri44@gmail.com&subject=Password%20Request"
-              className="request-link break-words"
+              href="mailto:nathanblaga90@gmail.com?cc=nicole.camilleri44@gmail.com&subject=Password%20Request&body=Dear%20Nicole%20%26%20Nathan,%0D%0A%0D%0ACould%20you%20please%20resend%20us%20our%20password%20again.%0D%0A%0D%0AKind%20Regards"
+              className="request-link inline-flex items-center justify-center gap-2"
               style={{
                 color: "#6b6b6b",
                 textDecoration: "none",
                 fontFamily: "'Poppins', sans-serif'",
+                fontSize: "1rem",
               }}
             >
+              <svg
+                xmlns="http://www.w3.org/2000/svg"
+                width="18"
+                height="18"
+                viewBox="0 0 24 24"
+                fill="none"
+                stroke="#6b6b6b"
+                strokeWidth="2"
+                strokeLinecap="round"
+                strokeLinejoin="round"
+              >
+                <rect x="2" y="4" width="20" height="16" rx="2"></rect>
+                <path d="M22 7 12 13 2 7"></path>
+              </svg>
               Request Password
             </a>
           </div>
@@ -266,7 +294,6 @@ export default function LoginModal({ isOpen, onSubmit }) {
           background-color: #fff9f9;
         }
 
-        /* Request link highlight pink on hover/focus */
         .request-link:hover, .request-link:focus {
           color: ${PINK_COLOR};
         }
