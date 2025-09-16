@@ -26,12 +26,10 @@ export default function App() {
 
   const PETAL_PINK = "#d38c8c";
 
-  // Save active tab to localStorage
   useEffect(() => {
     if (isLoggedIn) localStorage.setItem("activeTab", activeTab);
   }, [activeTab, isLoggedIn]);
 
-  // Refresh access token
   const refreshAccessToken = useCallback(async () => {
     if (!refreshToken) return false;
     try {
@@ -57,7 +55,6 @@ export default function App() {
     }
   }, [refreshToken]);
 
-  // Login
   const handleLogin = async (inputPass) => {
     try {
       const res = await fetch(
@@ -86,7 +83,6 @@ export default function App() {
     }
   };
 
-  // Logout
   const handleLogout = () => {
     setIsLoggedIn(false);
     setAccessToken("");
@@ -98,7 +94,6 @@ export default function App() {
     setMenuOpen(false);
   };
 
-  // Handle expired session
   const handleSessionExpired = async () => {
     const refreshed = await refreshAccessToken();
     if (!refreshed) {
@@ -107,7 +102,6 @@ export default function App() {
     }
   };
 
-  // Mobile drawer list
   const drawerList = (
     <Box
       sx={{
@@ -186,13 +180,11 @@ export default function App() {
         rel="stylesheet"
       />
 
-      {/* Login Modal */}
       <LoginModal
         isOpen={!isLoggedIn && !sessionExpired}
         onSubmit={handleLogin}
       />
 
-      {/* Session Expired Modal */}
       {sessionExpired && (
         <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/40">
           <div className="bg-white rounded-lg p-6 max-w-sm text-center shadow-lg">
@@ -207,7 +199,6 @@ export default function App() {
 
       {isLoggedIn && (
         <>
-          {/* Navigation */}
           <nav className="border-b p-4 bg-white shadow-sm">
             {/* Desktop Navbar */}
             <div className="hidden md:flex justify-center space-x-8">
@@ -265,14 +256,27 @@ export default function App() {
               </span>
               <button
                 onClick={() => setMenuOpen(!menuOpen)}
-                className="text-black text-3xl"
+                style={{
+                  fontWeight: 300, // lighter
+                  fontSize: "1.8rem",
+                  fontFamily: "'Dancing Script', cursive",
+                  color: "#000",
+                  transition: "all 0.3s ease",
+                }}
               >
-                {menuOpen ? "×" : "☰"}
+                <span
+                  style={{
+                    display: "inline-block",
+                    transition: "transform 0.3s ease",
+                    transform: menuOpen ? "rotate(0deg)" : "rotate(0deg)",
+                  }}
+                >
+                  {menuOpen ? "×" : "☰"}
+                </span>
               </button>
             </div>
           </nav>
 
-          {/* Mobile Drawer */}
           <SwipeableDrawer
             anchor="left"
             open={menuOpen}

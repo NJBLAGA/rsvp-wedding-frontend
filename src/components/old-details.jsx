@@ -4,18 +4,13 @@ import BackgroundImage from "../assets/16264603_v839-my-10a.svg";
 
 const faqData = [
   {
-    question: "Contacting Nicole?",
+    question: "How do we contact you?",
     answer: [
       {
         name: "Nicole",
         email: "nicole.camilleri44@gmail.com",
         mobile: "+61 428 229 283",
       },
-    ],
-  },
-  {
-    question: "Contacting Nathan?",
-    answer: [
       {
         name: "Nathan",
         email: "nathanblaga90@gmail.com",
@@ -58,7 +53,7 @@ export default function FAQ() {
     canvas.height = window.innerHeight;
 
     if (!petalArrayRef.current.length) {
-      const TOTAL = 20;
+      const TOTAL = 30;
       const petalImg = new Image();
       petalImg.src = "https://djjjk9bjm164h.cloudfront.net/petal.png";
 
@@ -131,7 +126,7 @@ export default function FAQ() {
 
       {/* Background */}
       <div
-        className="absolute inset-0 bg-center bg-desktop"
+        className="absolute inset-0 bg-center bg-contain"
         style={{ backgroundImage: `url(${BackgroundImage})` }}
       />
 
@@ -142,29 +137,45 @@ export default function FAQ() {
       />
 
       {/* Heading */}
-      <h1 className="relative z-20 text-center font-bold mb-2">FAQs</h1>
+      <h1
+        className="relative z-20 text-center font-bold mb-8"
+        style={{
+          fontFamily: "'Dancing Script', cursive",
+          fontSize: "2rem",
+          marginTop: "3rem",
+        }}
+      >
+        FAQs
+      </h1>
 
       {/* FAQ Accordion */}
-      <div className="relative z-20 flex flex-col items-center w-full max-w-md px-4 space-y-1">
+      <div className="relative z-20 flex flex-col items-center w-full max-w-md px-4 space-y-2">
         {faqData.map((item, idx) => (
           <div
             key={idx}
-            className="collapse collapse-arrow w-full bg-transparent border-none"
+            className="collapse collapse-arrow bg-white border border-base-300 w-full"
           >
             <input
               type="radio"
               name="my-accordion-2"
               defaultChecked={idx === 0}
             />
-            <div className="collapse-title">{item.question}</div>
-            <div className="collapse-content">
+            <div className="collapse-title font-semibold text-sm sm:text-base">
+              {item.question}
+            </div>
+            <div className="collapse-content text-xs sm:text-sm space-y-1">
               {Array.isArray(item.answer) ? (
                 item.answer.map((ans, idy) => (
                   <div key={idy} className="flex flex-col space-y-1">
+                    {ans.name && (
+                      <span className="font-medium text-sm sm:text-base">
+                        {ans.name}
+                      </span>
+                    )}
                     {ans.email && (
                       <a
                         href={`mailto:${ans.email}`}
-                        className="flex items-center space-x-1 answer-normal hover:underline text-black"
+                        className="flex items-center space-x-1 text-[#d38c8c] hover:underline text-xs sm:text-sm"
                       >
                         <EnvelopeIcon className="w-4 h-4 text-[#d38c8c]" />
                         <span>{ans.email}</span>
@@ -173,7 +184,7 @@ export default function FAQ() {
                     {ans.mobile && (
                       <a
                         href={`tel:${ans.mobile}`}
-                        className="flex items-center space-x-1 answer-normal hover:underline text-black"
+                        className="flex items-center space-x-1 text-[#d38c8c] hover:underline text-xs sm:text-sm"
                       >
                         <PhoneIcon className="w-4 h-4 text-[#d38c8c]" />
                         <span>{ans.mobile}</span>
@@ -184,19 +195,19 @@ export default function FAQ() {
                         href="https://maps.app.goo.gl/6NaC3CQ7zaXYqhBQ7"
                         target="_blank"
                         rel="noopener noreferrer"
-                        className="flex items-center space-x-1 answer-normal mt-0 hover:underline text-black"
+                        className="flex items-center space-x-1 text-[#d38c8c] hover:underline text-xs sm:text-sm"
                       >
                         <MapPinIcon className="w-4 h-4 text-[#d38c8c]" />
                         <span>{ans.address}</span>
                       </a>
                     )}
                     {typeof ans === "string" && (
-                      <p className="answer-normal">{ans}</p>
+                      <p className="text-xs sm:text-sm">{ans}</p>
                     )}
                   </div>
                 ))
               ) : (
-                <p className="answer-normal">{item.answer}</p>
+                <p className="text-xs sm:text-sm">{item.answer}</p>
               )}
             </div>
           </div>
@@ -204,43 +215,20 @@ export default function FAQ() {
       </div>
 
       <style>{`
-        html, body { margin:0; padding:0; }
+        html, body { margin: 0; padding: 0; }
 
-        .bg-desktop { background-size: contain; background-repeat: no-repeat; background-position: top center; }
-        @media (max-width:1023px) { .bg-desktop { background-size: contain; background-position: top center; } }
-        @media (max-width:639px) { .bg-desktop { background-size: cover; background-position: center; } }
-
-        h1 {
-          font-family: 'Dancing Script', cursive;
-          font-weight: bold;
-          text-align: center;
+        /* Background behavior like original code */
+        .bg-center { background-size: cover; background-position: center; }
+        @media (min-width: 1024px) {
+          .bg-center { background-size: contain !important; background-repeat: no-repeat; background-position: top center; }
         }
-        @media (max-width:379px) { h1 { font-size:1.5rem !important; margin-top:3.8rem !important; } }
-        @media (max-width:369px) { h1 { font-size:2rem !important; margin-top:4rem !important; } }
-        @media (min-width:380px) and (max-width:639px) { h1 { font-size:2rem !important; margin-top:5rem !important; } }
-        @media (min-width:640px) and (max-width:1023px) { h1 { font-size:2rem !important; margin-top:6rem !important; } }
-        @media (min-width:1024px) { h1 { font-size:2rem !important; margin-top:8rem !important; } }
 
-        .collapse-title { font-weight:500; font-size:0.65rem; margin-top:0.05rem; }
-        @media (min-width:380px) and (max-width:639px) { .collapse-title { font-size:0.7rem; } }
-        @media (min-width:640px) and (max-width:1023px) { .collapse-title { font-size:0.8rem; } }
-        @media (min-width:1024px) { .collapse-title { font-size:0.9rem; } }
-
-        .collapse:not(:has(input:checked)) { margin-bottom: 0.001rem; }
-        h1 { margin-bottom: 0.001rem !important; }
-
-        .answer-normal { font-size:0.55rem !important; }
-        @media (min-width:380px) and (max-width:639px) { .answer-normal { font-size:0.65rem !important; } }
-        @media (min-width:640px) and (max-width:1023px) { .answer-normal { font-size:0.7rem !important; } }
-        @media (min-width:1024px) { .answer-normal { font-size:0.8rem !important; } }
-
-        /* iPhone SE2 specific compact adjustments */
-        @media (max-width: 379px) {
-          .collapse-content { padding-top: 0.15rem !important; padding-bottom: 0.15rem !important; }
-          .collapse-content .flex.flex-col.space-y-1 { gap: 0.15rem !important; }
-          .collapse-content a.flex.items-center.space-x-1 { gap: 0.2rem !important; }
-          .collapse-title { font-size: 0.58rem !important; }
-          .answer-normal { font-size: 0.5rem !important; }
+        /* Heading adjustments for mobile */
+        @media (max-width: 1023px) {
+          h1 { font-size: 1.8rem !important; margin-top: 2.5rem !important; }
+        }
+        @media (max-width: 639px) {
+          h1 { font-size: 1.6rem !important; margin-top: 2rem !important; }
         }
       `}</style>
     </div>
