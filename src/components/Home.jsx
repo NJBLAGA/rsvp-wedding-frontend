@@ -83,7 +83,7 @@ export default function Home() {
   }, []);
 
   return (
-    <div className="relative w-full h-screen">
+    <div className="relative w-full h-screen flex flex-col items-center justify-start overflow-hidden">
       {/* Google Fonts */}
       <link
         href="https://fonts.googleapis.com/css2?family=Dancing+Script:wght@400;700&display=swap"
@@ -92,7 +92,7 @@ export default function Home() {
 
       {/* Background Image */}
       <div
-        className="absolute top-0 left-0 w-full h-full z-0 bg-cover bg-center"
+        className="absolute top-0 left-0 w-full h-full z-0 bg-desktop"
         style={{ backgroundImage: `url(${BackgroundImage})` }}
       />
 
@@ -103,172 +103,112 @@ export default function Home() {
       />
 
       {/* Page content */}
-      <div className="relative z-20 flex flex-col items-center justify-start h-full px-4">
+      <div className="relative z-20 flex flex-col items-center justify-start w-full px-4">
         <h1
-          className="text-black font-bold mb-4"
+          className="text-center text-black font-bold mb-2"
           style={{
             fontFamily: "'Dancing Script', cursive",
-            fontSize: "2.5rem",
+            fontSize: "2rem",
             marginTop: "6rem",
           }}
         >
           Our Special Day
         </h1>
 
-        {/* DaisyUI Card */}
-        <div className="card bg-white shadow-lg mt-0 w-full max-w-sm">
-          <figure className="flex justify-center mt-4">
+        {/* Card */}
+        <div className="card mt-0 bg-transparent border-none shadow-none flex flex-col items-center">
+          <figure className="w-full flex justify-center">
             <img
               src={WeddingImage}
               alt="Wedding couple"
-              className="rounded-t-lg w-4/5 card-image"
+              className="rounded-t-lg object-cover opacity-95"
+              style={{ width: "300px", height: "400px" }}
             />
           </figure>
-          <div className="card-body">
-            {/* Button to open modal */}
-            <div className="flex justify-center mt-4">
-              <button
-                className="btn btn-sm"
-                style={{
-                  backgroundColor: "rgb(237, 165, 165)",
-                  borderColor: "rgb(237, 165, 165)",
-                }}
-                onClick={() =>
-                  document.getElementById("my_modal_3").showModal()
-                }
-              >
-                Let's Celebrate
-              </button>
-            </div>
-
-            {/* Modal */}
-            <dialog id="my_modal_3" className="modal">
-              <div className="modal-box bg-white">
-                <form method="dialog">
-                  <button className="btn btn-sm btn-circle btn-ghost absolute right-2 top-2">
-                    ✕
-                  </button>
-                </form>
-
-                <h2
-                  className="text-center font-bold"
-                  style={{
-                    fontFamily: "'Dancing Script', cursive",
-                    fontSize: "1.8rem",
-                  }}
-                >
-                  Saturday, March 14, 2026
-                </h2>
-                <h3
-                  className="text-center font-semibold mt-2"
-                  style={{ fontSize: "1rem" }}
-                >
-                  Camden Valley Inn, Remembrance Dr, Cawdor NSW, Australia
-                </h3>
-                <p className="text-center mt-4" style={{ fontSize: "0.8rem" }}>
-                  Join us in celebrating our love! We can't wait to share our
-                  special day with you. We can't wait to share our special day
-                  with you
-                </p>
-              </div>
-            </dialog>
+          <div className="card-body text-center p-2 bg-transparent w-full">
+            <h2
+              className="font-bold"
+              style={{
+                fontFamily: "'Dancing Script', cursive",
+                fontSize: "1.3rem",
+                color: "rgba(0,0,0,0.85)",
+              }}
+            >
+              Saturday, March 14, 2026
+            </h2>
+            <h3
+              className="font-semibold mt-1"
+              style={{ fontSize: "0.8rem", color: "rgba(0,0,0,0.8)" }}
+            >
+              Camden Valley Inn, Remembrance Dr, Cawdor NSW, Australia
+            </h3>
+            <p
+              className="mt-1"
+              style={{ fontSize: "0.75rem", color: "rgba(0,0,0,0.8)" }}
+            >
+              Join us in celebrating our love! We can't wait to share our
+              special day with you.
+            </p>
           </div>
         </div>
       </div>
 
       <style>{`
-        .bg-cover {
-          background-size: cover;
-          background-position: center;
+        html, body { margin: 0; padding: 0; }
+
+        /* Desktop & Tablet: background contained at top */
+        .bg-desktop {
+          background-size: contain;
+          background-position: top center;
           background-repeat: no-repeat;
         }
 
-        .card-image {
-          max-height: 200px;
-          width: auto;
-        }
-
-        /* Backdrop blur when modal is open */
-        dialog::backdrop {
-          background: rgba(255, 255, 255, 0.3);
-          backdrop-filter: blur(5px);
-        }
-
-        /* Mobile-specific styles (including SE2 small devices) */
+        /* Mobile: stretch background to cover full screen */
         @media (max-width: 639px) {
-          h1 {
-            font-size: 1.8rem;
-            margin-top: 4rem;
-          }
-          h2 {
-            font-size: 1.4rem;
-          }
-          h3 {
-            font-size: 1rem;
-          }
-          p {
-            font-size: 0.7rem;
-          }
-          .card {
-            width: 80%; 
-            max-width: none; 
-            margin-top: 0rem; 
-            transform: none;
-            height: 60%;
-          }
-          .card-image {
-            max-height: 100%;
+          .bg-desktop {
+            background-size: cover;
+            background-position: center;
           }
         }
 
-        /* Tablet */
+        /* Extra small devices (SE2, <=380px) */
+        @media (max-width: 380px) {
+          h1 { font-size: 1.8rem !important; margin-top: 4rem !important; }
+          h2 { font-size: 1rem !important; }
+          h3 { font-size: 0.6rem !important; }
+          p { font-size: 0.6rem !important; }
+          img { width: 200px !important; height: 280px !important; }
+          .card { width: 90%; max-width: 250px; }
+        }
+
+        /* Mobile devices (381px–639px) */
+        @media (max-width: 639px) and (min-width: 381px) {
+          h1 { font-size: 2rem; margin-top: 5rem !important; }
+          h2 { font-size: 1rem; }
+          h3 { font-size: 0.65rem; }
+          p { font-size: 0.55rem; }
+          img { width: 250px !important; height: 350px !important; }
+          .card { width: 95%; max-width: 300px; }
+        }
+
+        /* Tablet (640px–1023px) */
         @media (min-width: 640px) and (max-width: 1023px) {
-          h1 {
-            font-size: 2.2rem;
-            margin-top: 5rem;
-          }
-          h2 {
-            font-size: 1.6rem;
-          }
-          h3 {
-            font-size: 1rem;
-          }
-          .card {
-            width: 70%; 
-            max-width: 500px;
-            margin-top: 1.5rem;
-            transform: none;
-          }
-          .card-image {
-            max-height: 180px;
-          }
+          h1 { font-size: 2.8rem !important; margin-top: 6rem !important; }
+          h2 { font-size: 1.3rem !important; }
+          h3 { font-size: 0.75rem !important; }
+          p { font-size: 0.65rem !important; }
+          img { width: 280px !important; height: 380px !important; }
+          .card { width: 50%; max-width: 350px; }
         }
 
-        /* Desktop */
+        /* Desktop (≥1024px) */
         @media (min-width: 1024px) {
-          h1 {
-            font-size: 2.5rem;
-            margin-top: 9rem;
-          }
-          h2 {
-            font-size: 1.8rem;
-          }
-          h3 {
-            font-size: 1.1rem;
-          }
-          .card {
-            width: 50%; 
-            max-width: 600px;
-            margin-top: 2rem;
-            transform: none;
-          }
-          .card-image {
-            max-height: 200px;
-          }
-          .bg-cover {
-            background-size: contain;
-            background-position: top center;
-          }
+          h1 { font-size: 3rem !important; margin-top: 8rem !important;; }
+          h2 { font-size: 1.5rem !important;; }
+          h3 { font-size: 0.75rem !important;; }
+          p { font-size: 0.7rem !important;; }
+          img { width: 300px !important; height: 400px !important; }
+          .card { width: 50%; max-width: 350px; }
         }
       `}</style>
     </div>
