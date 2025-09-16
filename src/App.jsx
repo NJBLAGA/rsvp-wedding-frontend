@@ -4,6 +4,13 @@ import Rsvp from "./components/RSVP";
 import Schedule from "./components/Schedule";
 import Details from "./components/Details.jsx";
 import LoginModal from "./components/LoginModal";
+import Box from "@mui/material/Box";
+import SwipeableDrawer from "@mui/material/SwipeableDrawer";
+import List from "@mui/material/List";
+import Divider from "@mui/material/Divider";
+import ListItem from "@mui/material/ListItem";
+import ListItemButton from "@mui/material/ListItemButton";
+import ListItemText from "@mui/material/ListItemText";
 
 export default function App() {
   const storedAccessToken = localStorage.getItem("accessToken");
@@ -36,9 +43,7 @@ export default function App() {
           body: JSON.stringify({ token: refreshToken }),
         },
       );
-
       if (!res.ok) return false;
-
       const data = await res.json();
       if (data.accessToken) {
         setAccessToken(data.accessToken);
@@ -63,9 +68,7 @@ export default function App() {
           body: JSON.stringify({ pass_key: inputPass }),
         },
       );
-
       if (!res.ok) return false;
-
       const data = await res.json();
       if (data.accessToken && data.refreshToken) {
         setAccessToken(data.accessToken);
@@ -104,6 +107,75 @@ export default function App() {
     }
   };
 
+  // Mobile drawer list
+  const drawerList = (
+    <Box
+      sx={{
+        width: 250,
+        backgroundColor: "#fff",
+        height: "100%",
+        boxShadow: "2px 0 8px rgba(0,0,0,0.15)",
+        display: "flex",
+        flexDirection: "column",
+        paddingTop: 2,
+      }}
+      role="presentation"
+      onClick={() => setMenuOpen(false)}
+      onKeyDown={() => setMenuOpen(false)}
+    >
+      <List>
+        {["Home", "RSVP", "Schedule", "Details"].map((text) => (
+          <ListItem key={text} disablePadding>
+            <ListItemButton
+              sx={{
+                borderRadius: 2,
+                marginX: 2,
+                marginY: 0.5,
+                color: activeTab === text ? PETAL_PINK : "#000",
+                fontWeight: activeTab === text ? "600" : "400",
+                background:
+                  activeTab === text
+                    ? "linear-gradient(90deg, rgba(211,140,140,0.15), rgba(211,140,140,0.05))"
+                    : "transparent",
+                borderLeft:
+                  activeTab === text ? `4px solid ${PETAL_PINK}` : "none",
+                transition: "all 0.3s ease",
+                "&:hover": {
+                  backgroundColor: "rgba(211,140,140,0.2)",
+                  color: PETAL_PINK,
+                },
+              }}
+              onClick={() => setActiveTab(text)}
+            >
+              <ListItemText primary={text} sx={{ paddingLeft: 1 }} />
+            </ListItemButton>
+          </ListItem>
+        ))}
+      </List>
+      <Divider />
+      <List>
+        <ListItem disablePadding>
+          <ListItemButton
+            sx={{
+              borderRadius: 2,
+              marginX: 2,
+              marginY: 0.5,
+              color: "#000",
+              fontWeight: "400",
+              "&:hover": {
+                backgroundColor: "rgba(211,140,140,0.2)",
+                color: PETAL_PINK,
+              },
+            }}
+            onClick={handleLogout}
+          >
+            <ListItemText primary="Logout" sx={{ paddingLeft: 1 }} />
+          </ListItemButton>
+        </ListItem>
+      </List>
+    </Box>
+  );
+
   return (
     <div
       className="min-h-screen bg-gray-50"
@@ -137,6 +209,7 @@ export default function App() {
         <>
           {/* Navigation */}
           <nav className="border-b p-4 bg-white shadow-sm">
+            {/* Desktop Navbar */}
             <div className="hidden md:flex justify-center space-x-8">
               {["Home", "RSVP", "Schedule", "Details"].map((tab) => (
                 <button
@@ -178,6 +251,7 @@ export default function App() {
               </button>
             </div>
 
+            {/* Mobile Navbar */}
             <div className="md:hidden flex justify-between items-center">
               <span
                 style={{
@@ -191,71 +265,22 @@ export default function App() {
               </span>
               <button
                 onClick={() => setMenuOpen(!menuOpen)}
-                className="text-black focus:outline-none"
+                className="text-black text-3xl"
               >
-                <svg
-                  className="w-6 h-6 transform scale-100"
-                  fill="none"
-                  stroke="currentColor"
-                  viewBox="0 0 24 24"
-                  xmlns="http://www.w3.org/2000/svg"
-                >
-                  {menuOpen ? (
-                    <path
-                      strokeLinecap="round"
-                      strokeLinejoin="round"
-                      strokeWidth={2}
-                      d="M6 18L18 6M6 6l12 12"
-                    />
-                  ) : (
-                    <path
-                      strokeLinecap="round"
-                      strokeLinejoin="round"
-                      strokeWidth={2}
-                      d="M4 6h16M4 12h16M4 18h16"
-                    />
-                  )}
-                </svg>
+                {menuOpen ? "×" : "☰"}
               </button>
             </div>
-
-            {menuOpen && (
-              <div className="md:hidden mt-2 flex flex-col space-y-2">
-                {["Home", "RSVP", "Schedule", "Details"].map((tab) => (
-                  <button
-                    key={tab}
-                    className="text-left font-normal px-2 py-1"
-                    style={{
-                      fontSize: "1.1rem",
-                      color: activeTab === tab ? PETAL_PINK : "#000",
-                      fontFamily: "'Poppins', sans-serif",
-                    }}
-                    onClick={() => {
-                      setActiveTab(tab);
-                      setMenuOpen(false);
-                    }}
-                  >
-                    {tab}
-                  </button>
-                ))}
-                <button
-                  onClick={handleLogout}
-                  className="text-left font-normal px-2 py-1"
-                  style={{
-                    fontSize: "1.1rem",
-                    color: "#000",
-                    fontFamily: "'Poppins', sans-serif",
-                  }}
-                  onMouseOver={(e) =>
-                    (e.currentTarget.style.color = PETAL_PINK)
-                  }
-                  onMouseOut={(e) => (e.currentTarget.style.color = "#000")}
-                >
-                  Logout
-                </button>
-              </div>
-            )}
           </nav>
+
+          {/* Mobile Drawer */}
+          <SwipeableDrawer
+            anchor="left"
+            open={menuOpen}
+            onClose={() => setMenuOpen(false)}
+            onOpen={() => setMenuOpen(true)}
+          >
+            {drawerList}
+          </SwipeableDrawer>
 
           <main className="min-h-screen" style={{ color: "#000" }}>
             {activeTab === "Home" && <Home />}

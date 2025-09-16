@@ -197,7 +197,7 @@ export default function Home() {
           h2 { font-size: 1.3rem !important; }
           h3 { font-size: 0.75rem !important; }
           p { font-size: 0.65rem !important; }
-          img { width: 280px !important; height: 380px !important; }
+          img { width: 280px !important; height: 400px !important; }
           .card { width: 50%; max-width: 350px; }
         }
 
@@ -207,7 +207,7 @@ export default function Home() {
           h2 { font-size: 1.5rem !important;; }
           h3 { font-size: 0.75rem !important;; }
           p { font-size: 0.7rem !important;; }
-          img { width: 300px !important; height: 400px !important; }
+          img { width: 300px !important; height: 450px !important; }
           .card { width: 50%; max-width: 350px; }
         }
       `}</style>
