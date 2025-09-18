@@ -236,13 +236,13 @@ export default function LoginModal({ isOpen, onSubmit }) {
           {/* Request Password Link */}
           <div className="mt-4 sm:mt-6 text-center w-full">
             <a
-              href="mailto:nathanblaga90@gmail.com?cc=nicole.camilleri44@gmail.com&subject=Password%20Request&body=Dear%20Nicole%20%26%20Nathan,%0D%0A%0D%0ACould%20you%20please%20resend%20us%20our%20password%20again.%0D%0A%0D%0AKind%20Regards"
+              href="mailto:nathanblaga90@gmail.com?cc=nicole.camilleri44@gmail.com&subject=Password%20Request&body=Dear%20Nathan%20%26%20Nicole,%0D%0A%0D%0ACould%20you%20please%20resend%20us%20our%20password%20again.%0D%0A%0D%0AKind%20Regards"
               className="request-link inline-flex items-center justify-center gap-2"
               style={{
                 color: "#6b6b6b",
                 textDecoration: "none",
                 fontFamily: "'Poppins', sans-serif'",
-                fontSize: "1rem",
+                fontSize: "1.2rem",
               }}
             >
               <svg
