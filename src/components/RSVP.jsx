@@ -12,8 +12,8 @@ export default function Rsvp({ token, onLogout, refreshAccessToken }) {
   const [updating, setUpdating] = useState(false);
   const [showSuccess, setShowSuccess] = useState(false);
   const [showConfetti, setShowConfetti] = useState(false);
-  const [inputError, setInputError] = useState("");
   const [songInput, setSongInput] = useState("");
+  const [fieldErrors, setFieldErrors] = useState({});
 
   const canvasRef = useRef(null);
   const animationIdRef = useRef(null);
@@ -59,7 +59,7 @@ export default function Rsvp({ token, onLogout, refreshAccessToken }) {
     if (token) fetchRsvpData();
   }, [token]);
 
-  // Petal animation
+  // Petal animation (same as before)
   useEffect(() => {
     const canvas = canvasRef.current;
     if (!canvas) return;
@@ -137,7 +137,7 @@ export default function Rsvp({ token, onLogout, refreshAccessToken }) {
       song_requests: record.song_requests?.slice() || [],
     });
     setSongInput("");
-    setInputError("");
+    setFieldErrors({});
     document.getElementById("edit_modal").showModal();
   };
 
@@ -145,7 +145,7 @@ export default function Rsvp({ token, onLogout, refreshAccessToken }) {
     document.getElementById("edit_modal").close();
     setEditRecord(null);
     setSongInput("");
-    setInputError("");
+    setFieldErrors({});
   };
 
   const handleChange = (e) => {
@@ -153,9 +153,12 @@ export default function Rsvp({ token, onLogout, refreshAccessToken }) {
 
     if (name === "dietary_requirements") {
       if (value.length > 150) {
-        setInputError("Dietary: character limit reached");
-        setTimeout(() => setInputError(""), 10000);
-        return;
+        setFieldErrors((prev) => ({
+          ...prev,
+          dietary_requirements: "Max character reached",
+        }));
+      } else {
+        setFieldErrors((prev) => ({ ...prev, dietary_requirements: "" }));
       }
     }
 
@@ -168,6 +171,23 @@ export default function Rsvp({ token, onLogout, refreshAccessToken }) {
 
   const handleSubmit = async (e) => {
     e.preventDefault();
+    const errors = {};
+
+    if (editRecord.is_guest) {
+      if (!editRecord.first_name?.trim())
+        errors.first_name = "First name is required";
+      if (!editRecord.last_name?.trim())
+        errors.last_name = "Last name is required";
+    }
+
+    if (editRecord.dietary_requirements?.length > 150)
+      errors.dietary_requirements = "Max character reached";
+
+    if (Object.keys(errors).length > 0) {
+      setFieldErrors(errors);
+      return;
+    }
+
     setUpdating(true);
     try {
       const res = await fetch(
@@ -207,14 +227,27 @@ export default function Rsvp({ token, onLogout, refreshAccessToken }) {
     if (!song) return;
 
     if (song.length > 30) {
-      setInputError("Song: character limit reached");
-      setTimeout(() => setInputError(""), 10000);
+      setFieldErrors((prev) => ({
+        ...prev,
+        song_requests: "Max character reached",
+      }));
+      return;
+    }
+
+    if (editRecord.song_requests.includes(song)) {
+      setFieldErrors((prev) => ({
+        ...prev,
+        song_requests: "Duplicate song not allowed",
+      }));
+      setSongInput("");
       return;
     }
 
     if (editRecord.song_requests.length >= 7) {
-      setInputError("Max 7 songs allowed");
-      setTimeout(() => setInputError(""), 10000);
+      setFieldErrors((prev) => ({
+        ...prev,
+        song_requests: "Max 7 songs allowed",
+      }));
       return;
     }
 
@@ -223,7 +256,6 @@ export default function Rsvp({ token, onLogout, refreshAccessToken }) {
         ...prev,
         song_requests: [...prev.song_requests, song],
       };
-
       setTimeout(() => {
         if (songChipContainerRef.current) {
           songChipContainerRef.current.scrollTo({
@@ -232,12 +264,11 @@ export default function Rsvp({ token, onLogout, refreshAccessToken }) {
           });
         }
       }, 50);
-
       return updated;
     });
 
     setSongInput("");
-    setInputError("");
+    setFieldErrors((prev) => ({ ...prev, song_requests: "" }));
   };
 
   const handleDeleteSong = (song) => {
@@ -261,22 +292,37 @@ export default function Rsvp({ token, onLogout, refreshAccessToken }) {
 
   return (
     <div className="relative w-full min-h-screen overflow-hidden px-4 py-6">
+      {/* Background Image */}
       <div
         className="absolute inset-0 z-0 bg-no-repeat bg-center bg-contain"
         style={{ backgroundImage: `url(${BackgroundImage})` }}
       />
+
+      {/* Mobile-only stretch */}
+      <style>{`
+        @media (max-width: 767px) {
+          .bg-no-repeat {
+            background-size: cover !important;
+          }
+          h1 {
+            margin-top: 2rem !important;
+          }
+        }
+      `}</style>
+
       <canvas
         ref={canvasRef}
         className="absolute top-0 left-0 w-full h-full z-10 pointer-events-none"
       />
 
       <h1
-        className="relative z-20 text-3xl sm:text-4xl md:text-5xl font-semibold mb-3 text-center mt-30"
+        className="relative z-20 text-3xl sm:text-4xl md:text-5xl font-semibold mb-3 text-center mt-15 sm:mt-30"
         style={{ fontFamily: "'Dancing Script', cursive" }}
       >
         RSVP
       </h1>
 
+      {/* Alerts */}
       <div className="relative z-20 flex flex-col items-center mt-1 gap-1">
         {loading && !error && (
           <motion.div
@@ -334,6 +380,7 @@ export default function Rsvp({ token, onLogout, refreshAccessToken }) {
         />
       )}
 
+      {/* RSVP Cards */}
       <div className="relative z-20 flex flex-col gap-1 max-w-md mx-auto mt-1">
         {records.map((record) => {
           const fullName =
@@ -394,6 +441,7 @@ export default function Rsvp({ token, onLogout, refreshAccessToken }) {
         })}
       </div>
 
+      {/* Modal */}
       <dialog
         id="edit_modal"
         className="modal backdrop-blur-[1px] backdrop:bg-black/10"
@@ -455,6 +503,14 @@ export default function Rsvp({ token, onLogout, refreshAccessToken }) {
                     onChange={handleChange}
                     className="input w-full px-3 py-2 border rounded-lg text-sm"
                   />
+                  {fieldErrors.first_name && (
+                    <p
+                      className="text-sm font-bold mt-1"
+                      style={{ color: PINK_COLOR }}
+                    >
+                      {fieldErrors.first_name}
+                    </p>
+                  )}
                   <label className="font-medium">Last Name</label>
                   <input
                     type="text"
@@ -464,6 +520,14 @@ export default function Rsvp({ token, onLogout, refreshAccessToken }) {
                     onChange={handleChange}
                     className="input w-full px-3 py-2 border rounded-lg text-sm"
                   />
+                  {fieldErrors.last_name && (
+                    <p
+                      className="text-sm font-bold mt-1"
+                      style={{ color: PINK_COLOR }}
+                    >
+                      {fieldErrors.last_name}
+                    </p>
+                  )}
                 </>
               )}
 
@@ -484,6 +548,14 @@ export default function Rsvp({ token, onLogout, refreshAccessToken }) {
                 onChange={handleChange}
                 className="input w-full px-3 py-2 border rounded-lg text-sm"
               />
+              {fieldErrors.dietary_requirements && (
+                <p
+                  className="text-sm font-bold mt-1"
+                  style={{ color: PINK_COLOR }}
+                >
+                  {fieldErrors.dietary_requirements}
+                </p>
+              )}
 
               <label className="font-medium relative flex flex-col">
                 Song Requests
@@ -501,6 +573,12 @@ export default function Rsvp({ token, onLogout, refreshAccessToken }) {
                   value={songInput}
                   onChange={(e) => setSongInput(e.target.value)}
                   maxLength={30}
+                  onKeyDown={(e) => {
+                    if (e.key === "Enter") {
+                      e.preventDefault();
+                      handleAddSong();
+                    }
+                  }}
                   className="input w-full px-3 py-2 border rounded-lg text-sm"
                 />
                 <button
@@ -519,13 +597,12 @@ export default function Rsvp({ token, onLogout, refreshAccessToken }) {
                   Add
                 </button>
               </div>
-
-              {inputError && (
+              {fieldErrors.song_requests && (
                 <p
-                  className="text-sm font-bold"
-                  style={{ color: PINK_COLOR, transition: "opacity 0.5s" }}
+                  className="text-sm font-bold mt-1"
+                  style={{ color: PINK_COLOR }}
                 >
-                  {inputError}
+                  {fieldErrors.song_requests}
                 </p>
               )}
 
@@ -557,7 +634,7 @@ export default function Rsvp({ token, onLogout, refreshAccessToken }) {
                   fontWeight: "normal",
                 }}
               >
-                Submit
+                Save & Submit
               </button>
             </>
           )}
