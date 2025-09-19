@@ -1,2 +1,10 @@
 @import "tailwindcss";
 @plugin "daisyui";
+
+/* Prevent Safari zoom on form controls */
+input,
+textarea,
+select,
+button {
+  font-size: 16px !important;
+}
