@@ -11,6 +11,7 @@ export default function Rsvp({ token, onLogout, refreshAccessToken }) {
   const [editRecord, setEditRecord] = useState(null);
   const [updating, setUpdating] = useState(false);
   const [showSuccess, setShowSuccess] = useState(false);
+  const [showProcessing, setShowProcessing] = useState(false);
   const [showConfetti, setShowConfetti] = useState(false);
   const [songInput, setSongInput] = useState("");
   const [fieldErrors, setFieldErrors] = useState({});
@@ -59,7 +60,7 @@ export default function Rsvp({ token, onLogout, refreshAccessToken }) {
     if (token) fetchRsvpData();
   }, [token]);
 
-  // Petal animation (same as before)
+  // Petal animation
   useEffect(() => {
     const canvas = canvasRef.current;
     if (!canvas) return;
@@ -68,7 +69,7 @@ export default function Rsvp({ token, onLogout, refreshAccessToken }) {
     canvas.height = window.innerHeight;
 
     if (!petalArrayRef.current.length) {
-      const TOTAL = 20;
+      const TOTAL = 15;
       const petalImg = new Image();
       petalImg.src = "https://djjjk9bjm164h.cloudfront.net/petal.png";
 
@@ -80,16 +81,16 @@ export default function Rsvp({ token, onLogout, refreshAccessToken }) {
           this.h = 20 + Math.random() * 10;
           this.opacity = this.w / 50;
           this.flip = Math.random();
-          this.xSpeed = 0.2 + Math.random() * 0.15;
-          this.ySpeed = 0.1 + Math.random() * 0.15;
+          this.xSpeed = 0.1 + Math.random() * 0.1;
+          this.ySpeed = 0.05 + Math.random() * 0.1;
           this.flipSpeed = Math.random() * 0.01;
         }
         draw() {
           if (this.y > canvas.height || this.x > canvas.width) {
             this.x = -25;
             this.y = Math.random() * canvas.height * 2 - canvas.height;
-            this.xSpeed = 0.2 + Math.random() * 0.15;
-            this.ySpeed = 0.1 + Math.random() * 0.15;
+            this.xSpeed = 0.1 + Math.random() * 0.1;
+            this.ySpeed = 0.05 + Math.random() * 0.1;
             this.flip = Math.random();
           }
           ctx.globalAlpha = this.opacity;
@@ -142,30 +143,37 @@ export default function Rsvp({ token, onLogout, refreshAccessToken }) {
   };
 
   const closeEditModal = () => {
-    document.getElementById("edit_modal").close();
     setEditRecord(null);
     setSongInput("");
     setFieldErrors({});
+    setShowProcessing(false);
+    const modal = document.getElementById("edit_modal");
+    if (modal) modal.close();
   };
 
   const handleChange = (e) => {
     const { name, value, type, checked } = e.target;
 
-    if (name === "dietary_requirements") {
-      if (value.length > 150) {
-        setFieldErrors((prev) => ({
-          ...prev,
-          dietary_requirements: "Max character reached",
-        }));
-      } else {
-        setFieldErrors((prev) => ({ ...prev, dietary_requirements: "" }));
-      }
-    }
-
     if (type === "checkbox") {
       setEditRecord({ ...editRecord, [name]: checked ? value : "" });
     } else {
       setEditRecord({ ...editRecord, [name]: value });
+
+      if (name === "dietary_requirements" && value.length >= 200) {
+        setFieldErrors((prev) => ({
+          ...prev,
+          dietary_requirements: "Max Characters Reached",
+        }));
+      } else if (name === "dietary_requirements") {
+        setFieldErrors((prev) => ({ ...prev, dietary_requirements: "" }));
+      }
+
+      if (name === "song_input" && value.length >= 50) {
+        setFieldErrors((prev) => ({
+          ...prev,
+          song_requests: "Max Character limit reached",
+        }));
+      }
     }
   };
 
@@ -180,15 +188,14 @@ export default function Rsvp({ token, onLogout, refreshAccessToken }) {
         errors.last_name = "Last name is required";
     }
 
-    if (editRecord.dietary_requirements?.length > 150)
-      errors.dietary_requirements = "Max character reached";
-
     if (Object.keys(errors).length > 0) {
       setFieldErrors(errors);
       return;
     }
 
     setUpdating(true);
+    setShowProcessing(true);
+
     try {
       const res = await fetch(
         `https://rsvp-wedding-backend.onrender.com/rsvp/${editRecord.id}`,
@@ -201,22 +208,30 @@ export default function Rsvp({ token, onLogout, refreshAccessToken }) {
           body: JSON.stringify({
             first_name: editRecord.is_guest ? editRecord.first_name : undefined,
             last_name: editRecord.is_guest ? editRecord.last_name : undefined,
-            dietary_requirements: editRecord.dietary_requirements,
             rsvp_status: editRecord.rsvp_status,
+            dietary_requirements: editRecord.dietary_requirements,
             song_requests: editRecord.song_requests,
           }),
         },
       );
       if (!res.ok) throw new Error("Failed to update record");
       await fetchRsvpData();
-      closeEditModal();
+
+      setShowProcessing(false);
       setShowSuccess(true);
       setShowConfetti(true);
+
+      // Close modal immediately
+      const modal = document.getElementById("edit_modal");
+      if (modal) modal.close();
+      setEditRecord(null);
+
       setTimeout(() => setShowSuccess(false), 5000);
       setTimeout(() => setShowConfetti(false), 7000);
     } catch (err) {
       console.error(err);
       setError("Error! Task failed successfully.");
+      setShowProcessing(false);
     } finally {
       setUpdating(false);
     }
@@ -226,10 +241,10 @@ export default function Rsvp({ token, onLogout, refreshAccessToken }) {
     const song = songInput.trim();
     if (!song) return;
 
-    if (song.length > 30) {
+    if (song.length > 50) {
       setFieldErrors((prev) => ({
         ...prev,
-        song_requests: "Max character reached",
+        song_requests: "Max Character limit reached",
       }));
       return;
     }
@@ -243,19 +258,16 @@ export default function Rsvp({ token, onLogout, refreshAccessToken }) {
       return;
     }
 
-    if (editRecord.song_requests.length >= 7) {
+    if (editRecord.song_requests.length >= 10) {
       setFieldErrors((prev) => ({
         ...prev,
-        song_requests: "Max 7 songs allowed",
+        song_requests: "Max 10 songs allowed",
       }));
       return;
     }
 
     setEditRecord((prev) => {
-      const updated = {
-        ...prev,
-        song_requests: [...prev.song_requests, song],
-      };
+      const updated = { ...prev, song_requests: [...prev.song_requests, song] };
       setTimeout(() => {
         if (songChipContainerRef.current) {
           songChipContainerRef.current.scrollTo({
@@ -281,12 +293,11 @@ export default function Rsvp({ token, onLogout, refreshAccessToken }) {
   useEffect(() => {
     records.forEach((record) => {
       const el = fullNameRefs.current[record.id];
-      if (el) {
+      if (el)
         el.style.setProperty(
           "--button-height",
           `${el.getBoundingClientRect().height}px`,
         );
-      }
     });
   }, [records]);
 
@@ -298,144 +309,135 @@ export default function Rsvp({ token, onLogout, refreshAccessToken }) {
         style={{ backgroundImage: `url(${BackgroundImage})` }}
       />
 
-      {/* Mobile-only stretch */}
-      <style>{`
-        @media (max-width: 767px) {
-          .bg-no-repeat {
-            background-size: cover !important;
-          }
-          h1 {
-            margin-top: 2rem !important;
-          }
-        }
-      `}</style>
-
       <canvas
         ref={canvasRef}
         className="absolute top-0 left-0 w-full h-full z-10 pointer-events-none"
       />
 
       <h1
-        className="relative z-20 text-3xl sm:text-4xl md:text-5xl font-semibold mb-3 text-center mt-15 sm:mt-30"
+        className="relative z-20 text-2xl xs:text-3xl sm:text-4xl md:text-5xl lg:text-6xl font-semibold text-center mt-6 xs:mt-8 sm:mt-10 md:mt-16 lg:mt-25"
         style={{ fontFamily: "'Dancing Script', cursive" }}
       >
-        RSVP
+        Your Invitation Awaits
       </h1>
 
       {/* Alerts */}
-      <div className="relative z-20 flex flex-col items-center mt-1 gap-1">
-        {loading && !error && (
-          <motion.div
-            role="alert"
-            className="alert alert-warning w-full max-w-md"
-            style={{ opacity: 0.5 }}
-            initial={{ opacity: 0 }}
-            animate={{ opacity: 0.5 }}
-            exit={{ opacity: 0 }}
-          >
-            Loading Invitations...
-          </motion.div>
-        )}
-        {error && (
-          <motion.div
-            role="alert"
-            className="alert alert-error w-full max-w-md"
-            style={{ opacity: 0.5 }}
-            initial={{ opacity: 0 }}
-            animate={{ opacity: 0.5 }}
-            exit={{ opacity: 0 }}
-          >
-            {error}
-          </motion.div>
-        )}
-        <AnimatePresence>
-          {showSuccess && (
+      <div className="relative z-20 flex flex-col items-center mt-1 gap-4">
+        <AnimatePresence mode="wait">
+          {showProcessing && (
             <motion.div
+              key="processing"
               role="alert"
-              className="alert alert-success w-full max-w-md"
-              style={{ opacity: 0.5 }}
-              initial={{ opacity: 0 }}
-              animate={{ opacity: 0.5 }}
-              exit={{ opacity: 0 }}
+              className="alert w-full max-w-lg my-4 flex items-center gap-2"
+              initial={{ opacity: 0, scale: 0.95 }}
+              animate={{ opacity: 0.6, scale: 1 }}
+              exit={{ opacity: 0, scale: 0.95 }}
+              transition={{ duration: 0.3 }}
+              style={{
+                backgroundColor: "rgba(250,204,21,0.6)",
+                color: "white",
+                border: "1px solid rgba(250,204,21,0.6)",
+                boxShadow: "0 0 8px rgba(250,204,21,0.4)",
+              }}
             >
-              RSVP Submitted Successfully!
+              <span className="animate-spin">⏳</span> Processing
+            </motion.div>
+          )}
+
+          {showSuccess && !loading && (
+            <motion.div
+              key="success"
+              role="alert"
+              className="alert w-full max-w-lg my-4 flex items-center gap-2"
+              initial={{ opacity: 0, scale: 0.8 }}
+              animate={{ opacity: 0.9, scale: 1 }}
+              exit={{ opacity: 0, scale: 0.8 }}
+              transition={{ duration: 0.3 }}
+              style={{
+                backgroundColor: "rgba(34,197,94,0.6)",
+                color: "white",
+                border: "1px solid rgba(34,197,94,0.6)",
+                boxShadow: "0 0 8px rgba(34,197,94,0.4)",
+              }}
+            >
+              ✅ RSVP Submitted Successfully!
+            </motion.div>
+          )}
+
+          {error && (
+            <motion.div
+              key="error"
+              role="alert"
+              className="alert w-full max-w-lg my-4 flex items-center gap-2"
+              initial={{ opacity: 0, scale: 0.95 }}
+              animate={{ opacity: 0.9, scale: 1 }}
+              exit={{ opacity: 0, scale: 0.95 }}
+              transition={{ duration: 0.3 }}
+              style={{
+                backgroundColor: "rgba(239,68,68,0.6)",
+                color: "white",
+                border: "1px solid rgba(239,68,68,0.6)",
+                boxShadow: "0 0 8px rgba(239,68,68,0.4)",
+              }}
+            >
+              ❌ {error}
             </motion.div>
           )}
         </AnimatePresence>
       </div>
 
+      {/* Confetti */}
       {showConfetti && (
         <Confetti
           recycle={false}
-          numberOfPieces={300}
-          gravity={0.2}
-          initialVelocityX={{ min: -10, max: 10 }}
-          initialVelocityY={{ min: 10, max: 20 }}
-          confettiSource={{
-            x: 0,
-            y: 0,
-            w: window.innerWidth,
-            h: 0,
-          }}
+          numberOfPieces={120}
+          gravity={0.18}
+          initialVelocityX={{ min: -7, max: 7 }}
+          initialVelocityY={{ min: 7, max: 20 }}
+          confettiSource={{ x: 0, y: 0, w: window.innerWidth, h: 0 }}
         />
       )}
 
       {/* RSVP Cards */}
-      <div className="relative z-20 flex flex-col gap-1 max-w-md mx-auto mt-1">
+      <div className="relative z-20 flex flex-col gap-6 max-w-md mx-auto mt-1">
         {records.map((record) => {
           const fullName =
-            `${record.first_name || ""} ${record.last_name || ""}`.trim() ||
-            "Guest";
+            `${record.first_name || ""} ${record.last_name || ""}`.trim();
           return (
             <div
               key={record.id}
-              className="card w-full bg-transparent rounded-lg relative p-3 flex flex-col gap-1"
+              className="card w-full bg-transparent rounded-lg relative p-4 flex flex-col gap-2 my-4"
             >
-              <div className="flex justify-between items-start">
-                <h2
-                  ref={(el) => (fullNameRefs.current[record.id] = el)}
-                  className="text-2xl sm:text-3xl leading-none"
-                  style={{ fontFamily: "'Dancing Script', cursive" }}
-                >
-                  {fullName}
-                </h2>
-                <button
-                  className="btn"
-                  onClick={() => openEditModal(record)}
-                  style={{
-                    backgroundColor: PINK_COLOR,
-                    color: "white",
-                    fontFamily: "Poppins, sans-serif",
-                    fontWeight: "normal",
-                    border: "none",
-                    fontSize: "1rem",
-                    height: "2.2rem",
-                    minWidth: "5rem",
-                    padding: "0 0.6rem",
-                    alignSelf: "flex-start",
-                    borderRadius: "0.35rem",
-                  }}
-                >
-                  Edit RSVP
-                </button>
-              </div>
-
-              <p>
+              <h2
+                ref={(el) => (fullNameRefs.current[record.id] = el)}
+                className="text-3xl sm:text-4xl leading-none"
+                style={{ fontFamily: "'Dancing Script', cursive" }}
+              >
+                {fullName || "Guest"}
+              </h2>
+              <p className="my-2">
                 <strong>RSVP Status:</strong>{" "}
                 {record.rsvp_status || "Not responded"}
               </p>
-              <p className="break-words">
-                <strong>Dietary Requirements:</strong>{" "}
-                {record.dietary_requirements || ""}
-              </p>
-              <p>
-                <strong>Song Requests:</strong>
-              </p>
-              <div className="flex flex-wrap -mt-1 gap-2">
-                {record.song_requests?.map((song, idx) => (
-                  <Chip key={idx} label={song} className="mt-1" />
-                ))}
-              </div>
+              <button
+                className="btn mt-2"
+                onClick={() => openEditModal(record)}
+                style={{
+                  backgroundColor: PINK_COLOR,
+                  color: "white",
+                  fontFamily: "Poppins, sans-serif",
+                  fontWeight: "normal",
+                  border: "none",
+                  fontSize: "1rem",
+                  height: "2.2rem",
+                  minWidth: "6rem",
+                  padding: "0 0.8rem",
+                  alignSelf: "flex-start",
+                  borderRadius: "0.35rem",
+                }}
+              >
+                Edit RSVP
+              </button>
             </div>
           );
         })}
@@ -458,39 +460,16 @@ export default function Rsvp({ token, onLogout, refreshAccessToken }) {
           >
             ✕
           </button>
-          <h3
-            className="text-4xl text-center mb-4"
-            style={{ fontFamily: "'Dancing Script', cursive" }}
-          >
-            Edit RSVP
-          </h3>
+
           {editRecord && (
             <>
-              <label className="font-medium">RSVP Status</label>
-              <div className="flex gap-4">
-                <label className="flex items-center gap-2">
-                  <input
-                    type="checkbox"
-                    name="rsvp_status"
-                    value="Attending"
-                    checked={editRecord.rsvp_status === "Attending"}
-                    onChange={handleChange}
-                    className="checkbox"
-                  />
-                  Attending
-                </label>
-                <label className="flex items-center gap-2">
-                  <input
-                    type="checkbox"
-                    name="rsvp_status"
-                    value="Not Attending"
-                    checked={editRecord.rsvp_status === "Not Attending"}
-                    onChange={handleChange}
-                    className="checkbox"
-                  />
-                  Not Attending
-                </label>
-              </div>
+              <h3
+                className="text-4xl text-center mb-4"
+                style={{ fontFamily: "'Dancing Script', cursive" }}
+              >
+                {`${editRecord.first_name || ""} ${editRecord.last_name || ""}`.trim() ||
+                  "Guest"}
+              </h3>
 
               {editRecord.is_guest && (
                 <>
@@ -511,6 +490,7 @@ export default function Rsvp({ token, onLogout, refreshAccessToken }) {
                       {fieldErrors.first_name}
                     </p>
                   )}
+
                   <label className="font-medium">Last Name</label>
                   <input
                     type="text"
@@ -531,22 +511,25 @@ export default function Rsvp({ token, onLogout, refreshAccessToken }) {
                 </>
               )}
 
+              {/* Dietary Requirements */}
               <label className="font-medium relative flex flex-col">
                 Dietary Requirements
                 <span
                   className="absolute right-2 top-0 text-sm font-bold"
                   style={{ color: PINK_COLOR }}
                 >
-                  {editRecord.dietary_requirements?.length || 0}/150
+                  {editRecord.dietary_requirements?.length || 0}/200
                 </span>
               </label>
-              <input
-                type="text"
+              <textarea
                 name="dietary_requirements"
                 placeholder="Dietary Requirements"
                 value={editRecord.dietary_requirements || ""}
                 onChange={handleChange}
-                className="input w-full px-3 py-2 border rounded-lg text-sm"
+                maxLength={200}
+                rows={6}
+                className="input w-full px-3 py-2 border rounded-lg text-sm resize-none"
+                style={{ height: "8rem" }}
               />
               {fieldErrors.dietary_requirements && (
                 <p
@@ -557,13 +540,14 @@ export default function Rsvp({ token, onLogout, refreshAccessToken }) {
                 </p>
               )}
 
+              {/* Song Requests */}
               <label className="font-medium relative flex flex-col">
                 Song Requests
                 <span
                   className="absolute right-2 top-0 text-sm font-bold"
                   style={{ color: PINK_COLOR }}
                 >
-                  {editRecord.song_requests.length}/7
+                  {editRecord.song_requests.length}/10
                 </span>
               </label>
               <div className="flex gap-2">
@@ -572,13 +556,7 @@ export default function Rsvp({ token, onLogout, refreshAccessToken }) {
                   placeholder="Add a song"
                   value={songInput}
                   onChange={(e) => setSongInput(e.target.value)}
-                  maxLength={30}
-                  onKeyDown={(e) => {
-                    if (e.key === "Enter") {
-                      e.preventDefault();
-                      handleAddSong();
-                    }
-                  }}
+                  maxLength={50}
                   className="input w-full px-3 py-2 border rounded-lg text-sm"
                 />
                 <button
@@ -634,7 +612,7 @@ export default function Rsvp({ token, onLogout, refreshAccessToken }) {
                   fontWeight: "normal",
                 }}
               >
-                Save & Submit
+                {updating ? "Processing..." : "Save & Submit"}
               </button>
             </>
           )}
@@ -643,15 +621,15 @@ export default function Rsvp({ token, onLogout, refreshAccessToken }) {
 
       <style>{`
         .bg-no-repeat { background-repeat: no-repeat; background-position: center; background-size: contain; }
-        input { font-family: 'Poppins', sans-serif; border: 1px solid black; background-color: white; }
-        input:focus { background-color: rgba(237,165,165,0.3); outline: none; border-color: ${PINK_COLOR}; }
+        input, textarea { font-family: 'Poppins', sans-serif; border: 1px solid black; background-color: white; }
+        input:focus, textarea:focus { background-color: rgba(237,165,165,0.3); outline: none; border-color: ${PINK_COLOR}; }
+        textarea { width: 100%; height: 8rem; resize: none; word-wrap: break-word; }
         .checkbox { width: 16px; height: 16px; border: 1px solid ${PINK_COLOR}; border-radius: 4px; background-color: white; cursor: pointer; appearance: none; position: relative; }
         .checkbox:checked { background-color: rgba(237,165,165,0.3); }
         .checkbox:checked::after { content: "✔"; position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%); color: ${PINK_COLOR}; font-size: 14px; }
-        .alert { padding: 0.5rem 1rem; border-radius: 0.5rem; font-weight: 500; text-align: center; }
-        .alert-warning { background-color: #facc15; color: black; }
-        .alert-error { background-color: #ef4444; color: white; }
-        .alert-success { background-color: #22c55e; color: white; }
+        @media (max-width: 767px) {
+          dialog#edit_modal .modal-box { width: 90% !important; height: 70vh !important; overflow-y: auto; }
+        }
       `}</style>
     </div>
   );
