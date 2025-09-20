@@ -71,7 +71,7 @@ export default function Rsvp({ token, onLogout, refreshAccessToken }) {
     canvas.height = window.innerHeight;
 
     if (!petalArrayRef.current.length) {
-      const TOTAL = 15;
+      const TOTAL = 20;
       const petalImg = new Image();
       petalImg.src = "https://djjjk9bjm164h.cloudfront.net/petal.png";
 
@@ -170,13 +170,29 @@ export default function Rsvp({ token, onLogout, refreshAccessToken }) {
       }
     } else {
       setEditRecord({ ...editRecord, [name]: value });
-      if (name === "dietary_requirements" && value.length >= 200) {
-        setFieldErrors((prev) => ({
-          ...prev,
-          dietary_requirements: "Max Characters Reached",
-        }));
-      } else if (name === "dietary_requirements") {
-        setFieldErrors((prev) => ({ ...prev, dietary_requirements: "" }));
+
+      // Dietary requirements
+      if (name === "dietary_requirements") {
+        if (value.length >= 200) {
+          setFieldErrors((prev) => ({
+            ...prev,
+            dietary_requirements: "Max Characters Reached",
+          }));
+        } else {
+          setFieldErrors((prev) => ({ ...prev, dietary_requirements: "" }));
+        }
+      }
+
+      // First name / Last name for guests
+      if (name === "first_name" || name === "last_name") {
+        if (value.length >= 20) {
+          setFieldErrors((prev) => ({
+            ...prev,
+            [name]: "Max Characters Reached",
+          }));
+        } else {
+          setFieldErrors((prev) => ({ ...prev, [name]: "" }));
+        }
       }
     }
   };
@@ -306,9 +322,9 @@ export default function Rsvp({ token, onLogout, refreshAccessToken }) {
 
   return (
     <div className="relative w-full min-h-screen overflow-hidden px-4 py-6">
-      {/* Background */}
+      {/* Background Image */}
       <div
-        className="absolute inset-0 z-0 bg-no-repeat bg-center bg-contain"
+        className="absolute top-0 left-0 w-full h-full z-0  bg-desktop"
         style={{ backgroundImage: `url(${BackgroundImage})` }}
       />
       <canvas
@@ -317,14 +333,12 @@ export default function Rsvp({ token, onLogout, refreshAccessToken }) {
       />
 
       <h1
-        className="relative z-20 text-2xl xs:text-3xl sm:text-4xl md:text-5xl lg:text-6xl font-semibold text-center mt-6 xs:mt-8 sm:mt-10 md:mt-16 lg:mt-25"
+        className="relative z-20 text-2xl xs:text-3xl sm:text-4xl md:text-5xl lg:text-5xl font-semibold text-center mt-6 xs:mt-8 sm:mt-10 md:mt-16 lg:mt-25 mobile-h1 tablet-h1"
         style={{ fontFamily: "'Dancing Script', cursive" }}
       >
-        Your Invitation Awaits
+        RSVP
       </h1>
-
       {/* Alerts (fixed height container) */}
-      {/* Alerts container */}
       <div className="relative z-20 flex flex-col items-center mt-6 gap-4 min-h-[3rem]">
         <AnimatePresence mode="wait">
           {showProcessing && !editRecord && (
@@ -401,7 +415,7 @@ export default function Rsvp({ token, onLogout, refreshAccessToken }) {
       )}
 
       {/* RSVP Cards */}
-      <div className="relative z-20 flex flex-col gap-6 max-w-md mx-auto mt-1">
+      <div className="relative z-20 flex flex-col gap-6 max-w-md mx-auto mt-1 mobile-card-gap">
         <AnimatePresence>
           {records.map((record) => {
             const fullName =
@@ -460,7 +474,7 @@ export default function Rsvp({ token, onLogout, refreshAccessToken }) {
         <form
           method="dialog"
           onSubmit={handleSubmit}
-          className="modal-box w-full max-w-md bg-white flex flex-col gap-4 relative border border-gray-200 shadow-sm rounded-lg p-6"
+          className="modal-box w-[95vw] sm:w-[600px] h-[90vh] sm:h-auto max-w-md bg-white flex flex-col gap-4 relative border border-gray-200 shadow-sm rounded-lg p-6"
         >
           <button
             type="button"
@@ -479,16 +493,47 @@ export default function Rsvp({ token, onLogout, refreshAccessToken }) {
                 {`${editRecord.first_name || ""} ${editRecord.last_name || ""}`.trim() ||
                   "Guest"}
               </h3>
+              {/* RSVP Status */}
+              <label className="font-medium mt-2">RSVP Status</label>
+              <div className="flex gap-4 mb-2">
+                {["Attending", "Not Attending"].map((status) => (
+                  <label
+                    key={status}
+                    className="flex items-center gap-2 cursor-pointer"
+                  >
+                    <input
+                      type="radio"
+                      name="rsvp_status"
+                      value={status}
+                      checked={editRecord.rsvp_status === status}
+                      onChange={handleChange}
+                      className={`checkbox theme-controller ${editRecord.rsvp_expired ? "disabled-radio" : ""}`}
+                      disabled={editRecord.rsvp_expired}
+                    />
+                    {status}
+                  </label>
+                ))}
+              </div>
 
               {editRecord.is_guest && (
                 <>
-                  <label className="font-medium">First Name</label>
+                  {/* First Name */}
+                  <label className="font-medium relative flex flex-col">
+                    First Name
+                    <span
+                      className="absolute right-2 top-0 text-sm font-bold"
+                      style={{ color: PINK_COLOR }}
+                    >
+                      {editRecord.first_name?.length || 0}/20
+                    </span>
+                  </label>
                   <input
                     type="text"
                     name="first_name"
                     placeholder="First Name"
                     value={editRecord.first_name || ""}
                     onChange={handleChange}
+                    maxLength={20}
                     className="input w-full px-3 py-2 border rounded-lg text-sm"
                   />
                   {fieldErrors.first_name && (
@@ -500,13 +545,23 @@ export default function Rsvp({ token, onLogout, refreshAccessToken }) {
                     </p>
                   )}
 
-                  <label className="font-medium">Last Name</label>
+                  {/* Last Name */}
+                  <label className="font-medium relative flex flex-col mt-2">
+                    Last Name
+                    <span
+                      className="absolute right-2 top-0 text-sm font-bold"
+                      style={{ color: PINK_COLOR }}
+                    >
+                      {editRecord.last_name?.length || 0}/20
+                    </span>
+                  </label>
                   <input
                     type="text"
                     name="last_name"
                     placeholder="Last Name"
                     value={editRecord.last_name || ""}
                     onChange={handleChange}
+                    maxLength={20}
                     className="input w-full px-3 py-2 border rounded-lg text-sm"
                   />
                   {fieldErrors.last_name && (
@@ -630,15 +685,155 @@ export default function Rsvp({ token, onLogout, refreshAccessToken }) {
       </dialog>
 
       <style>{`
+ html, body { margin: 0; padding: 0; }
+
+/* Desktop & Tablet: background contained at top */
+        .bg-desktop {
+          background-size: contain;
+          background-position: top center;
+          background-repeat: no-repeat;
+        }
+
+        /* Mobile: stretch background to cover full screen */
+        @media (max-width: 639px) {
+          .bg-desktop {
+            background-size: cover;
+            background-position: center;
+          }
+        }
+
+
         .bg-no-repeat { background-repeat: no-repeat; background-position: center; background-size: contain; }
         input, textarea { font-family: 'Poppins', sans-serif; border: 1px solid black; background-color: white; }
         input:focus, textarea:focus { background-color: rgba(237,165,165,0.3); outline: none; border-color: ${PINK_COLOR}; }
         textarea { width: 100%; height: 8rem; resize: none; white-space: pre-wrap; overflow-wrap: break-word; word-wrap: break-word; }
-        .checkbox { width: 16px; height: 16px; border: 1px solid ${PINK_COLOR}; border-radius: 4px; background-color: white; cursor: pointer; appearance: none; position: relative; }
-        .checkbox:checked { background-color: rgba(237,165,165,0.3); }
-        .checkbox:checked::after { content: "✔"; position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%); color: ${PINK_COLOR}; font-size: 14px; }
-        @media (max-width: 767px) {
+
+        /* Checkbox-styled radio buttons */
+        .checkbox {
+          width: 22px;
+          height: 22px;
+          border: 2px solid ${PINK_COLOR};
+          border-radius: 4px;
+          background-color: rgba(237, 165, 165, 0.1);
+          cursor: pointer;
+          appearance: none;
+          position: relative;
+          transition: all 0.2s ease;
+        }
+        .checkbox:checked {
+          background-color: rgba(237, 165, 165, 0.2);
+          border-color: ${PINK_COLOR};
+        }
+        .checkbox:checked::after {
+          content: "✔";
+          position: absolute;
+          top: 50%;
+          left: 50%;
+          transform: translate(-50%, -50%);
+          color: ${PINK_COLOR};
+          font-size: 16px;
+          font-weight: bold;
+        }
+
+        /* Mobile-only Styles */
+        @media (max-width: 375px) {
+          .mobile-h1 { font-size: 1.5rem !important; margin-top: 3rem !important; }
+          .alert { height: 2.5rem !important; font-size: 0.875rem !important; }
+          .mobile-car
           dialog#edit_modal .modal-box { width: 90% !important; height: 70vh !important; overflow-y: auto; }
+        }
+            
+/* Mobile-only Styles */
+@media (max-width: 639px) {
+  /* Increase top margin of H1 on mobile */
+  .mobile-h1 {
+    font-size: 1.8rem !important; 
+    margin-top: 4rem !important;
+  }
+
+  /* Pull cards closer to H1 */
+  .mobile-card-gap {
+    margin-top: 0rem !important; 
+  }
+}
+
+@media (max-width: 639px) {
+  /* Reduce card h2 font size on mobile */
+  .card h2 {
+    font-size: 1.5rem !important;
+  }
+}
+
+@media (max-width: 639px) {
+  /* Reduce vertical spacing between cards on mobile */
+  .mobile-card-gap {
+    gap: 1.5rem !important; /* vertical gap between cards */
+  }
+
+  .card {
+    margin-top: 0 !important;
+    margin-bottom: 0 !important;
+  }
+}
+
+/* Tablet H1 styles */
+@media (min-width: 640px) and (max-width: 1024px) {
+  .tablet-h1 {
+    font-size: 2.5rem !important; /* adjust font size for tablet */
+    margin-top: 6rem !important;  /* adjust top margin */
+  }
+}
+
+
+@media (max-width: 375px) {
+  /* Increase top margin of H1 on mobile */
+  .mobile-h1 {
+    font-size: 1.7rem !important; 
+    margin-top: 3rem !important;
+  }
+
+@media (max-width: 375px) {
+  /* Make Edit RSVP buttons smaller */
+  .card button {
+    width: 5rem !important;
+    height: 1.8rem !important;
+    font-size: 0.9rem !important;
+    padding: 0 0rem !important;
+    margin: 0rem !important; 
+  }
+}
+
+
+@media (max-width: 360px) {
+  .mobile-h1 {
+    font-size: 1.8rem !important; 
+    margin-top: 4rem !important;
+  }
+
+@media (max-width: 375px) {
+  .card h2 {
+    font-size: 1.4rem !important;
+  }
+}
+
+@media (max-width: 375px) {
+  .mobile-card-gap {
+    gap: 0rem !important; 
+  }
+
+  .card {
+    margin-top: 0 !important;
+    margin-bottom: 0 !important;
+  }
+}
+        .disabled-radio {
+         background-color: #e5e5e5 !important;
+         border-color: #bdbdbd !important;
+         cursor: not-allowed;
+        }
+
+        .disabled-radio::after {
+         color: #888888 !important; /* grey check mark if checked */
         }
       `}</style>
     </div>
