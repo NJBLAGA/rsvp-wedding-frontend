@@ -23,6 +23,7 @@ export default function Rsvp({ token, onLogout, refreshAccessToken }) {
   const songChipContainerRef = useRef(null);
   const PINK_COLOR = "#eda5a5";
 
+  // Fetch RSVP Data
   const fetchRsvpData = async () => {
     setLoading(true);
     setError("");
@@ -134,6 +135,7 @@ export default function Rsvp({ token, onLogout, refreshAccessToken }) {
     };
   }, []);
 
+  // Modal handling
   const openEditModal = (record) => {
     setEditRecord({
       ...record,
@@ -171,7 +173,6 @@ export default function Rsvp({ token, onLogout, refreshAccessToken }) {
     } else {
       setEditRecord({ ...editRecord, [name]: value });
 
-      // Dietary requirements
       if (name === "dietary_requirements") {
         if (value.length >= 200) {
           setFieldErrors((prev) => ({
@@ -183,7 +184,6 @@ export default function Rsvp({ token, onLogout, refreshAccessToken }) {
         }
       }
 
-      // First name / Last name for guests
       if (name === "first_name" || name === "last_name") {
         if (value.length >= 20) {
           setFieldErrors((prev) => ({
@@ -324,7 +324,7 @@ export default function Rsvp({ token, onLogout, refreshAccessToken }) {
     <div className="relative w-full min-h-screen overflow-hidden px-4 py-6">
       {/* Background Image */}
       <div
-        className="absolute top-0 left-0 w-full h-full z-0  bg-desktop"
+        className="absolute top-0 left-0 w-full h-full z-0 bg-desktop"
         style={{ backgroundImage: `url(${BackgroundImage})` }}
       />
       <canvas
@@ -332,22 +332,24 @@ export default function Rsvp({ token, onLogout, refreshAccessToken }) {
         className="absolute top-0 left-0 w-full h-full z-10 pointer-events-none"
       />
 
+      {/* H1 */}
       <h1
-        className="relative z-20 text-2xl xs:text-3xl sm:text-4xl md:text-5xl lg:text-5xl font-semibold text-center mt-6 xs:mt-8 sm:mt-10 md:mt-16 lg:mt-25 mobile-h1 tablet-h1"
+        className="relative z-20 text-3xl sm:text-4xl md:text-5xl lg:text-6xl font-semibold text-center mt-8 sm:mt-12 md:mt-16 lg:mt-20"
         style={{ fontFamily: "'Dancing Script', cursive" }}
       >
         RSVP
       </h1>
-      {/* Alerts (fixed height container) */}
+
+      {/* Alerts */}
       <div className="relative z-20 flex flex-col items-center mt-6 gap-4 min-h-[3rem]">
         <AnimatePresence mode="wait">
           {showProcessing && !editRecord && (
             <motion.div
               key="processing"
               role="alert"
-              className="alert w-full max-w-lg flex items-center gap-2 h-12"
+              className="alert w-full max-w-lg flex items-center gap-2 h-10 sm:h-12 text-sm sm:text-base md:text-lg"
               initial={{ opacity: 0 }}
-              animate={{ opacity: 0.6 }}
+              animate={{ opacity: 0.8 }}
               exit={{ opacity: 0 }}
               transition={{ duration: 0.3 }}
               style={{
@@ -365,7 +367,7 @@ export default function Rsvp({ token, onLogout, refreshAccessToken }) {
             <motion.div
               key="success"
               role="alert"
-              className="alert w-full max-w-lg flex items-center gap-2 h-12"
+              className="alert w-full max-w-lg flex items-center gap-2 h-10 sm:h-12 text-sm sm:text-base md:text-lg"
               initial={{ opacity: 0 }}
               animate={{ opacity: 0.9 }}
               exit={{ opacity: 0 }}
@@ -384,7 +386,7 @@ export default function Rsvp({ token, onLogout, refreshAccessToken }) {
             <motion.div
               key="error"
               role="alert"
-              className="alert w-full max-w-lg flex items-center gap-2 h-12"
+              className="alert w-full max-w-lg flex items-center gap-2 h-10 sm:h-12 text-sm sm:text-base md:text-lg"
               initial={{ opacity: 0 }}
               animate={{ opacity: 0.9 }}
               exit={{ opacity: 0 }}
@@ -415,7 +417,7 @@ export default function Rsvp({ token, onLogout, refreshAccessToken }) {
       )}
 
       {/* RSVP Cards */}
-      <div className="relative z-20 flex flex-col gap-6 max-w-md mx-auto mt-1 mobile-card-gap">
+      <div className="relative z-20 flex flex-col gap-4 sm:gap-6 max-w-lg mx-auto mt-6">
         <AnimatePresence>
           {records.map((record) => {
             const fullName =
@@ -428,34 +430,26 @@ export default function Rsvp({ token, onLogout, refreshAccessToken }) {
                 animate={{ opacity: 1, y: 0 }}
                 exit={{ opacity: 0, y: 20 }}
                 transition={{ duration: 0.4 }}
-                className="card w-full bg-transparent rounded-lg relative p-4 flex flex-col gap-2 my-4"
+                className="card w-full rounded-lg flex flex-col gap-3 p-2 sm:p-3 md:p-4"
               >
                 <h2
                   ref={(el) => (fullNameRefs.current[record.id] = el)}
-                  className="text-3xl sm:text-4xl leading-none"
+                  className="text-xl sm:text-2xl md:text-3xl font-medium leading-snug"
                   style={{ fontFamily: "'Dancing Script', cursive" }}
                 >
                   {fullName || "Guest"}
                 </h2>
-                <p className="my-2">
+                <p className="text-sm sm:text-base md:text-lg">
                   <strong>RSVP Status:</strong>{" "}
                   {record.rsvp_status || "Not responded"}
                 </p>
                 <button
-                  className="btn mt-2"
+                  className="btn self-start mt-2 px-4 py-2 text-sm sm:text-base rounded-md"
                   onClick={() => openEditModal(record)}
                   style={{
                     backgroundColor: PINK_COLOR,
                     color: "white",
                     fontFamily: "Poppins, sans-serif",
-                    fontWeight: "normal",
-                    border: "none",
-                    fontSize: "1rem",
-                    height: "2.2rem",
-                    minWidth: "6rem",
-                    padding: "0 0.8rem",
-                    alignSelf: "flex-start",
-                    borderRadius: "0.35rem",
                   }}
                 >
                   Edit RSVP
@@ -474,11 +468,12 @@ export default function Rsvp({ token, onLogout, refreshAccessToken }) {
         <form
           method="dialog"
           onSubmit={handleSubmit}
-          className="modal-box w-[95vw] sm:w-[600px] h-[90vh] sm:h-auto max-w-md bg-white flex flex-col gap-4 relative border border-gray-200 shadow-sm rounded-lg p-6"
+          className="modal-box w-[95vw] sm:w-[600px] h-[85vh] sm:h-auto max-w-md bg-white flex flex-col gap-4 relative border border-gray-200 shadow-sm rounded-lg p-4 sm:p-6 overflow-y-auto"
         >
+          {/* Close */}
           <button
             type="button"
-            className="absolute right-2 top-2 text-black"
+            className="absolute right-2 top-2 text-gray-600 hover:text-black text-lg sm:text-xl"
             onClick={closeEditModal}
           >
             ✕
@@ -487,19 +482,22 @@ export default function Rsvp({ token, onLogout, refreshAccessToken }) {
           {editRecord && (
             <>
               <h3
-                className="text-4xl text-center mb-4"
+                className="text-xl sm:text-4xl text-center mb-3 sm:mb-4"
                 style={{ fontFamily: "'Dancing Script', cursive" }}
               >
                 {`${editRecord.first_name || ""} ${editRecord.last_name || ""}`.trim() ||
                   "Guest"}
               </h3>
+
               {/* RSVP Status */}
-              <label className="font-medium mt-2">RSVP Status</label>
-              <div className="flex gap-4 mb-2">
+              <label className="font-medium text-sm sm:text-base mt-1 sm:mt-2">
+                RSVP Status
+              </label>
+              <div className="flex gap-3 sm:gap-4 mb-2">
                 {["Attending", "Not Attending"].map((status) => (
                   <label
                     key={status}
-                    className="flex items-center gap-2 cursor-pointer"
+                    className="flex items-center gap-2 cursor-pointer text-sm sm:text-base"
                   >
                     <input
                       type="radio"
@@ -517,11 +515,10 @@ export default function Rsvp({ token, onLogout, refreshAccessToken }) {
 
               {editRecord.is_guest && (
                 <>
-                  {/* First Name */}
-                  <label className="font-medium relative flex flex-col">
+                  <label className="font-medium text-sm sm:text-base relative flex flex-col">
                     First Name
                     <span
-                      className="absolute right-2 top-0 text-sm font-bold"
+                      className="absolute right-2 top-0 text-xs sm:text-sm font-bold"
                       style={{ color: PINK_COLOR }}
                     >
                       {editRecord.first_name?.length || 0}/20
@@ -534,22 +531,13 @@ export default function Rsvp({ token, onLogout, refreshAccessToken }) {
                     value={editRecord.first_name || ""}
                     onChange={handleChange}
                     maxLength={20}
-                    className="input w-full px-3 py-2 border rounded-lg text-sm"
+                    className="input w-full px-2 py-1 sm:px-3 sm:py-2 border rounded-md text-sm sm:text-base"
                   />
-                  {fieldErrors.first_name && (
-                    <p
-                      className="text-sm font-bold mt-1"
-                      style={{ color: PINK_COLOR }}
-                    >
-                      {fieldErrors.first_name}
-                    </p>
-                  )}
 
-                  {/* Last Name */}
-                  <label className="font-medium relative flex flex-col mt-2">
+                  <label className="font-medium text-sm sm:text-base relative flex flex-col mt-2">
                     Last Name
                     <span
-                      className="absolute right-2 top-0 text-sm font-bold"
+                      className="absolute right-2 top-0 text-xs sm:text-sm font-bold"
                       style={{ color: PINK_COLOR }}
                     >
                       {editRecord.last_name?.length || 0}/20
@@ -562,24 +550,15 @@ export default function Rsvp({ token, onLogout, refreshAccessToken }) {
                     value={editRecord.last_name || ""}
                     onChange={handleChange}
                     maxLength={20}
-                    className="input w-full px-3 py-2 border rounded-lg text-sm"
+                    className="input w-full px-2 py-1 sm:px-3 sm:py-2 border rounded-md text-sm sm:text-base"
                   />
-                  {fieldErrors.last_name && (
-                    <p
-                      className="text-sm font-bold mt-1"
-                      style={{ color: PINK_COLOR }}
-                    >
-                      {fieldErrors.last_name}
-                    </p>
-                  )}
                 </>
               )}
 
-              {/* Dietary Requirements */}
-              <label className="font-medium relative flex flex-col">
+              <label className="font-medium text-sm sm:text-base relative flex flex-col">
                 Dietary Requirements
                 <span
-                  className="absolute right-2 top-0 text-sm font-bold"
+                  className="absolute right-2 top-0 text-xs sm:text-sm font-bold"
                   style={{ color: PINK_COLOR }}
                 >
                   {editRecord.dietary_requirements?.length || 0}/200
@@ -591,24 +570,15 @@ export default function Rsvp({ token, onLogout, refreshAccessToken }) {
                 value={editRecord.dietary_requirements || ""}
                 onChange={handleChange}
                 maxLength={200}
-                rows={6}
-                className="input w-full px-3 py-2 border rounded-lg text-sm resize-none"
-                style={{ height: "8rem" }}
+                rows={5}
+                className="input w-full px-2 py-1 sm:px-3 sm:py-2 border rounded-md text-sm sm:text-base resize-none"
+                style={{ height: "6rem" }}
               />
-              {fieldErrors.dietary_requirements && (
-                <p
-                  className="text-sm font-bold mt-1"
-                  style={{ color: PINK_COLOR }}
-                >
-                  {fieldErrors.dietary_requirements}
-                </p>
-              )}
 
-              {/* Song Requests */}
-              <label className="font-medium relative flex flex-col">
+              <label className="font-medium text-sm sm:text-base relative flex flex-col">
                 Song Requests
                 <span
-                  className="absolute right-2 top-0 text-sm font-bold"
+                  className="absolute right-2 top-0 text-xs sm:text-sm font-bold"
                   style={{ color: PINK_COLOR }}
                 >
                   {editRecord.song_requests.length}/10
@@ -622,59 +592,47 @@ export default function Rsvp({ token, onLogout, refreshAccessToken }) {
                   value={songInput}
                   onChange={handleChange}
                   maxLength={50}
-                  className="input w-full px-3 py-2 border rounded-lg text-sm"
+                  className="input w-full px-2 py-1 sm:px-3 sm:py-2 border rounded-md text-sm sm:text-base"
                 />
                 <button
                   type="button"
                   onClick={handleAddSong}
+                  className="px-2 sm:px-3 py-1 rounded-md text-xs sm:text-sm"
                   style={{
                     backgroundColor: PINK_COLOR,
                     color: "white",
                     fontFamily: "Poppins, sans-serif",
-                    fontWeight: "normal",
-                    border: "none",
-                    borderRadius: "0.35rem",
-                    padding: "0 1rem",
                   }}
                 >
                   Add
                 </button>
               </div>
-              {fieldErrors.song_requests && (
-                <p
-                  className="text-sm font-bold mt-1"
-                  style={{ color: PINK_COLOR }}
-                >
-                  {fieldErrors.song_requests}
-                </p>
-              )}
 
               <div
                 ref={songChipContainerRef}
-                className="flex flex-wrap -mt-1 gap-2 overflow-x-auto"
+                className="flex gap-2 overflow-x-auto overflow-y-hidden min-h-[2.5rem] py-1 px-1"
+                style={{ WebkitOverflowScrolling: "touch" }}
               >
                 {editRecord.song_requests.map((song, idx) => (
                   <Chip
                     key={idx}
                     label={song}
                     onDelete={() => handleDeleteSong(song)}
-                    className="mt-1"
+                    className="shrink-0 text-xs sm:text-sm"
+                    style={{ maxWidth: "200px" }}
                   />
                 ))}
               </div>
 
               <button
                 type="submit"
-                className="btn mt-4 mx-auto"
+                className="btn mt-3 sm:mt-4 mx-auto text-xs sm:text-sm px-4 py-1 sm:px-6 sm:py-2 rounded-md"
                 disabled={updating}
                 style={{
                   backgroundColor: PINK_COLOR,
-                  width: "50%",
-                  height: "2rem",
                   color: "white",
                   border: "none",
                   fontFamily: "Poppins, sans-serif",
-                  fontWeight: "normal",
                 }}
               >
                 {updating ? "Processing..." : "Save & Submit"}
@@ -685,16 +643,14 @@ export default function Rsvp({ token, onLogout, refreshAccessToken }) {
       </dialog>
 
       <style>{`
- html, body { margin: 0; padding: 0; }
+        html, body { margin: 0; padding: 0; }
 
-/* Desktop & Tablet: background contained at top */
         .bg-desktop {
           background-size: contain;
           background-position: top center;
           background-repeat: no-repeat;
         }
 
-        /* Mobile: stretch background to cover full screen */
         @media (max-width: 639px) {
           .bg-desktop {
             background-size: cover;
@@ -702,13 +658,9 @@ export default function Rsvp({ token, onLogout, refreshAccessToken }) {
           }
         }
 
-
-        .bg-no-repeat { background-repeat: no-repeat; background-position: center; background-size: contain; }
         input, textarea { font-family: 'Poppins', sans-serif; border: 1px solid black; background-color: white; }
         input:focus, textarea:focus { background-color: rgba(237,165,165,0.3); outline: none; border-color: ${PINK_COLOR}; }
-        textarea { width: 100%; height: 8rem; resize: none; white-space: pre-wrap; overflow-wrap: break-word; word-wrap: break-word; }
 
-        /* Checkbox-styled radio buttons */
         .checkbox {
           width: 22px;
           height: 22px;
@@ -735,105 +687,88 @@ export default function Rsvp({ token, onLogout, refreshAccessToken }) {
           font-weight: bold;
         }
 
-        /* Mobile-only Styles */
-        @media (max-width: 375px) {
-          .mobile-h1 { font-size: 1.5rem !important; margin-top: 3rem !important; }
-          .alert { height: 2.5rem !important; font-size: 0.875rem !important; }
-          .mobile-car
-          dialog#edit_modal .modal-box { width: 90% !important; height: 70vh !important; overflow-y: auto; }
+        @media (max-width: 639px) {
+          dialog#edit_modal .modal-box {
+            width: 90vw !important;
+            height: 75vh !important;
+            padding: 1rem !important;
+            border-radius: 0.5rem !important;
+            font-size: 0.9rem !important;
+          }
+          dialog#edit_modal h3 {
+            font-size: 1.6rem !important;
+            margin-bottom: 1rem !important;
+          }
+          dialog#edit_modal input,
+          dialog#edit_modal textarea {
+            font-size: 0.85rem !important;
+            padding: 0.5rem !important;
+          }
         }
-            
-/* Mobile-only Styles */
-@media (max-width: 639px) {
-  /* Increase top margin of H1 on mobile */
-  .mobile-h1 {
-    font-size: 1.8rem !important; 
-    margin-top: 4rem !important;
-  }
 
-  /* Pull cards closer to H1 */
-  .mobile-card-gap {
-    margin-top: 0rem !important; 
-  }
-}
+        /* For devices ≤375px */
+        @media (max-width: 375px) {
+          dialog#edit_modal .modal-box {
+            font-size: 0.8rem !important;
+            padding: 0.75rem !important;
+          }
+          dialog#edit_modal h3 { font-size: 1.3rem !important; }
+          dialog#edit_modal label { font-size: 0.8rem !important; }
+          dialog#edit_modal input,
+          dialog#edit_modal textarea {
+            font-size: 0.8rem !important;
+            padding: 0.4rem !important;
+          }
+          dialog#edit_modal button {
+            font-size: 0.8rem !important;
+            padding: 0.4rem 0.6rem !important;
+          }
+        }
 
-@media (max-width: 639px) {
-  /* Reduce card h2 font size on mobile */
-  .card h2 {
-    font-size: 1.5rem !important;
-  }
-}
+        /* For devices ≤360px */
+        @media (max-width: 360px) {
+          dialog#edit_modal .modal-box {
+            font-size: 0.75rem !important;
+            padding: 0.6rem !important;
+          }
+          dialog#edit_modal h3 { font-size: 1.2rem !important; }
+          dialog#edit_modal input,
+          dialog#edit_modal textarea {
+            font-size: 0.75rem !important;
+            padding: 0.35rem !important;
+          }
+          dialog#edit_modal button {
+            font-size: 0.75rem !important;
+            padding: 0.35rem 0.5rem !important;
+          }
+        }
 
-@media (max-width: 639px) {
-  /* Reduce vertical spacing between cards on mobile */
-  .mobile-card-gap {
-    gap: 1.5rem !important; /* vertical gap between cards */
-  }
-
-  .card {
-    margin-top: 0 !important;
-    margin-bottom: 0 !important;
-  }
-}
-
-/* Tablet H1 styles */
-@media (min-width: 640px) and (max-width: 1024px) {
-  .tablet-h1 {
-    font-size: 2.5rem !important; /* adjust font size for tablet */
-    margin-top: 6rem !important;  /* adjust top margin */
-  }
-}
-
-
-@media (max-width: 375px) {
-  /* Increase top margin of H1 on mobile */
-  .mobile-h1 {
-    font-size: 1.7rem !important; 
-    margin-top: 3rem !important;
-  }
-
-@media (max-width: 375px) {
-  /* Make Edit RSVP buttons smaller */
-  .card button {
-    width: 5rem !important;
-    height: 1.8rem !important;
-    font-size: 0.9rem !important;
-    padding: 0 0rem !important;
-    margin: 0rem !important; 
-  }
-}
-
-
-@media (max-width: 360px) {
-  .mobile-h1 {
-    font-size: 1.8rem !important; 
-    margin-top: 4rem !important;
-  }
-
-@media (max-width: 375px) {
-  .card h2 {
-    font-size: 1.4rem !important;
-  }
-}
-
-@media (max-width: 375px) {
-  .mobile-card-gap {
-    gap: 0rem !important; 
-  }
-
-  .card {
-    margin-top: 0 !important;
-    margin-bottom: 0 !important;
-  }
-}
         .disabled-radio {
          background-color: #e5e5e5 !important;
          border-color: #bdbdbd !important;
          cursor: not-allowed;
         }
-
         .disabled-radio::after {
-         color: #888888 !important; /* grey check mark if checked */
+         color: #888888 !important;
+        }
+
+        /* Responsive tweaks for H1 */
+        @media (max-width: 768px) {
+          h1 { font-size: 2.25rem !important; margin-top: 1.5rem !important; }
+        }
+        @media (max-width: 480px) {
+          h1 { font-size: 2rem !important; margin-top: 1.25rem !important; }
+        }
+        @media (max-width: 360px) {
+          h1 { font-size: 1.75rem !important; margin-top: 1rem !important; }
+        }
+
+        /* Alerts scale */
+        @media (max-width: 480px) {
+          .alert { font-size: 0.85rem !important; height: 2.5rem !important; }
+        }
+        @media (max-width: 360px) {
+          .alert { font-size: 0.8rem !important; height: 2.3rem !important; }
         }
       `}</style>
     </div>
