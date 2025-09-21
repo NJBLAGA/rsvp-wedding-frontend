@@ -334,7 +334,7 @@ export default function Rsvp({ token, onLogout, refreshAccessToken }) {
 
       {/* H1 */}
       <h1
-        className="relative z-20 text-3xl sm:text-4xl md:text-5xl lg:text-6xl font-semibold text-center mt-8 sm:mt-12 md:mt-16 lg:mt-20"
+        className="relative z-20 text-3xl sm:text-4xl md:text-5xl lg:text-6xl font-semibold text-center mt-12 sm:mt-16 md:mt-20 lg:mt-24 rsvp-title"
         style={{ fontFamily: "'Dancing Script', cursive" }}
       >
         RSVP
@@ -417,7 +417,7 @@ export default function Rsvp({ token, onLogout, refreshAccessToken }) {
       )}
 
       {/* RSVP Cards */}
-      <div className="relative z-20 flex flex-col gap-4 sm:gap-6 max-w-lg mx-auto mt-6">
+      <div className="relative z-20 flex flex-col gap-4 sm:gap-6 max-w-lg mx-auto mt-6 cards-wrapper">
         <AnimatePresence>
           {records.map((record) => {
             const fullName =
@@ -434,7 +434,7 @@ export default function Rsvp({ token, onLogout, refreshAccessToken }) {
               >
                 <h2
                   ref={(el) => (fullNameRefs.current[record.id] = el)}
-                  className="text-xl sm:text-2xl md:text-3xl font-medium leading-snug"
+                  className="guest-name text-xl sm:text-2xl md:text-3xl font-medium leading-snug"
                   style={{ fontFamily: "'Dancing Script', cursive" }}
                 >
                   {fullName || "Guest"}
@@ -444,10 +444,11 @@ export default function Rsvp({ token, onLogout, refreshAccessToken }) {
                   {record.rsvp_status || "Not responded"}
                 </p>
                 <button
-                  className="btn self-start mt-2 px-4 py-2 text-sm sm:text-base rounded-md"
+                  className="btn self-start mt-1 sm:mt-2 px-2 sm:px-3 py-1 sm:py-1.5 text-xs sm:text-sm rounded-md edit-btn"
                   onClick={() => openEditModal(record)}
                   style={{
-                    backgroundColor: PINK_COLOR,
+                    backgroundColor: "rgba(237,165,165,0.8)",
+                    border: `1px solid ${PINK_COLOR}`,
                     color: "white",
                     fontFamily: "Poppins, sans-serif",
                   }}
@@ -468,7 +469,7 @@ export default function Rsvp({ token, onLogout, refreshAccessToken }) {
         <form
           method="dialog"
           onSubmit={handleSubmit}
-          className="modal-box w-[95vw] sm:w-[600px] h-[85vh] sm:h-auto max-w-md bg-white flex flex-col gap-4 relative border border-gray-200 shadow-sm rounded-lg p-4 sm:p-6 overflow-y-auto"
+          className="modal-box w-[95vw] sm:w-[600px] max-w-md bg-white flex flex-col gap-4 relative border border-gray-200 shadow-sm rounded-lg p-4 sm:p-6 pb-6 overflow-y-auto"
         >
           {/* Close */}
           <button
@@ -482,7 +483,7 @@ export default function Rsvp({ token, onLogout, refreshAccessToken }) {
           {editRecord && (
             <>
               <h3
-                className="text-xl sm:text-4xl text-center mb-3 sm:mb-4"
+                className="modal-name text-2xl sm:text-4xl text-center mb-3 sm:mb-4"
                 style={{ fontFamily: "'Dancing Script', cursive" }}
               >
                 {`${editRecord.first_name || ""} ${editRecord.last_name || ""}`.trim() ||
@@ -505,7 +506,7 @@ export default function Rsvp({ token, onLogout, refreshAccessToken }) {
                       value={status}
                       checked={editRecord.rsvp_status === status}
                       onChange={handleChange}
-                      className={`checkbox theme-controller ${editRecord.rsvp_expired ? "disabled-radio" : ""}`}
+                      className={`radio-pink ${editRecord.rsvp_expired ? "opacity-50 cursor-not-allowed" : ""}`}
                       disabled={editRecord.rsvp_expired}
                     />
                     {status}
@@ -513,16 +514,11 @@ export default function Rsvp({ token, onLogout, refreshAccessToken }) {
                 ))}
               </div>
 
+              {/* Guest-only fields */}
               {editRecord.is_guest && (
                 <>
                   <label className="font-medium text-sm sm:text-base relative flex flex-col">
                     First Name
-                    <span
-                      className="absolute right-2 top-0 text-xs sm:text-sm font-bold"
-                      style={{ color: PINK_COLOR }}
-                    >
-                      {editRecord.first_name?.length || 0}/20
-                    </span>
                   </label>
                   <input
                     type="text"
@@ -536,12 +532,6 @@ export default function Rsvp({ token, onLogout, refreshAccessToken }) {
 
                   <label className="font-medium text-sm sm:text-base relative flex flex-col mt-2">
                     Last Name
-                    <span
-                      className="absolute right-2 top-0 text-xs sm:text-sm font-bold"
-                      style={{ color: PINK_COLOR }}
-                    >
-                      {editRecord.last_name?.length || 0}/20
-                    </span>
                   </label>
                   <input
                     type="text"
@@ -555,14 +545,9 @@ export default function Rsvp({ token, onLogout, refreshAccessToken }) {
                 </>
               )}
 
+              {/* Dietary */}
               <label className="font-medium text-sm sm:text-base relative flex flex-col">
                 Dietary Requirements
-                <span
-                  className="absolute right-2 top-0 text-xs sm:text-sm font-bold"
-                  style={{ color: PINK_COLOR }}
-                >
-                  {editRecord.dietary_requirements?.length || 0}/200
-                </span>
               </label>
               <textarea
                 name="dietary_requirements"
@@ -575,14 +560,9 @@ export default function Rsvp({ token, onLogout, refreshAccessToken }) {
                 style={{ height: "6rem" }}
               />
 
+              {/* Songs */}
               <label className="font-medium text-sm sm:text-base relative flex flex-col">
                 Song Requests
-                <span
-                  className="absolute right-2 top-0 text-xs sm:text-sm font-bold"
-                  style={{ color: PINK_COLOR }}
-                >
-                  {editRecord.song_requests.length}/10
-                </span>
               </label>
               <div className="flex gap-2">
                 <input
@@ -599,7 +579,8 @@ export default function Rsvp({ token, onLogout, refreshAccessToken }) {
                   onClick={handleAddSong}
                   className="px-2 sm:px-3 py-1 rounded-md text-xs sm:text-sm"
                   style={{
-                    backgroundColor: PINK_COLOR,
+                    backgroundColor: "rgba(237,165,165,0.8)",
+                    border: `1px solid ${PINK_COLOR}`,
                     color: "white",
                     fontFamily: "Poppins, sans-serif",
                   }}
@@ -626,12 +607,12 @@ export default function Rsvp({ token, onLogout, refreshAccessToken }) {
 
               <button
                 type="submit"
-                className="btn mt-3 sm:mt-4 mx-auto text-xs sm:text-sm px-4 py-1 sm:px-6 sm:py-2 rounded-md"
+                className="btn mt-2 sm:mt-3 mx-auto text-xs sm:text-sm px-4 py-1 sm:px-6 sm:py-2 rounded-md mb-0"
                 disabled={updating}
                 style={{
-                  backgroundColor: PINK_COLOR,
+                  backgroundColor: "rgba(237,165,165,0.8)",
+                  border: `1px solid ${PINK_COLOR}`,
                   color: "white",
-                  border: "none",
                   fontFamily: "Poppins, sans-serif",
                 }}
               >
@@ -658,112 +639,95 @@ export default function Rsvp({ token, onLogout, refreshAccessToken }) {
           }
         }
 
-        input, textarea { font-family: 'Poppins', sans-serif; border: 1px solid black; background-color: white; }
-        input:focus, textarea:focus { background-color: rgba(237,165,165,0.3); outline: none; border-color: ${PINK_COLOR}; }
+        /* Inputs & Textareas */
+        input, textarea {
+          font-family: 'Poppins', sans-serif;
+          background-color: #ffffff !important;
+          color: #000000 !important;
+          border: 1px solid #000000 !important;
+        }
+        input::placeholder, textarea::placeholder { color: #6b7280; }
+        input:focus, textarea:focus {
+          background-color: rgba(237,165,165,0.15) !important;
+          outline: none !important;
+          border-color: ${PINK_COLOR} !important;
+          box-shadow: 0 0 0 2px rgba(237,165,165,0.15);
+        }
 
-        .checkbox {
+        /* Custom PINK square radio */
+        .radio-pink {
           width: 22px;
           height: 22px;
-          border: 2px solid ${PINK_COLOR};
-          border-radius: 4px;
-          background-color: rgba(237, 165, 165, 0.1);
-          cursor: pointer;
           appearance: none;
+          -webkit-appearance: none;
+          background-color: #fff;
+          border: 2px solid ${PINK_COLOR};
+          border-radius: 4px; /* square corners */
+          display: inline-block;
           position: relative;
-          transition: all 0.2s ease;
+          cursor: pointer;
+          transition: all 0.15s ease-in-out;
         }
-        .checkbox:checked {
-          background-color: rgba(237, 165, 165, 0.2);
+        .radio-pink:checked {
+          background-color: rgba(237,165,165,0.15);
           border-color: ${PINK_COLOR};
         }
-        .checkbox:checked::after {
+        .radio-pink:checked::after {
           content: "✔";
           position: absolute;
           top: 50%;
           left: 50%;
           transform: translate(-50%, -50%);
           color: ${PINK_COLOR};
-          font-size: 16px;
+          font-size: 14px;
           font-weight: bold;
         }
+        .radio-pink:disabled { opacity: 0.6; cursor: not-allowed; }
 
-        @media (max-width: 639px) {
-          dialog#edit_modal .modal-box {
-            width: 90vw !important;
-            height: 75vh !important;
-            padding: 1rem !important;
-            border-radius: 0.5rem !important;
-            font-size: 0.9rem !important;
-          }
-          dialog#edit_modal h3 {
-            font-size: 1.6rem !important;
-            margin-bottom: 1rem !important;
-          }
-          dialog#edit_modal input,
-          dialog#edit_modal textarea {
-            font-size: 0.85rem !important;
-            padding: 0.5rem !important;
-          }
-        }
+        /* Guest name adjustments */
+        .guest-name { white-space: normal; word-break: break-word; }
+        .modal-name { white-space: normal; word-break: break-word; }
 
-        /* For devices ≤375px */
         @media (max-width: 375px) {
-          dialog#edit_modal .modal-box {
-            font-size: 0.8rem !important;
-            padding: 0.75rem !important;
-          }
-          dialog#edit_modal h3 { font-size: 1.3rem !important; }
-          dialog#edit_modal label { font-size: 0.8rem !important; }
-          dialog#edit_modal input,
-          dialog#edit_modal textarea {
-            font-size: 0.8rem !important;
-            padding: 0.4rem !important;
-          }
-          dialog#edit_modal button {
-            font-size: 0.8rem !important;
-            padding: 0.4rem 0.6rem !important;
-          }
+          .guest-name { font-size: 1.2rem !important; margin-bottom: 0.25rem !important; }
+          .modal-name { font-size: 1.6rem !important; margin-bottom: 0.5rem !important; padding: 0.25rem 0 !important; }
         }
-
-        /* For devices ≤360px */
         @media (max-width: 360px) {
-          dialog#edit_modal .modal-box {
-            font-size: 0.75rem !important;
-            padding: 0.6rem !important;
-          }
-          dialog#edit_modal h3 { font-size: 1.2rem !important; }
-          dialog#edit_modal input,
-          dialog#edit_modal textarea {
-            font-size: 0.75rem !important;
-            padding: 0.35rem !important;
-          }
-          dialog#edit_modal button {
-            font-size: 0.75rem !important;
-            padding: 0.35rem 0.5rem !important;
-          }
+          .guest-name { font-size: 1.1rem !important; margin-bottom: 0.2rem !important; }
+          .modal-name { font-size: 1.4rem !important; margin-bottom: 0.4rem !important; padding: 0.2rem 0 !important; }
         }
 
-        .disabled-radio {
-         background-color: #e5e5e5 !important;
-         border-color: #bdbdbd !important;
-         cursor: not-allowed;
-        }
-        .disabled-radio::after {
-         color: #888888 !important;
-        }
-
-        /* Responsive tweaks for H1 */
-        @media (max-width: 768px) {
-          h1 { font-size: 2.25rem !important; margin-top: 1.5rem !important; }
+        /* Edit RSVP Button */
+        .edit-btn { min-width: 4.25rem; }
+        @media (max-width: 375px) {
+          .cards-wrapper { margin-top: 0.35rem !important; }
+          .edit-btn { font-size: 0.7rem !important; padding: 0.22rem 0.42rem !important; }
         }
         @media (max-width: 480px) {
-          h1 { font-size: 2rem !important; margin-top: 1.25rem !important; }
+          .btn { font-size: 0.78rem !important; padding: 0.28rem 0.5rem !important; }
         }
         @media (max-width: 360px) {
-          h1 { font-size: 1.75rem !important; margin-top: 1rem !important; }
+          .btn { font-size: 0.72rem !important; padding: 0.22rem 0.42rem !important; }
         }
 
-        /* Alerts scale */
+        /* H1 responsive */
+        @media (max-width: 1024px) {
+          h1 { font-size: 3rem !important; margin-top: 7rem !important; }
+        }
+        @media (max-width: 768px) {
+          h1 { font-size: 2.5rem !important; margin-top: 5.5rem !important; }
+        }
+        @media (max-width: 480px) {
+          h1 { font-size: 2rem !important; margin-top: 4.5rem !important; }
+        }
+        @media (max-width: 360px) {
+          h1 { font-size: 1.75rem !important; margin-top: 4rem !important; }
+        }
+        @media (min-width: 361px) and (max-width: 375px) {
+          h1 { font-size: 2rem !important; margin-top: 3.5rem !important; }
+        }
+
+        /* Alerts */
         @media (max-width: 480px) {
           .alert { font-size: 0.85rem !important; height: 2.5rem !important; }
         }
