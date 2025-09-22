@@ -131,7 +131,7 @@ export default function Home() {
                 fontFamily: "'Dancing Script', cursive",
               }}
             >
-              Saturday, March 14, 2026
+              Saturday, 14th March, 2026
             </h2>
             <h3 className="font-semibold mt-1">
               Camden Valley Inn, Remembrance Dr, Cawdor NSW, Australia

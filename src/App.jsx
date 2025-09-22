@@ -2,7 +2,7 @@ import { useState, useEffect, useCallback } from "react";
 import Home from "./components/Home";
 import Rsvp from "./components/RSVP";
 import Schedule from "./components/Schedule";
-import Details from "./components/Details.jsx";
+import FAQ from "./components/FAQ.jsx";
 import LoginModal from "./components/LoginModal";
 import Box from "@mui/material/Box";
 import SwipeableDrawer from "@mui/material/SwipeableDrawer";
@@ -118,7 +118,7 @@ export default function App() {
       onKeyDown={() => setMenuOpen(false)}
     >
       <List>
-        {["Home", "RSVP", "Schedule", "Details"].map((text) => (
+        {["Home", "RSVP", "Schedule", "FAQ"].map((text) => (
           <ListItem key={text} disablePadding>
             <ListItemButton
               sx={{
@@ -180,6 +180,18 @@ export default function App() {
         rel="stylesheet"
       />
 
+      {/* Inline CSS for navbar button font sizes */}
+      <style>{`
+        .navbar-desktop-btn {
+          font-size: 16px !important;
+        }
+        @media (min-width: 768px) {
+          .navbar-desktop-btn {
+            font-size: 20px !important;
+          }
+        }
+      `}</style>
+
       <LoginModal
         isOpen={!isLoggedIn && !sessionExpired}
         onSubmit={handleLogin}
@@ -202,12 +214,11 @@ export default function App() {
           <nav className="border-b p-4 bg-white shadow-sm">
             {/* Desktop Navbar */}
             <div className="hidden md:flex justify-center space-x-8">
-              {["Home", "RSVP", "Schedule", "Details"].map((tab) => (
+              {["Home", "RSVP", "Schedule", "FAQ"].map((tab) => (
                 <button
                   key={tab}
-                  className="pb-1 font-normal"
+                  className="navbar-desktop-btn pb-1 font-normal"
                   style={{
-                    fontSize: "1.1rem",
                     borderBottom:
                       activeTab === tab ? `2px solid ${PETAL_PINK}` : "none",
                     color: activeTab === tab ? PETAL_PINK : "#000",
@@ -229,9 +240,8 @@ export default function App() {
               ))}
               <button
                 onClick={handleLogout}
-                className="pb-1 font-normal"
+                className="navbar-desktop-btn pb-1 font-normal"
                 style={{
-                  fontSize: "1.1rem",
                   color: "#000",
                   fontFamily: "'Poppins', sans-serif",
                 }}
@@ -257,7 +267,7 @@ export default function App() {
               <button
                 onClick={() => setMenuOpen(!menuOpen)}
                 style={{
-                  fontWeight: 300, // lighter
+                  fontWeight: 300,
                   fontSize: "1.8rem",
                   fontFamily: "'Dancing Script', cursive",
                   color: "#000",
@@ -268,8 +278,7 @@ export default function App() {
                   style={{
                     display: "inline-block",
                     transition: "transform 0.3s ease",
-                    transform: menuOpen ? "rotate(0deg)" : "rotate(0deg)",
-                    fontSize: "2rem",
+                    fontSize: menuOpen ? "2.6rem" : "2rem", // bigger X close
                   }}
                 >
                   {menuOpen ? "×" : "☰"}
@@ -297,7 +306,7 @@ export default function App() {
               />
             )}
             {activeTab === "Schedule" && <Schedule />}
-            {activeTab === "Details" && <Details />}
+            {activeTab === "FAQ" && <FAQ />}
           </main>
         </>
       )}

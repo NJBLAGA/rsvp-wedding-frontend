@@ -64,7 +64,7 @@ export default function Rsvp({ token, onLogout, refreshAccessToken }) {
     if (token) fetchRsvpData();
   }, [token]);
 
-  // 🌸 Petal animation
+  // Petal animation
   useEffect(() => {
     const canvas = canvasRef.current;
     if (!canvas) return;
@@ -330,14 +330,14 @@ export default function Rsvp({ token, onLogout, refreshAccessToken }) {
 
       {/* H1 */}
       <h1
-        className="relative z-20 text-3xl sm:text-4xl md:text-5xl lg:text-6xl font-semibold text-center mt-12 sm:mt-16 md:mt-20 lg:mt-24 rsvp-title"
+        className="relative z-20 text-3xl sm:text-4xl md:text-5xl lg:text-5xl font-semibold text-center mt-12 sm:mt-16 md:mt-20 lg:mt-32 rsvp-title"
         style={{ fontFamily: "'Dancing Script', cursive" }}
       >
         RSVP
       </h1>
 
       {/* Alerts */}
-      <div className="relative z-20 flex flex-col items-center mt-6 gap-4 min-h-[3rem]">
+      <div className="relative z-20 flex flex-col items-center mt-2 gap-4 min-h-[3rem]">
         <AnimatePresence mode="wait">
           {showProcessing && !editRecord && (
             <motion.div
@@ -807,7 +807,7 @@ export default function Rsvp({ token, onLogout, refreshAccessToken }) {
 
         /* H1 responsive */
         @media (max-width: 1024px) {
-          h1 { font-size: 3rem !important; margin-top: 7rem !important; }
+          h1 { font-size: 3rem !important; margin-top: 8rem !important; }
         }
         @media (max-width: 768px) {
           h1 { font-size: 2.5rem !important; margin-top: 5.5rem !important; }

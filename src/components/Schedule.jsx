@@ -30,49 +30,53 @@ export default function Schedule() {
     canvas.height = window.innerHeight;
 
     if (!petalArrayRef.current.length) {
-      const TOTAL = 20;
+      const TOTAL = 10;
       const petalImg = new Image();
       petalImg.src = "https://djjjk9bjm164h.cloudfront.net/petal.png";
 
       class Petal {
         constructor() {
+          this.reset();
+        }
+        reset() {
           this.x = Math.random() * canvas.width;
-          this.y = Math.random() * canvas.height * 2 - canvas.height;
-          this.w = 25 + Math.random() * 15;
-          this.h = 20 + Math.random() * 10;
-          this.opacity = this.w / 50;
-          this.flip = Math.random();
-          this.xSpeed = 0.2 + Math.random() * 0.15;
-          this.ySpeed = 0.1 + Math.random() * 0.15;
-          this.flipSpeed = Math.random() * 0.01;
+          this.y =
+            Math.random() < 0.5
+              ? Math.random() * canvas.height
+              : -Math.random() * canvas.height;
+          this.w = 25 + Math.random() * 10;
+          this.h = 18 + Math.random() * 8;
+          this.opacity = 0.8;
+          this.ySpeed = 0.05 + Math.random() * 0.1;
+          this.angle = Math.random() * Math.PI * 2;
+          this.angleSpeed = 0.003 + Math.random() * 0.002;
+          this.swayDistance = 60;
         }
         draw() {
-          if (this.y > canvas.height || this.x > canvas.width) {
-            this.x = -25;
-            this.y = Math.random() * canvas.height * 2 - canvas.height;
-            this.xSpeed = 0.2 + Math.random() * 0.15;
-            this.ySpeed = 0.1 + Math.random() * 0.15;
-            this.flip = Math.random();
-          }
           ctx.globalAlpha = this.opacity;
           ctx.drawImage(
             petalImg,
-            this.x,
+            this.x + Math.sin(this.angle) * this.swayDistance,
             this.y,
-            this.w * (0.6 + Math.abs(Math.cos(this.flip)) / 3),
-            this.h * (0.8 + Math.abs(Math.sin(this.flip)) / 5),
+            this.w,
+            this.h,
           );
         }
         animate() {
-          this.x += this.xSpeed;
           this.y += this.ySpeed;
-          this.flip += this.flipSpeed;
+          this.angle += this.angleSpeed;
+          if (this.y > canvas.height + 20) {
+            this.reset();
+            this.y = -20;
+          }
           this.draw();
         }
       }
 
       petalImg.addEventListener("load", () => {
-        for (let i = 0; i < TOTAL; i++) petalArrayRef.current.push(new Petal());
+        for (let i = 0; i < TOTAL; i++) {
+          petalArrayRef.current.push(new Petal());
+        }
         const render = () => {
           ctx.clearRect(0, 0, canvas.width, canvas.height);
           petalArrayRef.current.forEach((p) => p.animate());
@@ -140,15 +144,19 @@ export default function Schedule() {
         rel="stylesheet"
       />
 
+      {/* Background */}
       <div
-        className="absolute inset-0 bg-desktop"
+        className="absolute inset-0 z-0 bg-wedding"
         style={{ backgroundImage: `url(${BackgroundImage})` }}
       />
+
+      {/* Petals */}
       <canvas
         ref={canvasRef}
         className="absolute top-0 left-0 w-full h-full z-10 pointer-events-none"
       />
 
+      {/* Heading */}
       <h1
         className="relative z-20 text-center font-bold text-black schedule-heading"
         style={{ fontFamily: "'Dancing Script', cursive" }}
@@ -156,6 +164,7 @@ export default function Schedule() {
         Wedding Day Schedule
       </h1>
 
+      {/* Timeline */}
       <div className="relative z-20 w-full max-w-md px-2 sm:px-4">
         <Timeline position="right" className="w-full">
           {schedule.map((item, idx) => (
@@ -183,7 +192,6 @@ export default function Schedule() {
                   {item.icon}
                 </TimelineDot>
 
-                {/* Only render connector if not the last item */}
                 {idx !== schedule.length - 1 && (
                   <TimelineConnector
                     sx={{
@@ -209,8 +217,21 @@ export default function Schedule() {
       <style>{`
         html, body { margin:0; padding:0; }
 
-        .bg-desktop { background-size: contain; background-repeat: no-repeat; background-position: top center; }
-        @media (max-width: 639px) { .bg-desktop { background-size: cover; background-position: center; } }
+        .bg-wedding {
+          background-position: center;
+          background-repeat: no-repeat;
+        }
+        @media (min-width: 1024px) {
+          .bg-wedding {
+            background-size: contain; /* Desktop: no stretching */
+            background-position: top center;
+          }
+        }
+        @media (max-width: 1023px) {
+          .bg-wedding {
+            background-size: cover; /* Mobile & tablet: fill */
+          }
+        }
 
         .schedule-heading {
           font-size: 2.5rem;
@@ -220,9 +241,9 @@ export default function Schedule() {
         }
         @media (max-width: 1024px) { .schedule-heading { font-size: 2.2rem; margin-top: 6.5rem; } }
         @media (max-width: 640px) { .schedule-heading { font-size: 1.8rem; margin-top: 5.5rem; } }
-        @media (max-width: 375px) { .schedule-heading { font-size: 1.3rem; margin-top: 4rem; margin-bottom: 1px; } }
+        @media (max-width: 375px) { .schedule-heading { font-size: 1.3rem; margin-top: 4.5rem; margin-bottom: 1px; } }
         @media (max-width: 360px) { .schedule-heading { font-size: 1.5rem; margin-top: 5.5rem; } }
-        @media (min-width: 1025px) { .schedule-heading { font-size: 3.5rem; margin-top: 8.5rem; } }
+        @media (min-width: 1025px) { .schedule-heading { font-size: 3rem; margin-top: 8rem; } }
 
         .timeline-label { font-family: 'Dancing Script', cursive; font-size: 1rem; color: black; }
         .timeline-time { font-family: 'Poppins', sans-serif; font-size: 0.7rem; color: black; }
@@ -240,7 +261,6 @@ export default function Schedule() {
         }
 
         @media (min-width: 1025px) {
-          /* Timeline dot size for desktop */
           .MuiTimelineDot-root {
             width: 50px;
             height: 50px;

@@ -23,7 +23,7 @@ export default function LoginModal({ isOpen, onSubmit }) {
     }
   }, [isOpen]);
 
-  // 🌸 Standardized Petal Animation
+  // Standardized Petal Animation
   useEffect(() => {
     const canvas = canvasRef.current;
     if (!canvas) return;
