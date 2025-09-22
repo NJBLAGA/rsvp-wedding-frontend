@@ -15,6 +15,7 @@ export default function Rsvp({ token, onLogout, refreshAccessToken }) {
   const [showConfetti, setShowConfetti] = useState(false);
   const [songInput, setSongInput] = useState("");
   const [fieldErrors, setFieldErrors] = useState({});
+  const [charCounts, setCharCounts] = useState({});
 
   const canvasRef = useRef(null);
   const animationIdRef = useRef(null);
@@ -63,7 +64,7 @@ export default function Rsvp({ token, onLogout, refreshAccessToken }) {
     if (token) fetchRsvpData();
   }, [token]);
 
-  // 🌸 Petal animation (20 petals, faster, spread across top axis)
+  // 🌸 Petal animation
   useEffect(() => {
     const canvas = canvasRef.current;
     if (!canvas) return;
@@ -72,7 +73,7 @@ export default function Rsvp({ token, onLogout, refreshAccessToken }) {
     canvas.height = window.innerHeight;
 
     if (!petalArrayRef.current.length) {
-      const TOTAL = 10;
+      const TOTAL = 15;
       const petalImg = new Image();
       petalImg.src = "https://djjjk9bjm164h.cloudfront.net/petal.png";
 
@@ -80,26 +81,20 @@ export default function Rsvp({ token, onLogout, refreshAccessToken }) {
         constructor() {
           this.reset();
         }
-
         reset() {
           this.x = Math.random() * canvas.width;
-
-          // Random Y: some petals on-screen, some above
           this.y =
             Math.random() < 0.5
               ? Math.random() * canvas.height
               : -Math.random() * canvas.height;
-
           this.w = 25 + Math.random() * 10;
           this.h = 18 + Math.random() * 8;
           this.opacity = 0.8;
-
           this.ySpeed = 0.05 + Math.random() * 0.1;
           this.angle = Math.random() * Math.PI * 2;
           this.angleSpeed = 0.003 + Math.random() * 0.002;
           this.swayDistance = 60;
         }
-
         draw() {
           ctx.globalAlpha = this.opacity;
           ctx.drawImage(
@@ -110,16 +105,13 @@ export default function Rsvp({ token, onLogout, refreshAccessToken }) {
             this.h,
           );
         }
-
         animate() {
           this.y += this.ySpeed;
           this.angle += this.angleSpeed;
-
           if (this.y > canvas.height + 20) {
             this.reset();
             this.y = -20;
           }
-
           this.draw();
         }
       }
@@ -156,6 +148,7 @@ export default function Rsvp({ token, onLogout, refreshAccessToken }) {
     });
     setSongInput("");
     setFieldErrors({});
+    setCharCounts({});
     document.getElementById("edit_modal").showModal();
   };
 
@@ -163,6 +156,7 @@ export default function Rsvp({ token, onLogout, refreshAccessToken }) {
     setEditRecord(null);
     setSongInput("");
     setFieldErrors({});
+    setCharCounts({});
     setShowProcessing(false);
     const modal = document.getElementById("edit_modal");
     if (modal) modal.close();
@@ -178,13 +172,14 @@ export default function Rsvp({ token, onLogout, refreshAccessToken }) {
       if (value.length >= 50) {
         setFieldErrors((prev) => ({
           ...prev,
-          song_requests: "Max Character Limit Reached",
+          song_input: "Max Characters Reached",
         }));
       } else {
-        setFieldErrors((prev) => ({ ...prev, song_requests: "" }));
+        setFieldErrors((prev) => ({ ...prev, song_input: "" }));
       }
     } else {
       setEditRecord({ ...editRecord, [name]: value });
+      setCharCounts((prev) => ({ ...prev, [name]: value.length }));
 
       if (name === "dietary_requirements") {
         if (value.length >= 200) {
@@ -213,22 +208,18 @@ export default function Rsvp({ token, onLogout, refreshAccessToken }) {
   const handleSubmit = async (e) => {
     e.preventDefault();
     const errors = {};
-
     if (editRecord.is_guest) {
       if (!editRecord.first_name?.trim())
         errors.first_name = "First name is required";
       if (!editRecord.last_name?.trim())
         errors.last_name = "Last name is required";
     }
-
     if (Object.keys(errors).length > 0) {
       setFieldErrors(errors);
       return;
     }
-
     setUpdating(true);
     setShowProcessing(true);
-
     try {
       const res = await fetch(
         `https://rsvp-wedding-backend.onrender.com/rsvp/${editRecord.id}`,
@@ -249,15 +240,12 @@ export default function Rsvp({ token, onLogout, refreshAccessToken }) {
       );
       if (!res.ok) throw new Error("Failed to update record");
       await fetchRsvpData();
-
       setShowProcessing(false);
       setShowSuccess(true);
       setShowConfetti(true);
-
       const modal = document.getElementById("edit_modal");
       if (modal) modal.close();
       setEditRecord(null);
-
       setTimeout(() => setShowSuccess(false), 5000);
       setTimeout(() => setShowConfetti(false), 7000);
     } catch (err) {
@@ -272,15 +260,13 @@ export default function Rsvp({ token, onLogout, refreshAccessToken }) {
   const handleAddSong = () => {
     const song = songInput.trim();
     if (!song) return;
-
     if (song.length > 50) {
       setFieldErrors((prev) => ({
         ...prev,
-        song_requests: "Max Character Limit Reached",
+        song_input: "Max Character Limit Reached",
       }));
       return;
     }
-
     if (editRecord.song_requests.includes(song)) {
       setFieldErrors((prev) => ({
         ...prev,
@@ -289,7 +275,6 @@ export default function Rsvp({ token, onLogout, refreshAccessToken }) {
       setSongInput("");
       return;
     }
-
     if (editRecord.song_requests.length >= 10) {
       setFieldErrors((prev) => ({
         ...prev,
@@ -297,7 +282,6 @@ export default function Rsvp({ token, onLogout, refreshAccessToken }) {
       }));
       return;
     }
-
     setEditRecord((prev) => {
       const updated = { ...prev, song_requests: [...prev.song_requests, song] };
       setTimeout(() => {
@@ -310,7 +294,6 @@ export default function Rsvp({ token, onLogout, refreshAccessToken }) {
       }, 50);
       return updated;
     });
-
     setSongInput("");
     setFieldErrors((prev) => ({ ...prev, song_requests: "" }));
   };
@@ -530,76 +513,175 @@ export default function Rsvp({ token, onLogout, refreshAccessToken }) {
               {/* Guest-only fields */}
               {editRecord.is_guest && (
                 <>
-                  <label className="font-medium text-sm sm:text-base relative flex flex-col">
-                    First Name
-                  </label>
-                  <input
-                    type="text"
-                    name="first_name"
-                    placeholder="First Name"
-                    value={editRecord.first_name || ""}
-                    onChange={handleChange}
-                    maxLength={20}
-                    className="input w-full px-2 py-1 sm:px-3 sm:py-2 border rounded-md text-sm sm:text-base"
-                  />
+                  <div className="relative">
+                    <label className="font-medium text-sm sm:text-base flex flex-col">
+                      First Name
+                    </label>
+                    <span
+                      className="absolute top-0 right-0 text-xs font-bold"
+                      style={{
+                        color: PINK_COLOR,
+                        fontFamily: "Poppins, sans-serif",
+                      }}
+                    >
+                      {charCounts.first_name || 0}/20
+                    </span>
+                    <input
+                      type="text"
+                      name="first_name"
+                      placeholder="First Name"
+                      value={editRecord.first_name || ""}
+                      onChange={handleChange}
+                      maxLength={20}
+                      className="input w-full px-2 py-1 sm:px-3 sm:py-2 border rounded-md text-sm sm:text-base"
+                    />
+                    {fieldErrors.first_name && (
+                      <p
+                        className="text-xs mt-1"
+                        style={{
+                          color: PINK_COLOR,
+                          fontFamily: "Poppins, sans-serif",
+                        }}
+                      >
+                        {fieldErrors.first_name}
+                      </p>
+                    )}
+                  </div>
 
-                  <label className="font-medium text-sm sm:text-base relative flex flex-col mt-2">
-                    Last Name
-                  </label>
-                  <input
-                    type="text"
-                    name="last_name"
-                    placeholder="Last Name"
-                    value={editRecord.last_name || ""}
-                    onChange={handleChange}
-                    maxLength={20}
-                    className="input w-full px-2 py-1 sm:px-3 sm:py-2 border rounded-md text-sm sm:text-base"
-                  />
+                  <div className="relative mt-2">
+                    <label className="font-medium text-sm sm:text-base flex flex-col">
+                      Last Name
+                    </label>
+                    <span
+                      className="absolute top-0 right-0 text-xs font-bold"
+                      style={{
+                        color: PINK_COLOR,
+                        fontFamily: "Poppins, sans-serif",
+                      }}
+                    >
+                      {charCounts.last_name || 0}/20
+                    </span>
+                    <input
+                      type="text"
+                      name="last_name"
+                      placeholder="Last Name"
+                      value={editRecord.last_name || ""}
+                      onChange={handleChange}
+                      maxLength={20}
+                      className="input w-full px-2 py-1 sm:px-3 sm:py-2 border rounded-md text-sm sm:text-base"
+                    />
+                    {fieldErrors.last_name && (
+                      <p
+                        className="text-xs mt-1"
+                        style={{
+                          color: PINK_COLOR,
+                          fontFamily: "Poppins, sans-serif",
+                        }}
+                      >
+                        {fieldErrors.last_name}
+                      </p>
+                    )}
+                  </div>
                 </>
               )}
 
               {/* Dietary */}
-              <label className="font-medium text-sm sm:text-base relative flex flex-col">
-                Dietary Requirements
-              </label>
-              <textarea
-                name="dietary_requirements"
-                placeholder="Dietary Requirements"
-                value={editRecord.dietary_requirements || ""}
-                onChange={handleChange}
-                maxLength={200}
-                rows={5}
-                className="input w-full px-2 py-1 sm:px-3 sm:py-2 border rounded-md text-sm sm:text-base resize-none"
-                style={{ height: "6rem" }}
-              />
-
-              {/* Songs */}
-              <label className="font-medium text-sm sm:text-base relative flex flex-col">
-                Song Requests
-              </label>
-              <div className="flex gap-2">
-                <input
-                  type="text"
-                  name="song_input"
-                  placeholder="Add a song"
-                  value={songInput}
-                  onChange={handleChange}
-                  maxLength={50}
-                  className="input w-full px-2 py-1 sm:px-3 sm:py-2 border rounded-md text-sm sm:text-base"
-                />
-                <button
-                  type="button"
-                  onClick={handleAddSong}
-                  className="px-2 sm:px-3 py-1 rounded-md text-xs sm:text-sm"
+              <div className="relative">
+                <label className="font-medium text-sm sm:text-base flex flex-col">
+                  Dietary Requirements
+                </label>
+                <span
+                  className="absolute top-0 right-0 text-xs font-bold"
                   style={{
-                    backgroundColor: "rgba(237,165,165,0.8)",
-                    border: `1px solid ${PINK_COLOR}`,
-                    color: "white",
+                    color: PINK_COLOR,
                     fontFamily: "Poppins, sans-serif",
                   }}
                 >
-                  Add
-                </button>
+                  {charCounts.dietary_requirements || 0}/200
+                </span>
+                <textarea
+                  name="dietary_requirements"
+                  placeholder="Dietary Requirements"
+                  value={editRecord.dietary_requirements || ""}
+                  onChange={handleChange}
+                  maxLength={200}
+                  rows={5}
+                  className="input w-full px-2 py-1 sm:px-3 sm:py-2 border rounded-md text-sm sm:text-base resize-none"
+                  style={{ height: "6rem" }}
+                />
+                {fieldErrors.dietary_requirements && (
+                  <p
+                    className="text-xs mt-1"
+                    style={{
+                      color: PINK_COLOR,
+                      fontFamily: "Poppins, sans-serif",
+                    }}
+                  >
+                    {fieldErrors.dietary_requirements}
+                  </p>
+                )}
+              </div>
+
+              {/* Songs */}
+              <div className="relative">
+                <label className="font-medium text-sm sm:text-base flex flex-col">
+                  Song Requests
+                </label>
+                <span
+                  className="absolute top-0 right-0 text-xs font-bold"
+                  style={{
+                    color: PINK_COLOR,
+                    fontFamily: "Poppins, sans-serif",
+                  }}
+                >
+                  {editRecord.song_requests.length}/10
+                </span>
+                <div className="relative flex gap-2 mt-1">
+                  <input
+                    type="text"
+                    name="song_input"
+                    placeholder="Add a song"
+                    value={songInput}
+                    onChange={handleChange}
+                    maxLength={50}
+                    className="input w-full px-2 py-1 sm:px-3 sm:py-2 border rounded-md text-sm sm:text-base"
+                  />
+                  <button
+                    type="button"
+                    onClick={handleAddSong}
+                    className="px-2 sm:px-3 py-1 rounded-md text-xs sm:text-sm"
+                    style={{
+                      backgroundColor: "rgba(237,165,165,0.8)",
+                      border: `1px solid ${PINK_COLOR}`,
+                      color: "white",
+                      fontFamily: "Poppins, sans-serif",
+                    }}
+                  >
+                    Add
+                  </button>
+                </div>
+                {fieldErrors.song_input && (
+                  <p
+                    className="text-xs mt-1"
+                    style={{
+                      color: PINK_COLOR,
+                      fontFamily: "Poppins, sans-serif",
+                    }}
+                  >
+                    {fieldErrors.song_input}
+                  </p>
+                )}
+                {fieldErrors.song_requests && (
+                  <p
+                    className="text-xs mt-1"
+                    style={{
+                      color: PINK_COLOR,
+                      fontFamily: "Poppins, sans-serif",
+                    }}
+                  >
+                    {fieldErrors.song_requests}
+                  </p>
+                )}
               </div>
 
               <div
