@@ -73,7 +73,7 @@ export default function Rsvp({ token, onLogout, refreshAccessToken }) {
     canvas.height = window.innerHeight;
 
     if (!petalArrayRef.current.length) {
-      const TOTAL = 15;
+      const TOTAL = 10;
       const petalImg = new Image();
       petalImg.src = "https://djjjk9bjm164h.cloudfront.net/petal.png";
 

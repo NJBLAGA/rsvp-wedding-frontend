@@ -269,6 +269,7 @@ export default function App() {
                     display: "inline-block",
                     transition: "transform 0.3s ease",
                     transform: menuOpen ? "rotate(0deg)" : "rotate(0deg)",
+                    fontSize: "2rem",
                   }}
                 >
                   {menuOpen ? "×" : "☰"}
