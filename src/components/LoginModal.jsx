@@ -199,21 +199,28 @@ export default function LoginModal({ isOpen, onSubmit }) {
             {isProcessing ? "Processing..." : "Unlock"}
           </button>
 
-          {/* Error (responsive, wraps on small screens, disappears in 10s) */}
           {error && (
             <Alert
               severity="error"
-              className="w-full mt-2 px-2"
+              className="w-full mt-2 px-2 flex items-start"
               style={{
                 fontSize: "0.8rem",
-                textAlign: "center",
+                textAlign: "left",
                 backgroundColor: "rgba(239,68,68,0.7)",
                 color: "white",
                 border: "1px solid rgba(239,68,68,0.7)",
                 boxShadow: "0 0 8px rgba(239,68,68,0.4)",
                 lineHeight: "1.2",
-                wordBreak: "break-word", // ✅ wrap onto new line
-                whiteSpace: "normal", // ✅ allow wrapping
+                wordBreak: "break-word",
+                whiteSpace: "normal",
+                alignItems: "flex-start",
+              }}
+              slotProps={{
+                message: {
+                  style: {
+                    marginTop: "2px",
+                  },
+                },
               }}
             >
               {error}
