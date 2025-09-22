@@ -84,7 +84,7 @@ export default function Rsvp({ token, onLogout, refreshAccessToken }) {
         reset() {
           // Random X across full width
           this.x = Math.random() * canvas.width;
-          this.y = -Math.random() * canvas.height;
+          this.y = -Math.random() * (canvas.height / 2);
           this.w = 25 + Math.random() * 10;
           this.h = 18 + Math.random() * 8;
           this.opacity = 0.8;
