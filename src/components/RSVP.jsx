@@ -82,18 +82,22 @@ export default function Rsvp({ token, onLogout, refreshAccessToken }) {
         }
 
         reset() {
-          // Random X across full width
           this.x = Math.random() * canvas.width;
-          this.y = -Math.random() * (canvas.height / 2);
+
+          // Random Y: some petals on-screen, some above
+          this.y =
+            Math.random() < 0.5
+              ? Math.random() * canvas.height
+              : -Math.random() * canvas.height;
+
           this.w = 25 + Math.random() * 10;
           this.h = 18 + Math.random() * 8;
           this.opacity = 0.8;
 
-          // Faster fall speed
-          this.ySpeed = 0.1 + Math.random() * 0.1;
+          this.ySpeed = 0.05 + Math.random() * 0.1;
           this.angle = Math.random() * Math.PI * 2;
           this.angleSpeed = 0.003 + Math.random() * 0.002;
-          this.swayDistance = 60; // wider sway
+          this.swayDistance = 60;
         }
 
         draw() {
