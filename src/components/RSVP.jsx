@@ -63,7 +63,7 @@ export default function Rsvp({ token, onLogout, refreshAccessToken }) {
     if (token) fetchRsvpData();
   }, [token]);
 
-  // 🌸 Petal animation (10 slow, bunched petals)
+  // 🌸 Petal animation (20 petals, faster, spread across top axis)
   useEffect(() => {
     const canvas = canvasRef.current;
     if (!canvas) return;
@@ -77,22 +77,23 @@ export default function Rsvp({ token, onLogout, refreshAccessToken }) {
       petalImg.src = "https://djjjk9bjm164h.cloudfront.net/petal.png";
 
       class Petal {
-        constructor(offset) {
-          this.offset = offset; // keeps petals slightly apart
+        constructor() {
           this.reset();
         }
 
         reset() {
-          this.x = canvas.width / 2 + this.offset; // start around center
+          // Random X across full width
+          this.x = Math.random() * canvas.width;
           this.y = -Math.random() * canvas.height;
           this.w = 25 + Math.random() * 10;
           this.h = 18 + Math.random() * 8;
           this.opacity = 0.8;
 
-          this.ySpeed = 0.05 + Math.random() * 0.05; // very slow fall
+          // Faster fall speed
+          this.ySpeed = 0.1 + Math.random() * 0.1;
           this.angle = Math.random() * Math.PI * 2;
-          this.angleSpeed = 0.0025; // gentle sway
-          this.swayDistance = 40; // grouped sway range
+          this.angleSpeed = 0.003 + Math.random() * 0.002;
+          this.swayDistance = 60; // wider sway
         }
 
         draw() {
@@ -121,9 +122,7 @@ export default function Rsvp({ token, onLogout, refreshAccessToken }) {
 
       petalImg.addEventListener("load", () => {
         for (let i = 0; i < TOTAL; i++) {
-          // offset each petal slightly so they "bunch" together
-          const offset = (i - TOTAL / 2) * 20;
-          petalArrayRef.current.push(new Petal(offset));
+          petalArrayRef.current.push(new Petal());
         }
         const render = () => {
           ctx.clearRect(0, 0, canvas.width, canvas.height);
