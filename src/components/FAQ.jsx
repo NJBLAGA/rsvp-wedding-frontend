@@ -54,18 +54,16 @@ export default function FAQ() {
   const petalArrayRef = useRef([]);
 
   const [currentPage, setCurrentPage] = useState(1);
-  const [itemsPerPage, setItemsPerPage] = useState(6); // default for desktop/tablet
+  const [itemsPerPage, setItemsPerPage] = useState(6);
 
-  // ✅ Handle responsive items per page
   useEffect(() => {
     const updateItemsPerPage = () => {
       if (window.innerWidth <= 639) {
-        setItemsPerPage(4); // Mobile
+        setItemsPerPage(3);
       } else {
-        setItemsPerPage(6); // Tablet & Desktop
+        setItemsPerPage(6);
       }
     };
-
     updateItemsPerPage();
     window.addEventListener("resize", updateItemsPerPage);
     return () => window.removeEventListener("resize", updateItemsPerPage);
@@ -140,7 +138,6 @@ export default function FAQ() {
       canvas.width = window.innerWidth;
       canvas.height = window.innerHeight;
     };
-
     window.addEventListener("resize", handleResize);
     return () => {
       window.removeEventListener("resize", handleResize);
@@ -150,6 +147,23 @@ export default function FAQ() {
 
   const startIndex = (currentPage - 1) * itemsPerPage;
   const currentFaqs = faqData.slice(startIndex, startIndex + itemsPerPage);
+
+  // Generate page numbers with ellipsis
+  const getPageNumbers = () => {
+    const pages = [];
+    if (totalPages <= 5) {
+      for (let i = 1; i <= totalPages; i++) pages.push(i);
+    } else {
+      if (currentPage > 2) pages.push(1);
+      if (currentPage > 3) pages.push("…");
+      if (currentPage > 1) pages.push(currentPage - 1);
+      pages.push(currentPage);
+      if (currentPage < totalPages) pages.push(currentPage + 1);
+      if (currentPage < totalPages - 2) pages.push("…");
+      if (currentPage < totalPages - 1) pages.push(totalPages);
+    }
+    return pages;
+  };
 
   return (
     <div className="relative w-full min-h-screen flex flex-col items-center justify-start overflow-hidden">
@@ -173,20 +187,58 @@ export default function FAQ() {
       {/* Heading */}
       <h1 className="relative z-20 text-center font-bold">FAQs</h1>
 
-      {/* Pagination */}
-      <div className="relative z-20 pagination-container">
-        <div className="join">
-          {Array.from({ length: totalPages }).map((_, i) => (
-            <button
-              key={i}
-              className={`join-item btn btn-square btn-sm pagination-btn ${
-                currentPage === i + 1 ? "active" : ""
-              }`}
-              onClick={() => setCurrentPage(i + 1)}
-            >
-              {i + 1}
-            </button>
-          ))}
+      {/* Pagination under heading */}
+      <div className="relative z-20 flex flex-col items-center pagination-static">
+        <p className="text-sm text-gray-600 mb-2">Pages</p>
+        <div className="flex space-x-2 items-center">
+          {/* Prev arrow */}
+          <button
+            className={`circle-btn-sm ${
+              currentPage === 1
+                ? "bg-gray-200 text-gray-400 cursor-not-allowed"
+                : "bg-white text-[#eda5a5] border border-[#eda5a5] hover:bg-[#fce8e8]"
+            }`}
+            onClick={() => currentPage > 1 && setCurrentPage(currentPage - 1)}
+            disabled={currentPage === 1}
+          >
+            ‹
+          </button>
+
+          {/* Page numbers */}
+          {getPageNumbers().map((num, idx) =>
+            num === "…" ? (
+              <span key={idx} className="px-1 text-gray-500">
+                …
+              </span>
+            ) : (
+              <button
+                key={idx}
+                className={`circle-btn ${
+                  currentPage === num
+                    ? "bg-[#eda5a5] text-white shadow-md scale-105"
+                    : "bg-white text-[#eda5a5] border border-[#eda5a5] hover:bg-[#fce8e8]"
+                }`}
+                onClick={() => setCurrentPage(num)}
+              >
+                {num}
+              </button>
+            ),
+          )}
+
+          {/* Next arrow */}
+          <button
+            className={`circle-btn-sm ${
+              currentPage === totalPages
+                ? "bg-gray-200 text-gray-400 cursor-not-allowed"
+                : "bg-white text-[#eda5a5] border border-[#eda5a5] hover:bg-[#fce8e8]"
+            }`}
+            onClick={() =>
+              currentPage < totalPages && setCurrentPage(currentPage + 1)
+            }
+            disabled={currentPage === totalPages}
+          >
+            ›
+          </button>
         </div>
       </div>
 
@@ -209,9 +261,7 @@ export default function FAQ() {
                 item.answer.map((ans, idy) => (
                   <div
                     key={idy}
-                    className={`flex flex-col space-y-1 contact-block ${
-                      idy > 0 ? "mt-2" : ""
-                    }`}
+                    className={`flex flex-col space-y-1 contact-block ${idy > 0 ? "mt-2" : ""}`}
                   >
                     {ans.email && (
                       <a
@@ -266,54 +316,21 @@ export default function FAQ() {
             background-size: contain;
             background-position: top center;
           }
-          h1 {
-            font-size: 3rem;
-            margin-top: 8rem;
-          }
+          h1 { font-size: 3rem; margin-top: 8rem; }
         }
 
-        /* Tablet adjustments */
         @media (min-width: 640px) and (max-width: 1023px) {
-          h1 {
-            font-size: 2.2rem !important;
-            margin-top: 6.5rem !important;
-          }
-          .collapse-title {
-            font-size: 0.85rem !important;
-          }
-          .answer-text {
-            font-size: 0.7rem !important;
-            line-height: 1.1rem !important;
-          }
+          .bg-wedding { background-size: contain; }
+          h1 { font-size: 2.2rem !important; margin-top: 6.5rem !important; }
+          .collapse-title { font-size: 0.85rem !important; }
+          .answer-text { font-size: 0.7rem !important; line-height: 1.1rem !important; }
         }
 
-        /* Mobile adjustments (≤639px) */
         @media (max-width: 639px) {
-          .bg-wedding {
-            background-size: cover;
-          }
-          h1 {
-            font-size: 2rem;
-            margin-top: 6rem;
-          }
-          .collapse-title {
-            font-size: 0.7rem !important;
-            padding-right: 1.5rem !important;
-          }
-          .answer-text {
-            font-size: 0.6rem !important;
-            line-height: 1rem;
-          }
-
-          /* tighter space between pagination and first card */
-          .pagination-container {
-            margin-bottom: 0.4rem !important;
-          }
-
-          /* tighter space between cards */
-          .space-y-2 > :not([hidden]) ~ :not([hidden]) {
-            margin-top: 0.3rem !important;
-          }
+          .bg-wedding { background-size: cover; } /* stretch on mobile */
+          h1 { font-size: 2rem; margin-top: 6rem; }
+          .collapse-title { font-size: 0.7rem !important; }
+          .answer-text { font-size: 0.6rem !important; line-height: 1rem; }
         }
 
         h1 {
@@ -323,90 +340,52 @@ export default function FAQ() {
           margin-bottom: 0.5rem !important;
         }
 
-        .pagination-container {
-          margin-bottom: 0.75rem !important;
+        /* Circle Buttons (smaller everywhere) */
+        .circle-btn {
+          width: 1.6rem;
+          height: 1.6rem;
+          border-radius: 50%;
+          font-size: 0.65rem;
+          display: flex;
+          align-items: center;
+          justify-content: center;
         }
 
-        .pagination-btn {
-          background-color: #eda5a5 !important;
-          border: 1px solid #eda5a5 !important;
-          color: white !important;
-        }
-        .pagination-btn:hover {
-          background-color: #d38c8c !important;
-          color: white !important;
-        }
-        .pagination-btn.active {
-          background-color: #c96b6b !important;
-          color: white !important;
-        }
-        .pagination-btn:focus {
-          outline: none !important;
-          background-color: #f2bcbc !important;
-          color: white !important;
-          box-shadow: 0 0 6px rgba(237, 165, 165, 0.8);
+        .circle-btn-sm {
+          width: 1.3rem;
+          height: 1.3rem;
+          border-radius: 50%;
+          font-size: 0.55rem;
+          display: flex;
+          align-items: center;
+          justify-content: center;
         }
 
-        .collapse-title {
-          font-size: 0.9rem;
-          position: relative;
-          padding-right: 2rem !important;
-        }
-        .answer-text {
-          font-size: 0.8rem;
-        }
-
-        .collapse-plus .collapse-title::after {
-          position: absolute !important;
-          right: 0.75rem !important;
-          top: 1.1rem !important;
-          margin: 0 !important;
-          font-size: 0.9rem !important;
-          line-height: 1 !important;
-        }
-
-        .contact-block + .contact-block {
-          margin-top: 0.4rem;
-        }
-
-        @media (min-width: 640px) and (max-width: 1023px) {
-         .collapse-plus .collapse-title::after {
-           font-size: 0.8rem !important;
-           top: 1.3rem !important;
-           right: 0.6rem !important;
+        /* Tablet */
+        @media (min-width: 640px) {
+          .circle-btn {
+            width: 1.9rem;
+            height: 1.9rem;
+            font-size: 0.75rem;
+          }
+          .circle-btn-sm {
+            width: 1.5rem;
+            height: 1.5rem;
+            font-size: 0.65rem;
           }
         }
 
-        /* Extra compact for ≤375px */
-        @media (max-width: 375px) {
-          h1 {
-            margin-top: 4.2rem !important;
-            margin-bottom: 0.4rem !important;
+        /* Desktop */
+        @media (min-width: 1024px) {
+          .circle-btn {
+            width: 2rem;
+            height: 2rem;
+            font-size: 0.8rem;
           }
-          .collapse-title {
-            font-size: 0.6rem !important;
-          }
-          .answer-text {
-            font-size: 0.5rem !important;
-            line-height: 0.9rem;
-          }
-          .collapse-plus .collapse-title::after {
-            font-size: 0.7rem !important;
-            top: 1.1rem !important;
-            right: 0.5rem !important;
-          }
-          .pagination-btn {
-            width: 1.5rem !important;
-            height: 1.5rem !important;
-            min-height: 1.5rem !important;
-            font-size: 0.6rem !important;
-            padding: 0 !important;
-          }
-          .pagination-btn.active,
-          .pagination-btn:focus {
-            background-color: #f2bcbc !important;
-            color: white !important;
-            box-shadow: 0 0 6px rgba(237, 165, 165, 0.8);
+          .circle-btn-sm {
+            width: 1.7rem;
+            height: 1.7rem;
+            font-size: 0.7rem;
           }
         }
       `}</style>
