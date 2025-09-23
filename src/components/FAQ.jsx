@@ -59,7 +59,7 @@ export default function FAQ() {
   useEffect(() => {
     const updateItemsPerPage = () => {
       if (window.innerWidth <= 639) {
-        setItemsPerPage(3);
+        setItemsPerPage(4);
       } else {
         setItemsPerPage(6);
       }
@@ -71,7 +71,7 @@ export default function FAQ() {
 
   const totalPages = Math.ceil(faqData.length / itemsPerPage);
 
-  // 🌸 Petal Animation
+  // Petal Animation
   useEffect(() => {
     const canvas = canvasRef.current;
     if (!canvas) return;
@@ -189,7 +189,6 @@ export default function FAQ() {
 
       {/* Pagination under heading */}
       <div className="relative z-20 flex flex-col items-center pagination-static">
-        <p className="text-sm text-gray-600 mb-2">Pages</p>
         <div className="flex space-x-2 items-center">
           {/* Prev arrow */}
           <button
@@ -306,89 +305,103 @@ export default function FAQ() {
       </div>
 
       <style>{`
-        .bg-wedding {
-          background-position: center;
-          background-repeat: no-repeat;
-        }
+  .bg-wedding {
+    background-position: center;
+    background-repeat: no-repeat;
+  }
 
-        @media (min-width: 1024px) {
-          .bg-wedding {
-            background-size: contain;
-            background-position: top center;
-          }
-          h1 { font-size: 3rem; margin-top: 8rem; }
-        }
+  @media (min-width: 1024px) {
+    .bg-wedding {
+      background-size: contain;
+      background-position: top center;
+    }
+    h1 { font-size: 3rem; margin-top: 8rem; }
+  }
 
-        @media (min-width: 640px) and (max-width: 1023px) {
-          .bg-wedding { background-size: contain; }
-          h1 { font-size: 2.2rem !important; margin-top: 6.5rem !important; }
-          .collapse-title { font-size: 0.85rem !important; }
-          .answer-text { font-size: 0.7rem !important; line-height: 1.1rem !important; }
-        }
+  @media (min-width: 640px) and (max-width: 1023px) {
+    .bg-wedding { background-size: contain; }
+    h1 { font-size: 2.2rem !important; margin-top: 6.5rem !important; }
+    .collapse-title { font-size: 0.85rem !important; }
+    .answer-text { font-size: 0.7rem !important; line-height: 1.1rem !important; }
+  }
 
-        @media (max-width: 639px) {
-          .bg-wedding { background-size: cover; } /* stretch on mobile */
-          h1 { font-size: 2rem; margin-top: 6rem; }
-          .collapse-title { font-size: 0.7rem !important; }
-          .answer-text { font-size: 0.6rem !important; line-height: 1rem; }
-        }
+  @media (max-width: 639px) {
+    .bg-wedding { background-size: cover; } /* stretch on mobile */
+    h1 { font-size: 2rem; margin-top: 6rem; }
+    .collapse-title { font-size: 0.7rem !important; }
+    .answer-text { font-size: 0.6rem !important; line-height: 1rem; }
+  }
 
-        h1 {
-          font-family: 'Dancing Script', cursive;
-          font-weight: bold;
-          text-align: center;
-          margin-bottom: 0.5rem !important;
-        }
+  h1 {
+    font-family: 'Dancing Script', cursive;
+    font-weight: bold;
+    text-align: center;
+    margin-bottom: 0.5rem !important;
+  }
 
-        /* Circle Buttons (smaller everywhere) */
-        .circle-btn {
-          width: 1.6rem;
-          height: 1.6rem;
-          border-radius: 50%;
-          font-size: 0.65rem;
-          display: flex;
-          align-items: center;
-          justify-content: center;
-        }
+  /* Circle Buttons (default small) */
+  .circle-btn {
+    width: 1.6rem;
+    height: 1.6rem;
+    border-radius: 50%;
+    font-size: 0.65rem;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+  }
 
-        .circle-btn-sm {
-          width: 1.3rem;
-          height: 1.3rem;
-          border-radius: 50%;
-          font-size: 0.55rem;
-          display: flex;
-          align-items: center;
-          justify-content: center;
-        }
+  .circle-btn-sm {
+    width: 1.3rem;
+    height: 1.3rem;
+    border-radius: 50%;
+    font-size: 0.55rem;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+  }
 
-        /* Tablet */
-        @media (min-width: 640px) {
-          .circle-btn {
-            width: 1.9rem;
-            height: 1.9rem;
-            font-size: 0.75rem;
-          }
-          .circle-btn-sm {
-            width: 1.5rem;
-            height: 1.5rem;
-            font-size: 0.65rem;
-          }
-        }
+  /* Tablet */
+  @media (min-width: 640px) {
+    .circle-btn {
+      width: 1.9rem;
+      height: 1.9rem;
+      font-size: 0.75rem;
+    }
+    .circle-btn-sm {
+      width: 1.5rem;
+      height: 1.5rem;
+      font-size: 0.65rem;
+    }
+  }
 
-        /* Desktop */
-        @media (min-width: 1024px) {
-          .circle-btn {
-            width: 2rem;
-            height: 2rem;
-            font-size: 0.8rem;
-          }
-          .circle-btn-sm {
-            width: 1.7rem;
-            height: 1.7rem;
-            font-size: 0.7rem;
-          }
-        }
-      `}</style>
+  /* Desktop */
+  @media (min-width: 1024px) {
+    .circle-btn {
+      width: 2rem;
+      height: 2rem;
+      font-size: 0.8rem;
+    }
+    .circle-btn-sm {
+      width: 1.7rem;
+      height: 1.7rem;
+      font-size: 0.7rem;
+    }
+  }
+
+  /* Extra Small devices (≤375px) */
+  @media (max-width: 375px) {
+    .circle-btn {
+      width: 1.3rem;
+      height: 1.3rem;
+      font-size: 0.55rem;
+    }
+    .circle-btn-sm {
+      width: 1rem;
+      height: 1rem;
+      font-size: 0.45rem;
+    }
+  }
+`}</style>
     </div>
   );
 }
