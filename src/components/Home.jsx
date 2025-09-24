@@ -7,7 +7,7 @@ export default function Home() {
   const animationIdRef = useRef(null);
   const petalArrayRef = useRef([]);
 
-  // 🌸 Standardized Petal Animation
+  // Petal Animation
   useEffect(() => {
     const canvas = canvasRef.current;
     if (!canvas) return;

@@ -263,14 +263,14 @@ export default function Rsvp({ token, onLogout, refreshAccessToken }) {
     if (song.length > 50) {
       setFieldErrors((prev) => ({
         ...prev,
-        song_input: "Max Character Limit Reached",
+        song_input: "Max character limit reached",
       }));
       return;
     }
     if (editRecord.song_requests.includes(song)) {
       setFieldErrors((prev) => ({
         ...prev,
-        song_requests: "Duplicate song are not allowed",
+        song_requests: "Duplicate songs are not allowed",
       }));
       setSongInput("");
       return;
@@ -278,7 +278,7 @@ export default function Rsvp({ token, onLogout, refreshAccessToken }) {
     if (editRecord.song_requests.length >= 10) {
       setFieldErrors((prev) => ({
         ...prev,
-        song_requests: "Sorry - Max limit of 10 songs allowed",
+        song_requests: "Sorry - max limit of 10 songs allowed",
       }));
       return;
     }
@@ -374,7 +374,7 @@ export default function Rsvp({ token, onLogout, refreshAccessToken }) {
                 boxShadow: "0 0 8px rgba(34,197,94,0.4)",
               }}
             >
-              ✅ RSVP Submitted Successfully!
+              ✅ RSVP Successfully Submitted!
             </motion.div>
           )}
 
@@ -543,7 +543,7 @@ export default function Rsvp({ token, onLogout, refreshAccessToken }) {
                           fontFamily: "Poppins, sans-serif",
                         }}
                       >
-                        {fieldErrors.first_name}
+                        {fieldErrors.first_nmame}
                       </p>
                     )}
                   </div>

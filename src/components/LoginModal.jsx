@@ -269,13 +269,13 @@ export default function LoginModal({ isOpen, onSubmit }) {
         }
         @media (min-width: 1024px) {
           .bg-wedding {
-            background-size: contain; /* ✅ Desktop: no stretching */
+            background-size: contain; /* Desktop: no stretching */
             background-position: top center;
           }
         }
         @media (max-width: 1023px) {
           .bg-wedding {
-            background-size: cover; /* ✅ Mobile & tablet: fill */
+            background-size: cover; /* Mobile & tablet: fill */
           }
         }
 
