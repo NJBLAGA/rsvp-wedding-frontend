@@ -2,8 +2,9 @@ import { useState, useEffect, useRef } from "react";
 import { EyeIcon, EyeSlashIcon } from "@heroicons/react/24/outline";
 import BackgroundImage from "../assets/16264603_v839-my-10a.svg";
 import Alert from "@mui/material/Alert";
+import { motion, AnimatePresence } from "framer-motion";
 
-export default function LoginModal({ isOpen, onSubmit }) {
+export default function LoginModal({ isOpen, onSubmit, logoutMessage }) {
   const [password, setPassword] = useState("");
   const [error, setError] = useState("");
   const [showPass, setShowPass] = useState(false);
@@ -14,6 +15,7 @@ export default function LoginModal({ isOpen, onSubmit }) {
   const animationIdRef = useRef(null);
   const petalArrayRef = useRef([]);
 
+  // Reset state when modal closes
   useEffect(() => {
     if (!isOpen) {
       setPassword("");
@@ -23,7 +25,7 @@ export default function LoginModal({ isOpen, onSubmit }) {
     }
   }, [isOpen]);
 
-  // Standardized Petal Animation
+  // Petal animation
   useEffect(() => {
     const canvas = canvasRef.current;
     if (!canvas) return;
@@ -102,15 +104,16 @@ export default function LoginModal({ isOpen, onSubmit }) {
 
   if (!isOpen) return null;
 
+  // Handle login form submit
   const handleSubmit = async (e) => {
     e.preventDefault();
     setIsProcessing(true);
+
     const success = await onSubmit(password);
     if (!success) {
       setError("Incorrect password. Please try again.");
       setPassword("");
-      // ⏱ Auto clear error after 10s
-      setTimeout(() => setError(""), 10000);
+      setTimeout(() => setError(""), 8000); // auto clear
     } else {
       setError("");
     }
@@ -148,6 +151,58 @@ export default function LoginModal({ isOpen, onSubmit }) {
           Nicole & Nathan
         </h2>
 
+        {/* Alerts (stack vertically) */}
+        <div className="w-full flex flex-col gap-2 mb-2">
+          <AnimatePresence>
+            {logoutMessage && (
+              <motion.div
+                key="logout-alert"
+                initial={{ opacity: 0, y: -10 }}
+                animate={{ opacity: 1, y: 0 }}
+                exit={{ opacity: 0, y: -10 }}
+                transition={{ duration: 0.3 }}
+                className="w-full"
+              >
+                <Alert
+                  severity="info"
+                  style={{
+                    backgroundColor: "rgba(239,68,68,0.7)",
+                    color: "white",
+                    fontSize: "0.8rem",
+                  }}
+                >
+                  {logoutMessage}
+                </Alert>
+              </motion.div>
+            )}
+          </AnimatePresence>
+
+          <AnimatePresence>
+            {error && (
+              <motion.div
+                key="error-alert"
+                initial={{ opacity: 0, y: -10 }}
+                animate={{ opacity: 1, y: 0 }}
+                exit={{ opacity: 0, y: -10 }}
+                transition={{ duration: 0.3 }}
+                className="w-full"
+              >
+                <Alert
+                  severity="error"
+                  style={{
+                    backgroundColor: "rgba(239,68,68,0.8)",
+                    color: "white",
+                    fontSize: "0.8rem",
+                  }}
+                >
+                  {error}
+                </Alert>
+              </motion.div>
+            )}
+          </AnimatePresence>
+        </div>
+
+        {/* Login form */}
         <form
           onSubmit={handleSubmit}
           className="flex flex-col items-center space-y-2 w-full"
@@ -198,34 +253,6 @@ export default function LoginModal({ isOpen, onSubmit }) {
           >
             {isProcessing ? "Processing..." : "Unlock"}
           </button>
-
-          {error && (
-            <Alert
-              severity="error"
-              className="w-full mt-2 px-2 flex items-start"
-              style={{
-                fontSize: "0.8rem",
-                textAlign: "left",
-                backgroundColor: "rgba(239,68,68,0.7)",
-                color: "white",
-                border: "1px solid rgba(239,68,68,0.7)",
-                boxShadow: "0 0 8px rgba(239,68,68,0.4)",
-                lineHeight: "1.2",
-                wordBreak: "break-word",
-                whiteSpace: "normal",
-                alignItems: "flex-start",
-              }}
-              slotProps={{
-                message: {
-                  style: {
-                    marginTop: "2px",
-                  },
-                },
-              }}
-            >
-              {error}
-            </Alert>
-          )}
 
           {/* Request Password Link */}
           <div className="mt-4 sm:mt-6 text-center w-full">

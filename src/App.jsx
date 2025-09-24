@@ -14,31 +14,29 @@ import ListItemText from "@mui/material/ListItemText";
 
 export default function App() {
   const storedAccessToken = localStorage.getItem("accessToken");
-  const storedRefreshToken = localStorage.getItem("refreshToken");
   const storedTab = localStorage.getItem("activeTab");
 
   const [accessToken, setAccessToken] = useState(storedAccessToken || "");
-  const [refreshToken, setRefreshToken] = useState(storedRefreshToken || "");
   const [isLoggedIn, setIsLoggedIn] = useState(!!storedAccessToken);
   const [activeTab, setActiveTab] = useState(storedTab || "Home");
   const [menuOpen, setMenuOpen] = useState(false);
-  const [sessionExpired, setSessionExpired] = useState(false);
+  const [logoutMessage, setLogoutMessage] = useState("");
 
   const PETAL_PINK = "#d38c8c";
 
+  // Persist active tab while logged in
   useEffect(() => {
     if (isLoggedIn) localStorage.setItem("activeTab", activeTab);
   }, [activeTab, isLoggedIn]);
 
+  // Refresh token handler (uses cookie)
   const refreshAccessToken = useCallback(async () => {
-    if (!refreshToken) return false;
     try {
       const res = await fetch(
-        "https://rsvp-wedding-backend.onrender.com/refresh_token",
+        "https://rsvp-wedding-backend.onrender.com/token/refresh",
         {
           method: "POST",
-          headers: { "Content-Type": "application/json" },
-          body: JSON.stringify({ token: refreshToken }),
+          credentials: "include", // 🔑 send cookie
         },
       );
       if (!res.ok) return false;
@@ -46,6 +44,7 @@ export default function App() {
       if (data.accessToken) {
         setAccessToken(data.accessToken);
         localStorage.setItem("accessToken", data.accessToken);
+        setIsLoggedIn(true);
         return true;
       }
       return false;
@@ -53,8 +52,16 @@ export default function App() {
       console.error("Refresh token failed:", err);
       return false;
     }
-  }, [refreshToken]);
+  }, []);
 
+  // Try to refresh on mount if no valid accessToken
+  useEffect(() => {
+    if (!storedAccessToken) {
+      refreshAccessToken();
+    }
+  }, [refreshAccessToken, storedAccessToken]);
+
+  // Login handler
   const handleLogin = async (inputPass) => {
     try {
       const res = await fetch(
@@ -62,18 +69,17 @@ export default function App() {
         {
           method: "POST",
           headers: { "Content-Type": "application/json" },
+          credentials: "include", // 🔑 cookie will be set here
           body: JSON.stringify({ pass_key: inputPass }),
         },
       );
       if (!res.ok) return false;
       const data = await res.json();
-      if (data.accessToken && data.refreshToken) {
+      if (data.accessToken) {
         setAccessToken(data.accessToken);
-        setRefreshToken(data.refreshToken);
         localStorage.setItem("accessToken", data.accessToken);
-        localStorage.setItem("refreshToken", data.refreshToken);
         setIsLoggedIn(true);
-        setSessionExpired(false);
+        setLogoutMessage(""); // clear old alerts
         return true;
       }
       return false;
@@ -83,25 +89,40 @@ export default function App() {
     }
   };
 
-  const handleLogout = () => {
+  // Explicit logout
+  const handleLogout = async (message = "") => {
+    try {
+      await fetch("https://rsvp-wedding-backend.onrender.com/logout", {
+        method: "POST",
+        credentials: "include", // 🔑 clears cookie
+      });
+    } catch (err) {
+      console.error("Logout failed:", err);
+    }
+
     setIsLoggedIn(false);
     setAccessToken("");
-    setRefreshToken("");
     localStorage.removeItem("accessToken");
-    localStorage.removeItem("refreshToken");
     localStorage.removeItem("activeTab");
     setActiveTab("Home");
     setMenuOpen(false);
-  };
 
-  const handleSessionExpired = async () => {
-    const refreshed = await refreshAccessToken();
-    if (!refreshed) {
-      handleLogout();
-      setSessionExpired(true);
+    if (message) {
+      setLogoutMessage(message);
+      setTimeout(() => setLogoutMessage(""), 8000); // auto clear after 8s
+      window.scrollTo(0, 0); // scroll up so user sees alert
     }
   };
 
+  // Session expired handler (called by Rsvp)
+  const handleSessionExpired = async () => {
+    const refreshed = await refreshAccessToken();
+    if (!refreshed) {
+      handleLogout("Your session has expired. Please log in again.");
+    }
+  };
+
+  // Drawer list
   const drawerList = (
     <Box
       sx={{
@@ -161,7 +182,7 @@ export default function App() {
                 color: PETAL_PINK,
               },
             }}
-            onClick={handleLogout}
+            onClick={() => handleLogout()}
           >
             <ListItemText primary="Logout" sx={{ paddingLeft: 1 }} />
           </ListItemButton>
@@ -180,7 +201,7 @@ export default function App() {
         rel="stylesheet"
       />
 
-      {/* Inline CSS for navbar button font sizes */}
+      {/* Navbar button font sizes */}
       <style>{`
         .navbar-desktop-btn {
           font-size: 16px !important;
@@ -192,21 +213,13 @@ export default function App() {
         }
       `}</style>
 
-      <LoginModal
-        isOpen={!isLoggedIn && !sessionExpired}
-        onSubmit={handleLogin}
-      />
-
-      {sessionExpired && (
-        <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/40">
-          <div className="bg-white rounded-lg p-6 max-w-sm text-center shadow-lg">
-            <h2 className="text-xl font-semibold mb-4">Session Expired</h2>
-            <p className="mb-4">
-              Your session has expired. Please log in again.
-            </p>
-            <LoginModal isOpen={true} onSubmit={handleLogin} />
-          </div>
-        </div>
+      {/* Login modal */}
+      {!isLoggedIn && (
+        <LoginModal
+          isOpen={!isLoggedIn}
+          onSubmit={handleLogin}
+          logoutMessage={logoutMessage}
+        />
       )}
 
       {isLoggedIn && (
@@ -239,7 +252,7 @@ export default function App() {
                 </button>
               ))}
               <button
-                onClick={handleLogout}
+                onClick={() => handleLogout()}
                 className="navbar-desktop-btn pb-1 font-normal"
                 style={{
                   color: "#000",
@@ -278,7 +291,7 @@ export default function App() {
                   style={{
                     display: "inline-block",
                     transition: "transform 0.3s ease",
-                    fontSize: menuOpen ? "2.6rem" : "2rem", // bigger X close
+                    fontSize: menuOpen ? "2.6rem" : "2rem",
                   }}
                 >
                   {menuOpen ? "×" : "☰"}

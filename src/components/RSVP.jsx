@@ -24,25 +24,40 @@ export default function Rsvp({ token, onLogout, refreshAccessToken }) {
   const songChipContainerRef = useRef(null);
   const PINK_COLOR = "#eda5a5";
 
+  // 🔑 Fetch helper with retry logic
+  const fetchWithAuth = async (url, options = {}) => {
+    const doFetch = async (newToken = token) =>
+      fetch(url, {
+        ...options,
+        headers: {
+          ...(options.headers || {}),
+          Authorization: `Bearer ${newToken}`,
+        },
+        credentials: "include",
+      });
+
+    let res = await doFetch();
+    if (res.status === 401) {
+      const refreshed = await refreshAccessToken();
+      if (!refreshed) {
+        onLogout("Your session has expired. Please log in again.");
+        return res;
+      }
+      const newToken = localStorage.getItem("accessToken");
+      res = await doFetch(newToken);
+    }
+    return res;
+  };
+
   // Fetch RSVP Data
   const fetchRsvpData = async () => {
     setLoading(true);
     setError("");
     setShowProcessing(true);
     try {
-      const res = await fetch(
+      const res = await fetchWithAuth(
         "https://rsvp-wedding-backend.onrender.com/family",
-        { headers: { Authorization: `Bearer ${token}` } },
       );
-
-      if (res.status === 401) {
-        const refreshed = await refreshAccessToken();
-        if (!refreshed) {
-          onLogout();
-          return;
-        }
-        return;
-      }
 
       if (!res.ok) throw new Error("Failed to fetch RSVP records.");
 
@@ -64,7 +79,7 @@ export default function Rsvp({ token, onLogout, refreshAccessToken }) {
     if (token) fetchRsvpData();
   }, [token]);
 
-  // Petal animation
+  // 🌸 Petal animation
   useEffect(() => {
     const canvas = canvasRef.current;
     if (!canvas) return;
@@ -221,13 +236,12 @@ export default function Rsvp({ token, onLogout, refreshAccessToken }) {
     setUpdating(true);
     setShowProcessing(true);
     try {
-      const res = await fetch(
+      const res = await fetchWithAuth(
         `https://rsvp-wedding-backend.onrender.com/rsvp/${editRecord.id}`,
         {
           method: "PATCH",
           headers: {
             "Content-Type": "application/json",
-            Authorization: `Bearer ${token}`,
           },
           body: JSON.stringify({
             first_name: editRecord.is_guest ? editRecord.first_name : undefined,
@@ -243,9 +257,7 @@ export default function Rsvp({ token, onLogout, refreshAccessToken }) {
       setShowProcessing(false);
       setShowSuccess(true);
       setShowConfetti(true);
-      const modal = document.getElementById("edit_modal");
-      if (modal) modal.close();
-      setEditRecord(null);
+      closeEditModal();
       setTimeout(() => setShowSuccess(false), 5000);
       setTimeout(() => setShowConfetti(false), 7000);
     } catch (err) {
@@ -257,52 +269,60 @@ export default function Rsvp({ token, onLogout, refreshAccessToken }) {
     }
   };
 
-  const handleAddSong = () => {
+  // 🎵 Song add
+  const handleAddSong = async () => {
     const song = songInput.trim();
     if (!song) return;
-    if (song.length > 50) {
-      setFieldErrors((prev) => ({
+    try {
+      const res = await fetchWithAuth(
+        `https://rsvp-wedding-backend.onrender.com/rsvp/${editRecord.id}/song`,
+        {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({ song }),
+        },
+      );
+      if (!res.ok) {
+        const errData = await res.json();
+        setFieldErrors((prev) => ({
+          ...prev,
+          song_requests: errData.error || "Failed to add song",
+        }));
+        return;
+      }
+      const updated = await res.json();
+      setEditRecord((prev) => ({
         ...prev,
-        song_input: "Max character limit reached",
-      }));
-      return;
-    }
-    if (editRecord.song_requests.includes(song)) {
-      setFieldErrors((prev) => ({
-        ...prev,
-        song_requests: "Duplicate songs are not allowed",
+        song_requests: updated.song_requests,
       }));
       setSongInput("");
-      return;
+    } catch (err) {
+      console.error(err);
+      setError("Could not add song");
     }
-    if (editRecord.song_requests.length >= 10) {
-      setFieldErrors((prev) => ({
-        ...prev,
-        song_requests: "Sorry - max limit of 10 songs allowed",
-      }));
-      return;
-    }
-    setEditRecord((prev) => {
-      const updated = { ...prev, song_requests: [...prev.song_requests, song] };
-      setTimeout(() => {
-        if (songChipContainerRef.current) {
-          songChipContainerRef.current.scrollTo({
-            left: songChipContainerRef.current.scrollWidth,
-            behavior: "smooth",
-          });
-        }
-      }, 50);
-      return updated;
-    });
-    setSongInput("");
-    setFieldErrors((prev) => ({ ...prev, song_requests: "" }));
   };
 
-  const handleDeleteSong = (song) => {
-    setEditRecord((prev) => ({
-      ...prev,
-      song_requests: prev.song_requests.filter((s) => s !== song),
-    }));
+  // 🎵 Song delete
+  const handleDeleteSong = async (song) => {
+    try {
+      const res = await fetchWithAuth(
+        `https://rsvp-wedding-backend.onrender.com/rsvp/${editRecord.id}/song`,
+        {
+          method: "DELETE",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({ song }),
+        },
+      );
+      if (!res.ok) throw new Error("Failed to delete song");
+      const updated = await res.json();
+      setEditRecord((prev) => ({
+        ...prev,
+        song_requests: updated.song_requests,
+      }));
+    } catch (err) {
+      console.error(err);
+      setError("Could not delete song");
+    }
   };
 
   useEffect(() => {
@@ -543,7 +563,7 @@ export default function Rsvp({ token, onLogout, refreshAccessToken }) {
                           fontFamily: "Poppins, sans-serif",
                         }}
                       >
-                        {fieldErrors.first_nmame}
+                        {fieldErrors.first_name}
                       </p>
                     )}
                   </div>
