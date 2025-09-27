@@ -79,7 +79,7 @@ export default function Rsvp({ token, onLogout, refreshAccessToken }) {
     if (token) fetchRsvpData();
   }, [token]);
 
-  // 🌸 Petal animation
+  // Petal animation
   useEffect(() => {
     const canvas = canvasRef.current;
     if (!canvas) return;
@@ -269,7 +269,7 @@ export default function Rsvp({ token, onLogout, refreshAccessToken }) {
     }
   };
 
-  // 🎵 Song add
+  // Song add
   const handleAddSong = async () => {
     const song = songInput.trim();
     if (!song) return;
@@ -302,7 +302,7 @@ export default function Rsvp({ token, onLogout, refreshAccessToken }) {
     }
   };
 
-  // 🎵 Song delete
+  // Song delete
   const handleDeleteSong = async (song) => {
     try {
       const res = await fetchWithAuth(
