@@ -24,7 +24,7 @@ export default function Rsvp({ token, onLogout, refreshAccessToken }) {
   const songChipContainerRef = useRef(null);
   const PINK_COLOR = "#eda5a5";
 
-  // 🔑 Fetch helper with retry logic
+  // Fetch helper with retry logic
   const fetchWithAuth = async (url, options = {}) => {
     const doFetch = async (newToken = token) =>
       fetch(url, {
