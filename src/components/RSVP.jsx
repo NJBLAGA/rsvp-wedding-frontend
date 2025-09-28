@@ -182,9 +182,15 @@ export default function Rsvp({ token, onLogout, refreshAccessToken }) {
 
     if (type === "checkbox") {
       setEditRecord({ ...editRecord, [name]: checked ? value : "" });
-    } else if (name === "song_input") {
-      setSongInput(value);
-      if (value.length >= 50) {
+      return;
+    }
+
+    if (name === "song_input") {
+      // Limit song input to 50 chars
+      const newValue = value.slice(0, 50);
+      setSongInput(newValue);
+
+      if (newValue.length >= 50) {
         setFieldErrors((prev) => ({
           ...prev,
           song_input: "Max Characters Reached",
@@ -192,31 +198,25 @@ export default function Rsvp({ token, onLogout, refreshAccessToken }) {
       } else {
         setFieldErrors((prev) => ({ ...prev, song_input: "" }));
       }
+      return;
+    }
+
+    let maxLen = null;
+    if (name === "dietary_requirements") maxLen = 200;
+    if (name === "first_name" || name === "last_name") maxLen = 20;
+
+    const newValue = maxLen ? value.slice(0, maxLen) : value;
+
+    setEditRecord({ ...editRecord, [name]: newValue });
+    setCharCounts((prev) => ({ ...prev, [name]: newValue.length }));
+
+    if (maxLen && newValue.length >= maxLen) {
+      setFieldErrors((prev) => ({
+        ...prev,
+        [name]: "Max Characters Reached",
+      }));
     } else {
-      setEditRecord({ ...editRecord, [name]: value });
-      setCharCounts((prev) => ({ ...prev, [name]: value.length }));
-
-      if (name === "dietary_requirements") {
-        if (value.length >= 200) {
-          setFieldErrors((prev) => ({
-            ...prev,
-            dietary_requirements: "Max Characters Reached",
-          }));
-        } else {
-          setFieldErrors((prev) => ({ ...prev, dietary_requirements: "" }));
-        }
-      }
-
-      if (name === "first_name" || name === "last_name") {
-        if (value.length >= 20) {
-          setFieldErrors((prev) => ({
-            ...prev,
-            [name]: "Max Characters Reached",
-          }));
-        } else {
-          setFieldErrors((prev) => ({ ...prev, [name]: "" }));
-        }
-      }
+      setFieldErrors((prev) => ({ ...prev, [name]: "" }));
     }
   };
 
