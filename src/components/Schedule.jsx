@@ -229,7 +229,7 @@ export default function Schedule() {
         }
         @media (max-width: 1023px) {
           .bg-wedding {
-            background-size: cover; /* Mobile & tablet: fill */
+            background-size: cover;
           }
         }
 
