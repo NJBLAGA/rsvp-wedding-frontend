@@ -454,7 +454,7 @@ export default function Rsvp({ token, onLogout, refreshAccessToken }) {
               >
                 <h2
                   ref={(el) => (fullNameRefs.current[record.id] = el)}
-                  className="guest-name text-xl sm:text-2xl md:text-3xl font-medium leading-snug"
+                  className="guest-name text-2xl sm:text-3xl md:text-3xl font-medium leading-snug"
                   style={{ fontFamily: "'Dancing Script', cursive" }}
                 >
                   {fullName || "Guest"}
@@ -815,11 +815,11 @@ export default function Rsvp({ token, onLogout, refreshAccessToken }) {
         .modal-name { white-space: normal; word-break: break-word; }
 
         @media (max-width: 375px) {
-          .guest-name { font-size: 1.2rem !important; margin-bottom: 0.25rem !important; }
+          .guest-name { font-size: 1.4rem !important; margin-bottom: 0.25rem !important; }
           .modal-name { font-size: 1.6rem !important; margin-bottom: 0.5rem !important; padding: 0.25rem 0 !important; }
         }
         @media (max-width: 360px) {
-          .guest-name { font-size: 1.1rem !important; margin-bottom: 0.2rem !important; }
+          .guest-name { font-size: 1.4rem !important; margin-bottom: 0.2rem !important; }
           .modal-name { font-size: 1.4rem !important; margin-bottom: 0.4rem !important; padding: 0.2rem 0 !important; }
         }
 
