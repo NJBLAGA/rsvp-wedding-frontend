@@ -163,7 +163,11 @@ export default function Rsvp({ token, onLogout, refreshAccessToken }) {
     });
     setSongInput("");
     setFieldErrors({});
-    setCharCounts({});
+    setCharCounts({
+      first_name: record.first_name?.length || 0,
+      last_name: record.last_name?.length || 0,
+      dietary_requirements: record.dietary_requirements?.length || 0,
+    });
     document.getElementById("edit_modal").showModal();
   };
 
