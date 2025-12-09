@@ -761,6 +761,13 @@ export default function Rsvp({ token, onLogout, refreshAccessToken }) {
           color: #000000 !important;
           border: 1px solid #000000 !important;
         }
+  
+        textarea {
+          white-space: pre-wrap;
+          overflow-wrap: break-word;
+          word-wrap: break-word;
+        }
+
         input::placeholder, textarea::placeholder { color: #6b7280; }
         input:focus, textarea:focus {
           background-color: rgba(237,165,165,0.15) !important;
