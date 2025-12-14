@@ -199,7 +199,7 @@ export default function Home() {
         }
 
         /* Desktop (≥1024px) */
-        @media (min-width: 1024px) {
+         @media (min-width: 1024px) and (max-height: 820px) {
           h1 { font-size: 3rem !important; margin-top: 8rem !important; }
           h2 { font-size: 1.4rem !important; }
           h3 { font-size: 0.8rem !important; }
@@ -207,6 +207,17 @@ export default function Home() {
           img { width: 200px !important; height: 300px !important; }
           .card { width: 50%; max-width: 360px; }
         }
+
+       /* Desktop — 15 inch and larger */
+       @media (min-width: 1024px) and (min-height: 821px) {
+       h1 { font-size: 3rem !important; margin-top: 8rem !important; }
+       h2 { font-size: 1.4rem !important; }
+       h3 { font-size: 0.8rem !important; }
+       p  { font-size: 0.75rem !important; }
+
+       img { width: 260px !important; height: 360px !important; }
+       .card { width: 50%; max-width: 360px; }
+      }
       `}</style>
     </div>
   );
