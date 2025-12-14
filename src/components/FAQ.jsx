@@ -36,25 +36,10 @@ const faqData = [
     question: "Will there be parking available?",
     answer: "Yes, free parking will be available at the venue.",
   },
-  {
-    question: "When is the RSVP deadline?",
-    answer:
-      "Please RSVP by February 1st, so we can have an accurate headcount.",
-  },
-  {
-    question: "Are kids welcome?",
-    answer:
-      "As much as we love your little ones, we will not be including them in the ceremony or reception.",
-  },
-  {
-    question: "Where should I park",
-    answer: "There is plenty of free parking onsite at Camden Valley Inn.",
-  },
-  {
-    question: "Is the wedding indoors or outdoors?",
-    answer:
-      "Our wedding ceremony is outdoors, but our reception will be indoors.",
-  },
+  { question: "Template 1", answer: "Answer 1" },
+  { question: "Template 2", answer: "Answer 2" },
+  { question: "Template 3", answer: "Answer 3" },
+  { question: "Template 4", answer: "Answer 4" },
   { question: "Template 5", answer: "Answer 5" },
   { question: "Template 6", answer: "Answer 6" },
   { question: "Template 7", answer: "Answer 7" },
