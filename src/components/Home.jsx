@@ -16,7 +16,7 @@ export default function Home() {
     canvas.height = window.innerHeight;
 
     if (!petalArrayRef.current.length) {
-      const TOTAL = 10;
+      const TOTAL = 12;
       const petalImg = new Image();
       petalImg.src = "https://djjjk9bjm164h.cloudfront.net/petal.png";
 
@@ -30,8 +30,8 @@ export default function Home() {
             Math.random() < 0.5
               ? Math.random() * canvas.height
               : -Math.random() * canvas.height;
-          this.w = 25 + Math.random() * 10;
-          this.h = 18 + Math.random() * 8;
+          this.w = 16 + Math.random() * 10;
+          this.h = 12 + Math.random() * 8;
           this.opacity = 0.8;
           this.ySpeed = 0.05 + Math.random() * 0.1;
           this.angle = Math.random() * Math.PI * 2;
@@ -121,7 +121,7 @@ export default function Home() {
             <img
               src={WeddingImage}
               alt="Wedding couple"
-              className="rounded-t-lg object-cover opacity-95"
+              className="rounded-t-lg object-cover opacity-95 w-full max-w-[360px] aspect-[3/4]"
             />
           </figure>
           <div className="card-body text-center p-2 bg-transparent w-full">
@@ -166,7 +166,6 @@ export default function Home() {
         h2 { font-size: 1.2rem; color: rgba(0,0,0,0.85); }
         h3 { font-size: 0.8rem; color: rgba(0,0,0,0.8); }
         p { font-size: 0.75rem; color: rgba(0,0,0,0.8); }
-        img { width: 260px; height: 360px; }
 
         /* SE2 and extra small devices (<=380px) */
         @media (max-width: 380px) {
@@ -174,7 +173,6 @@ export default function Home() {
           h2 { font-size: 0.95rem !important; }
           h3 { font-size: 0.6rem !important; }
           p { font-size: 0.6rem !important; }
-          img { width: 180px !important; height: 260px !important; }
           .card { width: 90%; max-width: 240px; }
         }
 
@@ -184,7 +182,6 @@ export default function Home() {
           h2 { font-size: 1rem !important; }
           h3 { font-size: 0.65rem !important; }
           p { font-size: 0.65rem !important; }
-          img { width: 220px !important; height: 300px !important; }
           .card { width: 95%; max-width: 280px; }
         }
 
@@ -204,7 +201,6 @@ export default function Home() {
           h2 { font-size: 1.4rem !important; }
           h3 { font-size: 0.8rem !important; }
           p { font-size: 0.75rem !important; }
-          img { width: 320px !important; height: 460px !important; }
           .card { width: 50%; max-width: 360px; }
         }
       `}</style>
