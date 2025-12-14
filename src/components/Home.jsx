@@ -137,8 +137,8 @@ export default function Home() {
               Camden Valley Inn, Remembrance Dr, Cawdor NSW, Australia
             </h3>
             <p className="mt-1">
-              Join us in celebrating our love! We can't wait to share our
-              special day with you.
+              We would like to invite you to celebrate our wedding. We can't
+              wait to share our special day with you.
             </p>
           </div>
         </div>
