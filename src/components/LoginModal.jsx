@@ -315,6 +315,14 @@ export default function LoginModal({ isOpen, onSubmit, logoutMessage }) {
         .request-link:hover, .request-link:focus {
           color: ${PINK_COLOR};
         }
+
+
+@media (max-width: 1440px) and (max-height: 900px) {
+  html {
+    font-size: 92%;
+  }
+}
+
       `}</style>
     </div>
   );
