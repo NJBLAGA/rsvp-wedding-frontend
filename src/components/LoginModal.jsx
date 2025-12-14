@@ -10,6 +10,7 @@ export default function LoginModal({ isOpen, onSubmit, logoutMessage }) {
   const [showPass, setShowPass] = useState(false);
   const [isProcessing, setIsProcessing] = useState(false);
   const canvasRef = useRef(null);
+  console.log("hello");
 
   const PINK_COLOR = "#eda5a5";
   const animationIdRef = useRef(null);
@@ -104,7 +105,7 @@ export default function LoginModal({ isOpen, onSubmit, logoutMessage }) {
 
   if (!isOpen) return null;
 
-  // Handle login submit
+  // Handle login form submit
   const handleSubmit = async (e) => {
     e.preventDefault();
     setIsProcessing(true);
@@ -113,7 +114,7 @@ export default function LoginModal({ isOpen, onSubmit, logoutMessage }) {
     if (!success) {
       setError("Incorrect password. Please try again.");
       setPassword("");
-      setTimeout(() => setError(""), 8000);
+      setTimeout(() => setError(""), 8000); // auto clear
     } else {
       setError("");
     }
@@ -122,7 +123,7 @@ export default function LoginModal({ isOpen, onSubmit, logoutMessage }) {
 
   return (
     <div
-      className="fixed inset-0 z-50 flex items-center justify-center overflow-y-auto px-2 sm:px-4"
+      className="fixed inset-0 z-50 flex items-center justify-center overflow-hidden px-2 sm:px-4"
       style={{ fontFamily: "'Poppins', sans-serif" }}
     >
       <link
@@ -143,7 +144,7 @@ export default function LoginModal({ isOpen, onSubmit, logoutMessage }) {
       />
 
       {/* Content */}
-      <div className="relative z-20 w-full max-w-sm text-center px-4 py-8">
+      <div className="relative z-20 w-full max-w-sm text-center px-4">
         <h2
           className="text-3xl sm:text-4xl mb-4"
           style={{ fontFamily: "'Dancing Script', cursive", color: "#000" }}
@@ -151,14 +152,17 @@ export default function LoginModal({ isOpen, onSubmit, logoutMessage }) {
           Nicole & Nathan
         </h2>
 
-        {/* Alerts */}
+        {/* Alerts (stack vertically) */}
         <div className="w-full flex flex-col gap-2 mb-2">
           <AnimatePresence>
             {logoutMessage && (
               <motion.div
+                key="logout-alert"
                 initial={{ opacity: 0, y: -10 }}
                 animate={{ opacity: 1, y: 0 }}
                 exit={{ opacity: 0, y: -10 }}
+                transition={{ duration: 0.3 }}
+                className="w-full"
               >
                 <Alert
                   severity="info"
@@ -177,9 +181,12 @@ export default function LoginModal({ isOpen, onSubmit, logoutMessage }) {
           <AnimatePresence>
             {error && (
               <motion.div
+                key="error-alert"
                 initial={{ opacity: 0, y: -10 }}
                 animate={{ opacity: 1, y: 0 }}
                 exit={{ opacity: 0, y: -10 }}
+                transition={{ duration: 0.3 }}
+                className="w-full"
               >
                 <Alert
                   severity="error"
@@ -196,11 +203,12 @@ export default function LoginModal({ isOpen, onSubmit, logoutMessage }) {
           </AnimatePresence>
         </div>
 
-        {/* Form */}
+        {/* Login form */}
         <form
           onSubmit={handleSubmit}
           className="flex flex-col items-center space-y-2 w-full"
         >
+          {/* Password Input */}
           <div className="relative w-full">
             <input
               type={showPass ? "text" : "password"}
@@ -209,14 +217,18 @@ export default function LoginModal({ isOpen, onSubmit, logoutMessage }) {
               onChange={(e) => setPassword(e.target.value)}
               required
               disabled={isProcessing}
-              className="w-full px-3 py-2 border rounded-lg text-sm text-black"
-              style={{ borderColor: PINK_COLOR }}
+              className="w-full px-3 py-2 border rounded-lg focus:outline-none text-sm text-black"
+              style={{
+                borderColor: PINK_COLOR,
+                fontFamily: "'Poppins', sans-serif",
+              }}
             />
             <button
               type="button"
               className="absolute right-2 top-1/2 -translate-y-1/2"
               style={{ color: PINK_COLOR }}
               onClick={() => setShowPass(!showPass)}
+              disabled={isProcessing}
             >
               {showPass ? (
                 <EyeSlashIcon className="h-5 w-5" />
@@ -226,13 +238,16 @@ export default function LoginModal({ isOpen, onSubmit, logoutMessage }) {
             </button>
           </div>
 
+          {/* Unlock Button */}
           <button
             type="submit"
             disabled={isProcessing}
-            className="w-full py-2 rounded-lg text-sm font-semibold"
+            className="w-full py-2 rounded-lg text-sm font-semibold transition-colors"
             style={{
               backgroundColor: isProcessing ? "#f7bfc1" : PINK_COLOR,
               color: "white",
+              fontFamily: "'Poppins', sans-serif",
+              cursor: isProcessing ? "not-allowed" : "pointer",
               border: `1px solid ${PINK_COLOR}`,
               boxShadow: "0 0 8px rgba(237,165,165,0.4)",
             }}
@@ -240,39 +255,64 @@ export default function LoginModal({ isOpen, onSubmit, logoutMessage }) {
             {isProcessing ? "Processing..." : "Unlock"}
           </button>
 
-          <div className="mt-4 text-center">
+          {/* Request Password Link */}
+          <div className="mt-4 sm:mt-6 text-center w-full">
             <a
-              href="mailto:nathanblaga90@gmail.com?cc=nicole.camilleri44@gmail.com&subject=Password%20Request"
-              className="request-link text-sm"
+              href="mailto:nathanblaga90@gmail.com?cc=nicole.camilleri44@gmail.com&subject=Password%20Request&body=Dear%20Nathan%20%26%20Nicole,%0D%0A%0D%0ACould%20you%20please%20resend%20us%20our%20password%20again.%0D%0A%0D%0AKind%20Regards"
+              className="request-link inline-flex items-center justify-center gap-1 sm:gap-2"
+              style={{
+                color: "#6b6b6b",
+                textDecoration: "none",
+                fontFamily: "'Poppins', sans-serif",
+                fontSize: "0.9rem",
+              }}
             >
-              Request Password
+              <svg
+                xmlns="http://www.w3.org/2000/svg"
+                width="15"
+                height="15"
+                className="sm:w-[18px] sm:h-[18px]"
+                viewBox="0 0 24 24"
+                fill="none"
+                stroke="#6b6b6b"
+                strokeWidth="2"
+                strokeLinecap="round"
+                strokeLinejoin="round"
+              >
+                <rect x="2" y="4" width="20" height="16" rx="2"></rect>
+                <path d="M22 7 12 13 2 7"></path>
+              </svg>
+              <span className="text-xs sm:text-sm md:text-base">
+                Request Password
+              </span>
             </a>
           </div>
         </form>
       </div>
 
-      {/* ✅ BACKGROUND FIX */}
       <style>{`
         .bg-wedding {
-          background-position: top center;
-          background-repeat: repeat-y;      /* infinite vertical */
-          background-size: auto 100vh;      /* height = viewport */
+          background-position: center;
+          background-repeat: no-repeat;
         }
-
+        @media (min-width: 1024px) {
+          .bg-wedding {
+            background-size: contain; /* Desktop: no stretching */
+            background-position: top center;
+          }
+        }
         @media (max-width: 1023px) {
           .bg-wedding {
-            background-size: cover;
-            background-repeat: repeat-y;
+            background-size: cover; /* Mobile & tablet: fill */
           }
         }
 
         input:focus {
-          outline: none;
+          outline: none !important;
           border-color: ${PINK_COLOR};
           background-color: #fff9f9;
         }
-
-        .request-link:hover {
+        .request-link:hover, .request-link:focus {
           color: ${PINK_COLOR};
         }
       `}</style>
