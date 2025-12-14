@@ -121,7 +121,7 @@ export default function Home() {
             <img
               src={WeddingImage}
               alt="Wedding couple"
-              className="rounded-t-lg object-cover opacity-95 w-full max-w-[360px] aspect-[3/4]"
+              className="rounded-t-lg object-cover opacity-95"
             />
           </figure>
           <div className="card-body text-center p-2 bg-transparent w-full">
@@ -166,6 +166,7 @@ export default function Home() {
         h2 { font-size: 1.2rem; color: rgba(0,0,0,0.85); }
         h3 { font-size: 0.8rem; color: rgba(0,0,0,0.8); }
         p { font-size: 0.75rem; color: rgba(0,0,0,0.8); }
+        img { width: 260px; height: 360px; }
 
         /* SE2 and extra small devices (<=380px) */
         @media (max-width: 380px) {
@@ -173,6 +174,7 @@ export default function Home() {
           h2 { font-size: 0.95rem !important; }
           h3 { font-size: 0.6rem !important; }
           p { font-size: 0.6rem !important; }
+          img { width: 180px !important; height: 260px !important; }
           .card { width: 90%; max-width: 240px; }
         }
 
@@ -182,6 +184,7 @@ export default function Home() {
           h2 { font-size: 1rem !important; }
           h3 { font-size: 0.65rem !important; }
           p { font-size: 0.65rem !important; }
+          img { width: 220px !important; height: 300px !important; }
           .card { width: 95%; max-width: 280px; }
         }
 
@@ -201,7 +204,16 @@ export default function Home() {
           h2 { font-size: 1.4rem !important; }
           h3 { font-size: 0.8rem !important; }
           p { font-size: 0.75rem !important; }
+          img { width: 320px !important; height: 460px !important; }
           .card { width: 50%; max-width: 360px; }
+        }
+
+        /* 13-inch laptop override (MacBook Air / small laptops) */
+        @media (min-width: 1280px) and (max-width: 1440px) and (max-height: 900px) {
+          img {
+            width: 52px !important;
+            height: 72px !important;
+          }
         }
       `}</style>
     </div>
