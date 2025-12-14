@@ -194,7 +194,7 @@ export default function Home() {
           h2 { font-size: 1.2rem !important; }
           h3 { font-size: 0.75rem !important; }
           p { font-size: 0.7rem !important; }
-          img { width: 280px !important; height: 400px !important; }
+          img { width: 200px !important; height: 300px !important; }
           .card { width: 55%; max-width: 340px; }
         }
 
