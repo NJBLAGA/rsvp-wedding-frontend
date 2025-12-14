@@ -1,0 +1,97 @@
+/* =========================================
+   GLOBAL DESKTOP SCALE FIX (13" laptops)
+   Targets ~1366px–1536px widths
+   ========================================= */
+
+/* 1. Cap overall content width */
+body {
+  overflow-x: hidden;
+}
+
+#root,
+main,
+.page,
+.app {
+  max-width: 1200px;
+  margin-inline: auto;
+}
+
+/* 2. Reduce vertical spacing on desktop */
+@media (min-width: 1024px) and (max-width: 1536px) {
+  section,
+  main,
+  .page {
+    padding-top: 1.5rem !important;
+    padding-bottom: 2rem !important;
+  }
+}
+
+/* 3. Scale ALL headings smoothly */
+h1 {
+  font-size: clamp(2rem, 3.5vw, 3rem) !important;
+  margin-top: clamp(4rem, 6vw, 6.5rem) !important;
+}
+
+h2 {
+  font-size: clamp(1.4rem, 2.5vw, 2rem) !important;
+}
+
+h3 {
+  font-size: clamp(1.1rem, 2vw, 1.5rem) !important;
+}
+
+/* 4. Normalize body text */
+p,
+span,
+label,
+input,
+textarea,
+button {
+  font-size: 0.95rem;
+  line-height: 1.4;
+}
+
+/* 5. Cards & containers feel too big → shrink slightly */
+.card,
+.modal-box,
+.alert,
+.timeline-content,
+.collapse {
+  transform: scale(0.96);
+  transform-origin: top center;
+}
+
+/* 6. Fix huge top spacing caused by mt-32 / mt-40 */
+.mt-32,
+.mt-36,
+.mt-40 {
+  margin-top: 6rem !important;
+}
+
+/* 7. RSVP page specific tightening */
+.rsvp-title {
+  margin-top: 6.5rem !important;
+}
+
+.cards-wrapper {
+  gap: 1rem !important;
+}
+
+/* 8. Timeline dots & spacing (Schedule page) */
+.MuiTimelineItem-root {
+  margin-bottom: 0.75rem !important;
+}
+
+/* 9. Prevent full-screen sections feeling oversized */
+.min-h-screen {
+  min-height: auto !important;
+}
+
+/* 10. Keep large desktops untouched */
+@media (min-width: 1600px) {
+  .card,
+  .modal-box,
+  .collapse {
+    transform: none;
+  }
+}

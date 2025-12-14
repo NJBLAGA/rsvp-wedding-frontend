@@ -11,6 +11,7 @@ import Divider from "@mui/material/Divider";
 import ListItem from "@mui/material/ListItem";
 import ListItemButton from "@mui/material/ListItemButton";
 import ListItemText from "@mui/material/ListItemText";
+import "./styles/desktop-scale-fix.css";
 
 export default function App() {
   const storedAccessToken = localStorage.getItem("accessToken");
