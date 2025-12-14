@@ -227,7 +227,7 @@ export default function App() {
           <nav className="border-b p-4 bg-white shadow-sm">
             {/* Desktop Navbar */}
             <div className="hidden md:flex justify-center space-x-8">
-              {["Home", "RSVP", "Schedule", "FAQ"].map((tab) => (
+              {["Home", "RSVP", "Schedule", "FAQs"].map((tab) => (
                 <button
                   key={tab}
                   className="navbar-desktop-btn pb-1 font-normal"
