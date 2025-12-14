@@ -200,11 +200,11 @@ export default function Home() {
 
         /* Desktop (≥1024px) */
          @media (min-width: 1024px) and (max-height: 820px) {
-          h1 { font-size: 3rem !important; margin-top: 8rem !important; }
-          h2 { font-size: 1.4rem !important; }
-          h3 { font-size: 0.8rem !important; }
-          p { font-size: 0.75rem !important; }
-          img { width: 200px !important; height: 300px !important; }
+          h1 { font-size: 2rem !important; margin-top: 4rem !important; }
+          h2 { font-size: 1.2rem !important; }
+          h3 { font-size: 0.6rem !important; }
+          p { font-size: 0.7rem !important; }
+          img { width: 250px !important; height: 350px !important; }
           .card { width: 50%; max-width: 360px; }
         }
 
@@ -214,7 +214,6 @@ export default function Home() {
        h2 { font-size: 1.4rem !important; }
        h3 { font-size: 0.8rem !important; }
        p  { font-size: 0.75rem !important; }
-
        img { width: 260px !important; height: 360px !important; }
        .card { width: 50%; max-width: 360px; }
       }
