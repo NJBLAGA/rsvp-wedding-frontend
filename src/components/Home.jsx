@@ -207,14 +207,6 @@ export default function Home() {
           img { width: 320px !important; height: 460px !important; }
           .card { width: 50%; max-width: 360px; }
         }
-
-        /* 13-inch laptop override (MacBook Air / small laptops) */
-        @media (min-width: 1280px) and (max-width: 1440px) and (max-height: 900px) {
-          img {
-            width: 52px !important;
-            height: 72px !important;
-          }
-        }
       `}</style>
     </div>
   );
