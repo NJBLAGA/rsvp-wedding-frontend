@@ -48,7 +48,7 @@ const faqData = [
   { question: "Template 10", answer: "Answer 10" },
 ];
 
-export default function FAQ() {
+export default function FAQs() {
   const canvasRef = useRef(null);
   const animationIdRef = useRef(null);
   const petalArrayRef = useRef([]);

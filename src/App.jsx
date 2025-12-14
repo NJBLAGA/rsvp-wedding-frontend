@@ -319,7 +319,7 @@ export default function App() {
               />
             )}
             {activeTab === "Schedule" && <Schedule />}
-            {activeTab === "FAQ" && <FAQ />}
+            {activeTab === "FAQs" && <FAQs />}
           </main>
         </>
       )}
