@@ -2,7 +2,7 @@ import { useState, useEffect, useCallback } from "react";
 import Home from "./components/Home";
 import Rsvp from "./components/RSVP";
 import Schedule from "./components/Schedule";
-import FAQ from "./components/FAQ.jsx";
+import FAQs from "./components/FAQs.jsx";
 import LoginModal from "./components/LoginModal";
 import Box from "@mui/material/Box";
 import SwipeableDrawer from "@mui/material/SwipeableDrawer";
