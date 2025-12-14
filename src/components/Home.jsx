@@ -108,7 +108,9 @@ export default function Home() {
       <div className="relative z-20 flex flex-col items-center justify-start w-full px-4">
         <h1
           className="text-center text-black font-bold mb-2"
-          style={{ fontFamily: "'Dancing Script', cursive" }}
+          style={{
+            fontFamily: "'Dancing Script', cursive",
+          }}
         >
           Our Special Day
         </h1>
@@ -125,7 +127,9 @@ export default function Home() {
           <div className="card-body text-center p-2 bg-transparent w-full">
             <h2
               className="font-bold"
-              style={{ fontFamily: "'Dancing Script', cursive" }}
+              style={{
+                fontFamily: "'Dancing Script', cursive",
+              }}
             >
               Saturday, 14th March, 2026
             </h2>
@@ -145,14 +149,12 @@ export default function Home() {
           background-position: center;
           background-repeat: no-repeat;
         }
-
         @media (min-width: 1024px) {
           .bg-wedding {
             background-size: contain;
             background-position: top center;
           }
         }
-
         @media (max-width: 1023px) {
           .bg-wedding {
             background-size: cover;
@@ -163,55 +165,45 @@ export default function Home() {
         h1 { font-size: 2rem; margin-top: 5rem; }
         h2 { font-size: 1.2rem; color: rgba(0,0,0,0.85); }
         h3 { font-size: 0.8rem; color: rgba(0,0,0,0.8); }
-        p  { font-size: 0.75rem; color: rgba(0,0,0,0.8); }
+        p { font-size: 0.75rem; color: rgba(0,0,0,0.8); }
         img { width: 260px; height: 360px; }
 
         /* SE2 and extra small devices (<=380px) */
         @media (max-width: 380px) {
-          h1 { font-size: 1.6rem !important; margin-top: 4.2rem !important; }
+          h1 { font-size: 1.6rem !important; margin-top: 4.2rem !important; } /* more margin */
           h2 { font-size: 0.95rem !important; }
           h3 { font-size: 0.6rem !important; }
-          p  { font-size: 0.6rem !important; }
+          p { font-size: 0.6rem !important; }
           img { width: 180px !important; height: 260px !important; }
           .card { width: 90%; max-width: 240px; }
         }
 
         /* Small mobiles (381px–639px) */
         @media (max-width: 639px) and (min-width: 381px) {
-          h1 { font-size: 1.8rem !important; margin-top: 5rem !important; }
+          h1 { font-size: 1.8rem !important; margin-top: 5rem !important; } /* more margin */
           h2 { font-size: 1rem !important; }
           h3 { font-size: 0.65rem !important; }
-          p  { font-size: 0.65rem !important; }
+          p { font-size: 0.65rem !important; }
           img { width: 220px !important; height: 300px !important; }
           .card { width: 95%; max-width: 280px; }
         }
 
         /* Tablet (640px–1023px) */
         @media (min-width: 640px) and (max-width: 1023px) {
-          h1 { font-size: 2.4rem !important; margin-top: 6rem !important; }
+          h1 { font-size: 2.4rem !important; margin-top: 6rem !important; } /* reduced */
           h2 { font-size: 1.2rem !important; }
           h3 { font-size: 0.75rem !important; }
-          p  { font-size: 0.7rem !important; }
+          p { font-size: 0.7rem !important; }
           img { width: 280px !important; height: 400px !important; }
           .card { width: 55%; max-width: 340px; }
         }
 
-        /* ⭐ 13-inch laptops (1280–1536 wide, short height) */
-        @media (min-width: 1280px) and (max-width: 1536px) and (max-height: 900px) {
-          h1 { font-size: 2.6rem !important; margin-top: 5.8rem !important; }
-          h2 { font-size: 1.3rem !important; }
-          h3 { font-size: 0.75rem !important; }
-          p  { font-size: 0.72rem !important; }
-          img { width: 300px !important; height: 420px !important; }
-          .card { width: 50%; max-width: 340px; }
-        }
-
-        /* Large desktop (≥1024px, tall screens) */
-        @media (min-width: 1024px) and (min-height: 901px) {
+        /* Desktop (≥1024px) */
+        @media (min-width: 1024px) {
           h1 { font-size: 3rem !important; margin-top: 8rem !important; }
           h2 { font-size: 1.4rem !important; }
           h3 { font-size: 0.8rem !important; }
-          p  { font-size: 0.75rem !important; }
+          p { font-size: 0.75rem !important; }
           img { width: 320px !important; height: 460px !important; }
           .card { width: 50%; max-width: 360px; }
         }
