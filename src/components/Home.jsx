@@ -125,6 +125,11 @@ export default function Home() {
             />
           </figure>
           <div className="card-body text-center p-2 bg-transparent w-full">
+            <p className="mt-1">
+              We would like to invite you to celebrate our wedding. We can't
+              wait to share our special day with you.
+            </p>
+
             <h2
               className="font-bold"
               style={{
@@ -136,10 +141,6 @@ export default function Home() {
             <h3 className="font-semibold mt-1">
               Camden Valley Inn, Remembrance Dr, Cawdor NSW, Australia
             </h3>
-            <p className="mt-1">
-              We would like to invite you to celebrate our wedding. We can't
-              wait to share our special day with you.
-            </p>
           </div>
         </div>
       </div>

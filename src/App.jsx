@@ -139,7 +139,7 @@ export default function App() {
       onKeyDown={() => setMenuOpen(false)}
     >
       <List>
-        {["Home", "RSVP", "Schedule", "FAQ"].map((text) => (
+        {["Home", "RSVP", "Schedule", "FAQs"].map((text) => (
           <ListItem key={text} disablePadding>
             <ListItemButton
               sx={{
