@@ -34,7 +34,7 @@ export default function LoginModal({ isOpen, onSubmit, logoutMessage }) {
     canvas.height = window.innerHeight;
 
     if (!petalArrayRef.current.length) {
-      const TOTAL = 10;
+      const TOTAL = 12;
       const petalImg = new Image();
       petalImg.src = "https://djjjk9bjm164h.cloudfront.net/petal.png";
 
@@ -48,8 +48,8 @@ export default function LoginModal({ isOpen, onSubmit, logoutMessage }) {
             Math.random() < 0.5
               ? Math.random() * canvas.height
               : -Math.random() * canvas.height;
-          this.w = 25 + Math.random() * 10;
-          this.h = 18 + Math.random() * 8;
+          this.w = 16 + Math.random() * 10;
+          this.h = 12 + Math.random() * 8;
           this.opacity = 0.8;
           this.ySpeed = 0.05 + Math.random() * 0.1;
           this.angle = Math.random() * Math.PI * 2;
