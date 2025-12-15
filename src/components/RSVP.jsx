@@ -363,7 +363,7 @@ export default function Rsvp({ token, onLogout, refreshAccessToken }) {
         className="relative z-20 text-center mt-2 sm:mt-3 text-sm sm:text-base md:text-lg text-gray-700"
         style={{ fontFamily: "'Poppins', sans-serif" }}
       >
-        Please RSVP by the <strong>7th February 2026</strong>.
+        Please RSVP by <strong>7th February 2026</strong>
       </h2>
 
       {/* Alerts */}

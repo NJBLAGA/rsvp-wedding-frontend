@@ -8,7 +8,6 @@ const faqData = [
     answer:
       "Please RSVP by 7th February 2026 to make sure we have an accurate headcount.",
   },
-
   {
     question: "How to contact us?",
     answer: [
@@ -30,14 +29,14 @@ const faqData = [
       {
         dir1: "Both the ceremony and reception will be held at Camden Valley Inn.",
         dir2: "Please click the link below for directions to the venue.",
-        address: "Remembrance Dr, Cawdor",
+        address: "290 Remembrance Dr, Cawdor NSW",
       },
     ],
   },
   {
     question: "What should I wear to the wedding?",
     answer:
-      "The dress code is semi-formal/cocktail attire. The ceremony will be held on a grassy area so stiletto heels are not recommended. ",
+      "The dress code is cocktail attire. The ceremony will be held on a grassy area so stiletto heels are not recommended. ",
   },
   {
     question: "Can I bring a guest?",
@@ -54,7 +53,7 @@ const faqData = [
       "As much as we love your little ones, unfortunately our wedding will be an adults-only celebration. We appreciate your understanding and hope you enjoy a night off to celebrate with us.",
   },
   {
-    question: "Is there accomodation available?",
+    question: "Is there accommodation available?",
     answer: "Yes, Camden Valley Inn has a limited number of rooms available.",
   },
 ];

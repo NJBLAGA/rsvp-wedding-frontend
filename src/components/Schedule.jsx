@@ -126,7 +126,7 @@ export default function Schedule() {
     {
       time: "10:30 PM",
       label: "Evening's End",
-      description: "Event concludes.",
+      description: "Wedding concludes.",
       icon: <EmojiEvents />,
     },
   ];

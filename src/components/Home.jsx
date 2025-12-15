@@ -138,8 +138,10 @@ export default function Home() {
             >
               Saturday, 14th March, 2026
             </h2>
-            <h3 className="font-semibold mt-1">
-              Camden Valley Inn, Remembrance Dr, Cawdor NSW, Australia
+            <h3 className="mt-1">
+              <strong>Camden Valley Inn</strong>
+              <br />
+              290 Remembrance Driveway, Cawdor NSW 2570
             </h3>
           </div>
         </div>
