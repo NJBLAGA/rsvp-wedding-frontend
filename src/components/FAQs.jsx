@@ -9,21 +9,6 @@ const faqData = [
       "Please RSVP by 7th February 2026 to make sure we have an accurate headcount.",
   },
   {
-    question: "How to contact us?",
-    answer: [
-      {
-        name: "Nicole:",
-        email: "nandnblaga@gmail.com",
-        mobile: "+61 428 229 283",
-      },
-      {
-        name: "Nathan:",
-        email: "nathanblaga90@gmail.com",
-        mobile: "+61 436 190 824",
-      },
-    ],
-  },
-  {
     question: "Where will the ceremony and reception be held?",
     answer: [
       {
@@ -55,6 +40,21 @@ const faqData = [
   {
     question: "Is there accommodation available?",
     answer: "Yes, Camden Valley Inn has a limited number of rooms available.",
+  },
+  {
+    question: "How to contact us?",
+    answer: [
+      {
+        name: "Nicole:",
+        email: "nandnblaga@gmail.com",
+        mobile: "+61 428 229 283",
+      },
+      {
+        name: "Nathan:",
+        email: "nathanblaga90@gmail.com",
+        mobile: "+61 436 190 824",
+      },
+    ],
   },
 ];
 
