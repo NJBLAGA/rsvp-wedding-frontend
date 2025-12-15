@@ -415,16 +415,33 @@ export default function FAQs() {
 /* 13–14 inch laptops (short desktop screens) */
 @media (min-width: 1024px) and (max-height: 820px) {
 
+/* Question */
+.collapse-title {
+  padding-left: 0.5rem !important;
+  padding-right: 0.5rem !important;
+}
 
 /* Answer */
+.collapse-content {
+  padding-left: 0.5rem !important;
+  padding-right: 0.5rem !important;
+}
   h1 {
     font-size: 2.1rem !important;
     margin-top: 4.5rem !important;
   }
-  .faq-card {
-    width: auto !important;          /* stops w-full forcing full width */
-    margin-left: 1.25rem !important; /* adjust these */
-    margin-right: 1.25rem !important;
+
+  /* Pagination buttons slightly smaller */
+  .circle-btn {
+    width: 1.7rem;
+    height: 1.7rem;
+    font-size: 0.7rem;
+  }
+
+  .circle-btn-sm {
+    width: 1.4rem;
+    height: 1.4rem;
+    font-size: 0.6rem;
   }
 }
 
