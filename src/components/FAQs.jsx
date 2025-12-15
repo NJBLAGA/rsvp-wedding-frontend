@@ -4,6 +4,12 @@ import BackgroundImage from "../assets/16264603_v839-my-10a.svg";
 
 const faqData = [
   {
+    question: "When is the RSVP deadline?",
+    answer:
+      "Please RSVP by 7th February 2026 to make sure we have an accurate headcount.",
+  },
+
+  {
     question: "How to contact us?",
     answer: [
       {
@@ -50,11 +56,6 @@ const faqData = [
   {
     question: "Is there accomodation available?",
     answer: "Yes, Camden Valley Inn has a limited number of rooms available.",
-  },
-  {
-    question: "When is the RSVP deadline?",
-    answer:
-      "Please RSVP by 7 February 2026 to make sure we have an accurate headcount.",
   },
 ];
 
