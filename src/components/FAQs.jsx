@@ -412,51 +412,21 @@ export default function FAQs() {
     }
   }
 
-   @media (min-width: 1024px) and (max-height: 820px) {
+/* 13–14 inch laptops (short desktop screens) */
+@media (min-width: 1024px) and (max-height: 820px) {
 
+
+/* Answer */
   h1 {
     font-size: 2.1rem !important;
     margin-top: 4.5rem !important;
   }
-
-  /* Question */
-  .collapse-title {
-    font-size: 0.8rem !important;
-    padding: 0.45rem 0.5rem !important;
-    min-height: auto !important;
-  }
-
-  /* Answer wrapper */
-  .collapse-content {
-    padding: 0.4rem 0.5rem !important;
-  }
-
-  /* Answer text */
-  .answer-text {
-    font-size: 0.68rem !important;
-    line-height: 1.05rem !important;
-  }
-
-  /* Reduce vertical spacing between answers */
-  .contact-block {
-    margin-top: 0.3rem !important;
-  }
-
-  /* Pagination buttons */
-  .circle-btn {
-    width: 1.6rem;
-    height: 1.6rem;
-    font-size: 0.65rem;
-  }
-
-  .circle-btn-sm {
-    width: 1.3rem;
-    height: 1.3rem;
-    font-size: 0.55rem;
+  .faq-card {
+    width: auto !important;          /* stops w-full forcing full width */
+    margin-left: 1.25rem !important; /* adjust these */
+    margin-right: 1.25rem !important;
   }
 }
-
-
 
 `}</style>
     </div>
