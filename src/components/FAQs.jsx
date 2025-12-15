@@ -31,7 +31,7 @@ const faqData = [
   {
     question: "Are kids welcome?",
     answer:
-      "As much as we love your little ones, unfortunately our wedding will be an adults-only celebration. We appreciate your understanding and hope you enjoy a night off to celebrate with us.",
+      "As much as we love your little ones, our wedding will be an adults-only celebration. We appreciate your understanding and hope you enjoy a night off to celebrate with us.",
   },
   {
     question: "Will there be parking available?",
@@ -40,6 +40,11 @@ const faqData = [
   {
     question: "Is there accommodation available?",
     answer: "Yes, Camden Valley Inn has a limited number of rooms available.",
+  },
+  {
+    question: "Do you have a gift registry?",
+    answer:
+      "Your presence at our wedding is the greatest gift of all. However, if you wish to celebrate with a gift, a contribution towards our honeymoon would be sincerely appreciated.",
   },
   {
     question: "How to contact us?",
