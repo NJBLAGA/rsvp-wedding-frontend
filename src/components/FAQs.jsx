@@ -286,7 +286,7 @@ export default function FAQs() {
                         <span>{ans.mobile}</span>
                       </a>
                     )}
-                    <span>
+                    <span className="answer-text">
                       {ans.dir1} {ans.dir2}
                     </span>
                     {ans.address && (
