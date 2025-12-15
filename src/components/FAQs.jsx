@@ -29,13 +29,13 @@ const faqData = [
       "Please refer to your invitation. If a guest is listed, they are welcome!",
   },
   {
-    question: "Will there be parking available?",
-    answer: "Yes, free parking will be available at the venue.",
-  },
-  {
     question: "Are kids welcome?",
     answer:
       "As much as we love your little ones, unfortunately our wedding will be an adults-only celebration. We appreciate your understanding and hope you enjoy a night off to celebrate with us.",
+  },
+  {
+    question: "Will there be parking available?",
+    answer: "Yes, free parking will be available at the venue.",
   },
   {
     question: "Is there accommodation available?",
