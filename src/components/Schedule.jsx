@@ -268,7 +268,7 @@ export default function Schedule() {
 
       /* Desktop (≥1024px) */
       @media (min-width: 1024px) and (max-height: 820px) {
-       h1 { font-size: 2.1rem !important; margin-top: 4.1rem !important; }
+       h1 { font-size: 2.5rem !important; margin-top: 4.1rem !important; margin-bottom: 0.5rem !important;}
       }
       `}</style>
     </div>
