@@ -269,9 +269,38 @@ export default function Schedule() {
       /* Desktop (≥1024px) */
       @media (min-width: 1024px) and (max-height: 820px) {
        h1 { font-size: 2rem !important; margin-top: 4.1rem !important; margin-bottom: 0.5rem !important;}
-      .MuiTimelineConnector-root {
-       height: 14px !important;
-       }
+ /* Timeline spacing */
+  .MuiTimelineItem-root {
+    min-height: 60px;
+  }
+
+  /* Circles */
+  .MuiTimelineDot-root {
+    width: 34px !important;
+    height: 34px !important;
+  }
+
+  .MuiTimelineDot-root svg {
+    font-size: 22px !important;
+  }
+
+  /* Connector */
+  .MuiTimelineConnector-root {
+    height: 16px !important;
+  }
+
+  /* Text */
+  .timeline-label {
+    font-size: 1.1rem !important;
+  }
+
+  .timeline-time {
+    font-size: 0.8rem !important;
+  }
+
+  .timeline-content {
+    font-size: 0.7rem !important;
+  }
       }
       `}</style>
     </div>
