@@ -873,7 +873,7 @@ export default function Rsvp({ token, onLogout, refreshAccessToken }) {
           /* ALERTS */
   .alert {
     height: 2.2rem !important;
-    padding: 0.25rem 0.6rem !important;
+    padding: 3rem 3rem !important;
     font-size: 0.85rem !important;
 
     /* 👇 THIS is what actually makes margin visible */
@@ -884,8 +884,8 @@ export default function Rsvp({ token, onLogout, refreshAccessToken }) {
 
   /* RSVP CARD WRAPPER */
   .cards-wrapper {
-    padding-left: 0.75rem !important;
-    padding-right: 0.75rem !important;
+    padding-left: 7rem !important;
+    padding-right: 7rem !important;
   }
 
   /* RSVP CARDS */
