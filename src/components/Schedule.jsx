@@ -268,7 +268,7 @@ export default function Schedule() {
 
       /* Desktop (≥1024px) */
       @media (min-width: 1024px) and (max-height: 820px) {
-       h1 { font-size: 2rem !important; margin-top: 4rem !important; margin-bottom: 0.1rem !important;}
+       h1 { font-size: 1.8rem !important; margin-top: 4rem !important; margin-bottom: 0.1rem !important;}
 
  * Reduce item height */
   .MuiTimelineItem-root {
