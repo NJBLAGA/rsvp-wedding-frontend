@@ -866,30 +866,47 @@ export default function Rsvp({ token, onLogout, refreshAccessToken }) {
         @media (max-width: 360px) {
           .alert { font-size: 0.8rem !important; height: 2.3rem !important; }
         }
-      /* 13-inch laptops (short vertical height) */
-@media (min-width: 1024px) and (max-height: 820px) {
-
-  /* ALERTS */
+        /* Desktop (≥1024px) */
+         @media (min-width: 1024px) and (max-height: 820px) {
+          h1 { font-size: 2rem !important; margin-top: 4rem !important; }
+          h2 { font-size: 1rem !important; }
+          /* ALERTS */
   .alert {
     height: 2.2rem !important;
     padding: 0.25rem 0.6rem !important;
     font-size: 0.85rem !important;
+
+    /* 👇 THIS is what actually makes margin visible */
+    max-width: 520px !important;
+    margin-left: auto !important;
+    margin-right: auto !important;
+  }
+
+  /* RSVP CARD WRAPPER */
+  .cards-wrapper {
+    padding-left: 0.75rem !important;
+    padding-right: 0.75rem !important;
   }
 
   /* RSVP CARDS */
   .card {
     padding: 0.6rem !important;
     gap: 0.4rem !important;
+
+    /* 👇 force visible side spacing */
+    max-width: 520px !important;
+    margin-left: auto !important;
+    margin-right: auto !important;
   }
 
-  /* Guest name inside card */
+  /* Guest name */
   .guest-name {
     font-size: 1.8rem !important;
     line-height: 1.2 !important;
     margin-bottom: 0.15rem !important;
   }
 
-  /* RSVP text inside card */
+  /* Card text */
   .card p {
     font-size: 0.95rem !important;
     line-height: 1.2 !important;
@@ -900,8 +917,8 @@ export default function Rsvp({ token, onLogout, refreshAccessToken }) {
     padding: 0.3rem 0.55rem !important;
     font-size: 0.75rem !important;
   }
-}
 
+        }
       `}</style>
     </div>
   );
