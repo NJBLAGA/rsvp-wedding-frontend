@@ -414,6 +414,11 @@ export default function FAQs() {
 
 /* 13–14 inch laptops (short desktop screens) */
 @media (min-width: 1024px) and (max-height: 820px) {
+
+  .collapse {
+    padding-left: 1rem;
+    padding-right: 1rem;
+  }
   h1 {
     font-size: 2.1rem !important;
     margin-top: 4.5rem !important;
