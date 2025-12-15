@@ -67,9 +67,19 @@ export default function FAQs() {
 
   useEffect(() => {
     const updateItemsPerPage = () => {
-      if (window.innerWidth <= 639) {
+      const width = window.innerWidth;
+      const height = window.innerHeight;
+
+      // 13–14 inch laptops
+      if (width >= 1280 && width <= 1440 && height <= 900) {
         setItemsPerPage(4);
-      } else {
+      }
+      // Mobile
+      else if (width <= 639) {
+        setItemsPerPage(4);
+      }
+      // Everything else (15"+ laptops, desktops)
+      else {
         setItemsPerPage(6);
       }
     };
@@ -417,7 +427,7 @@ export default function FAQs() {
 
         /* Desktop (≥1024px) */
          @media (min-width: 1024px) and (max-height: 820px) {
-          h1 { font-size: 2rem !important; margin-top: 4rem !important; }
+          h1 { font-size: 3rem !important; margin-top: 5rem !important; }
         }
 `}</style>
     </div>
