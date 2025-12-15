@@ -35,16 +35,16 @@ const faqData = [
   },
   {
     question: "Will there be parking available?",
-    answer: "Yes, free parking will be available at the venue.",
+    answer: "Yes. Free parking will be available at the venue.",
   },
   {
     question: "Is there accommodation available?",
-    answer: "Yes, Camden Valley Inn has a limited number of rooms available.",
+    answer: "Yes. Camden Valley Inn has a limited number of rooms available.",
   },
   {
     question: "Do you have a gift registry?",
     answer:
-      "No, your presence at our wedding is the greatest gift of all. However, if you wish to celebrate with a gift, a contribution towards our honeymoon would be sincerely appreciated.",
+      "No. Your presence at our wedding is the greatest gift of all. However, if you wish to celebrate with a gift, a contribution towards our honeymoon would be sincerely appreciated.",
   },
   {
     question: "How to contact us?",
