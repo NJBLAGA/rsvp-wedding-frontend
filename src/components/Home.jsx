@@ -126,8 +126,7 @@ export default function Home() {
           </figure>
           <div className="card-body text-center p-2 bg-transparent w-full">
             <p className="mt-1">
-              We would like to invite you to celebrate our wedding. We can't
-              wait to share our special day with you.
+              We would like to invite you to celebrate our wedding.
             </p>
 
             <h2
