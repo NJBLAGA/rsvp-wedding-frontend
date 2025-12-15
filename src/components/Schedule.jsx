@@ -265,6 +265,11 @@ export default function Schedule() {
           .timeline-time { font-size: 1rem; }
           .timeline-content { font-size: 0.9rem; }
         }
+
+       /* Desktop — 15 inch and larger */
+       @media (min-width: 1024px) and (min-height: 821px) {
+       h1 { font-size: 2.1rem !important; margin-top: 4.1rem !important; }
+      }
       `}</style>
     </div>
   );
