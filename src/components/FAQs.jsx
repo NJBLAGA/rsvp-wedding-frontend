@@ -412,10 +412,36 @@ export default function FAQs() {
     }
   }
 
-        /* Desktop (≥1024px) */
-         @media (min-width: 1024px) and (max-height: 820px) {
-          h1 { font-size: 2rem !important; margin-top: 4.5rem !important; }
-        }
+/* 13–14 inch laptops (short desktop screens) */
+@media (min-width: 1024px) and (max-height: 820px) {
+  h1 {
+    font-size: 2.1rem !important;
+    margin-top: 4.5rem !important;
+  }
+
+  .collapse-title {
+    font-size: 0.85rem !important;
+  }
+
+  .answer-text {
+    font-size: 0.7rem !important;
+    line-height: 1.1rem !important;
+  }
+
+  /* Pagination buttons slightly smaller */
+  .circle-btn {
+    width: 1.7rem;
+    height: 1.7rem;
+    font-size: 0.7rem;
+  }
+
+  .circle-btn-sm {
+    width: 1.4rem;
+    height: 1.4rem;
+    font-size: 0.6rem;
+  }
+}
+
 `}</style>
     </div>
   );
