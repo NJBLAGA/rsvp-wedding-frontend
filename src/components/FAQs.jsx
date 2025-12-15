@@ -248,7 +248,7 @@ export default function FAQs() {
       </div>
 
       {/* FAQ Accordion */}
-      <div className="relative z-20 flex flex-col items-center w-full max-w-md px-4 space-y-2">
+      <div className="relative z-20 flex flex-col items-center w-full max-w-md px-4 space-y-2 faq-wrapper">
         {currentFaqs.map((item, idx) => (
           <div
             key={idx}
@@ -411,37 +411,32 @@ export default function FAQs() {
       font-size: 0.45rem;
     }
   }
-
-/* 13–14 inch laptops (short desktop screens) */
-@media (min-width: 1024px) and (max-height: 820px) {
-
-/* Question */
-.collapse-title {
-  padding-left: 0.5rem !important;
-  padding-right: 0.5rem !important;
-}
-
-/* Answer */
-.collapse-content {
-  padding-left: 0.5rem !important;
-  padding-right: 0.5rem !important;
-}
-  h1 {
-    font-size: 2.1rem !important;
-    margin-top: 4.5rem !important;
+        /* Desktop (≥1024px) */
+         @media (min-width: 1024px) and (max-height: 820px) {
+          h1 { font-size: 2rem !important; margin-top: 4rem !important; }
+        
+  /* FAQ container narrower */
+  .faq-wrapper {
+    max-width: 420px !important;
   }
 
-  /* Pagination buttons slightly smaller */
-  .circle-btn {
-    width: 1.7rem;
-    height: 1.7rem;
-    font-size: 0.7rem;
+  /* Card spacing */
+  .collapse {
+    margin-left: 1rem;
+    margin-right: 1rem;
   }
 
-  .circle-btn-sm {
-    width: 1.4rem;
-    height: 1.4rem;
-    font-size: 0.6rem;
+  /* Question text */
+  .collapse-title {
+    font-size: 0.75rem !important;
+    padding-top: 0.6rem;
+    padding-bottom: 0.6rem;
+  }
+
+  /* Answer text */
+  .answer-text {
+    font-size: 0.65rem !important;
+    line-height: 1rem !important;
   }
 }
 
