@@ -866,6 +866,42 @@ export default function Rsvp({ token, onLogout, refreshAccessToken }) {
         @media (max-width: 360px) {
           .alert { font-size: 0.8rem !important; height: 2.3rem !important; }
         }
+      /* 13-inch laptops (short vertical height) */
+@media (min-width: 1024px) and (max-height: 820px) {
+
+  /* ALERTS */
+  .alert {
+    height: 2.2rem !important;
+    padding: 0.25rem 0.6rem !important;
+    font-size: 0.85rem !important;
+  }
+
+  /* RSVP CARDS */
+  .card {
+    padding: 0.6rem !important;
+    gap: 0.4rem !important;
+  }
+
+  /* Guest name inside card */
+  .guest-name {
+    font-size: 1.8rem !important;
+    line-height: 1.2 !important;
+    margin-bottom: 0.15rem !important;
+  }
+
+  /* RSVP text inside card */
+  .card p {
+    font-size: 0.95rem !important;
+    line-height: 1.2 !important;
+  }
+
+  /* Edit button */
+  .edit-btn {
+    padding: 0.3rem 0.55rem !important;
+    font-size: 0.75rem !important;
+  }
+}
+
       `}</style>
     </div>
   );
