@@ -235,7 +235,7 @@ export default function Schedule() {
         }
         @media (max-width: 1024px) { .schedule-heading { font-size: 2.2rem; margin-top: 6.5rem; } }
         @media (max-width: 640px) { .schedule-heading { font-size: 1.8rem; margin-top: 5.5rem; } }
-        @media (max-width: 375px) { .schedule-heading { font-size: 1.3rem; margin-top: 4.5rem; margin-bottom: 1px; } }
+        @media (max-width: 375px) { .schedule-heading { font-size: 1.3rem; margin-top: 4.5rem; margin-bottom: 1rem; } }
         @media (max-width: 360px) { .schedule-heading { font-size: 1.5rem; margin-top: 5.5rem; } }
         @media (min-width: 1025px) { .schedule-heading { font-size: 3rem; margin-top: 8rem; } }
 
