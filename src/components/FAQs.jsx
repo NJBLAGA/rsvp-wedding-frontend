@@ -44,7 +44,7 @@ const faqData = [
   {
     question: "Do you have a gift registry?",
     answer:
-      "Your presence at our wedding is the greatest gift of all. However, if you wish to celebrate with a gift, a contribution towards our honeymoon would be sincerely appreciated.",
+      "No, your presence at our wedding is the greatest gift of all. However, if you wish to celebrate with a gift, a contribution towards our honeymoon would be sincerely appreciated.",
   },
   {
     question: "How to contact us?",

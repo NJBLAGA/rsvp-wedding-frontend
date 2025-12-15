@@ -148,7 +148,7 @@ export default function LoginModal({ isOpen, onSubmit, logoutMessage }) {
           className="text-3xl sm:text-4xl mb-4"
           style={{ fontFamily: "'Dancing Script', cursive", color: "#000" }}
         >
-          Nicole & Nathan
+          CRACCCCCCCCCCKKKKKKKKkERRRRR
         </h2>
 
         {/* Alerts (stack vertically) */}
