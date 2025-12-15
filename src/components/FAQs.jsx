@@ -7,25 +7,30 @@ const faqData = [
     question: "How to contact us?",
     answer: [
       {
-        name: "Nicole",
-        email: "nicole.camilleri44@gmail.com",
+        name: "Nicole:",
+        email: "nandnblaga@gmail.com",
         mobile: "+61 428 229 283",
       },
       {
-        name: "Nathan",
-        email: "nathanblaga90@gmail.com",
+        name: "Nathan:",
         mobile: "+61 436 190 824",
       },
     ],
   },
   {
-    question: "Directions to Venue",
-    answer: [{ name: "Camden Valley Inn", address: "Remembrance Dr, Cawdor" }],
+    question: "Where will the ceremony and reception be held?",
+    answer: [
+      {
+        dir1: "Both the ceremony and reception will be held at Camden Valley Inn.",
+        dir2: "Please click the link below for directions to the venue.",
+        address: "Remembrance Dr, Cawdor",
+      },
+    ],
   },
   {
     question: "What should I wear to the wedding?",
     answer:
-      "Dress code is semi-formal. Think cocktail dresses or suit without a tie.",
+      "The dress code is semi-formal/cocktail attire. The ceremony will be held on a grassy area so stiletto heels are not recommended. ",
   },
   {
     question: "Can I bring a guest?",
@@ -36,16 +41,20 @@ const faqData = [
     question: "Will there be parking available?",
     answer: "Yes, free parking will be available at the venue.",
   },
-  { question: "Template 1", answer: "Answer 1" },
-  { question: "Template 2", answer: "Answer 2" },
-  { question: "Template 3", answer: "Answer 3" },
-  { question: "Template 4", answer: "Answer 4" },
-  { question: "Template 5", answer: "Answer 5" },
-  { question: "Template 6", answer: "Answer 6" },
-  { question: "Template 7", answer: "Answer 7" },
-  { question: "Template 8", answer: "Answer 8" },
-  { question: "Template 9", answer: "Answer 9" },
-  { question: "Template 10", answer: "Answer 10" },
+  {
+    question: "Are kids welcome?",
+    answer:
+      "As much as we love your little ones, unfortunately our wedding will be an adults-only celebration. We appreciate your understanding and hope you enjoy a night off to celebrate with us.",
+  },
+  {
+    question: "Is there accomodation available?",
+    answer: "Yes, Camden Valley Inn has a limited number of rooms available.",
+  },
+  {
+    question: "When is the RSVP deadline?",
+    answer:
+      "Please RSVP by 1 February 2026 to make sure we have an accurate headcount.",
+  },
 ];
 
 export default function FAQs() {
@@ -80,7 +89,7 @@ export default function FAQs() {
     canvas.height = window.innerHeight;
 
     if (!petalArrayRef.current.length) {
-      const TOTAL = 10;
+      const TOTAL = 12;
       const petalImg = new Image();
       petalImg.src = "https://djjjk9bjm164h.cloudfront.net/petal.png";
 
@@ -94,8 +103,8 @@ export default function FAQs() {
             Math.random() < 0.5
               ? Math.random() * canvas.height
               : -Math.random() * canvas.height;
-          this.w = 25 + Math.random() * 10;
-          this.h = 18 + Math.random() * 8;
+          this.w = 16 + Math.random() * 10;
+          this.h = 12 + Math.random() * 8;
           this.opacity = 0.8;
           this.ySpeed = 0.05 + Math.random() * 0.1;
           this.angle = Math.random() * Math.PI * 2;
@@ -270,13 +279,17 @@ export default function FAQs() {
                         <EnvelopeIcon className="w-4 h-4 text-[#eda5a5]" />
                         <span>{ans.email}</span>
                       </a>
-                    )}
+                    )}{" "}
+                    <span>{ans.dir1}</span>
+                    <span></span>
+                    <span>{ans.dir2}</span>
                     {ans.mobile && (
                       <a
                         href={`tel:${ans.mobile}`}
                         className="flex items-center space-x-1 hover:underline text-black answer-text"
                       >
                         <PhoneIcon className="w-4 h-4 text-[#eda5a5]" />
+                        <span>{ans.name}</span>
                         <span>{ans.mobile}</span>
                       </a>
                     )}
