@@ -412,47 +412,51 @@ export default function FAQs() {
     }
   }
 
-/* 13–14 inch laptops (short desktop screens) */
-@media (min-width: 1024px) and (max-height: 820px) {
+   @media (min-width: 1024px) and (max-height: 820px) {
 
-/* Question */
-.collapse-title {
-  padding-left: 0.5rem !important;
-  padding-right: 0.5rem !important;
-}
-
-/* Answer */
-.collapse-content {
-  padding-left: 0.5rem !important;
-  padding-right: 0.5rem !important;
-}
   h1 {
     font-size: 2.1rem !important;
     margin-top: 4.5rem !important;
   }
 
+  /* Question */
   .collapse-title {
-    font-size: 0.85rem !important;
+    font-size: 0.8rem !important;
+    padding: 0.45rem 0.5rem !important;
+    min-height: auto !important;
   }
 
+  /* Answer wrapper */
+  .collapse-content {
+    padding: 0.4rem 0.5rem !important;
+  }
+
+  /* Answer text */
   .answer-text {
-    font-size: 0.7rem !important;
-    line-height: 1.1rem !important;
+    font-size: 0.68rem !important;
+    line-height: 1.05rem !important;
   }
 
-  /* Pagination buttons slightly smaller */
+  /* Reduce vertical spacing between answers */
+  .contact-block {
+    margin-top: 0.3rem !important;
+  }
+
+  /* Pagination buttons */
   .circle-btn {
-    width: 1.7rem;
-    height: 1.7rem;
-    font-size: 0.7rem;
+    width: 1.6rem;
+    height: 1.6rem;
+    font-size: 0.65rem;
   }
 
   .circle-btn-sm {
-    width: 1.4rem;
-    height: 1.4rem;
-    font-size: 0.6rem;
+    width: 1.3rem;
+    height: 1.3rem;
+    font-size: 0.55rem;
   }
 }
+
+
 
 `}</style>
     </div>
