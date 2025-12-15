@@ -113,7 +113,7 @@ export default function Schedule() {
     },
     {
       time: "4:30 PM",
-      label: "Canapes",
+      label: "Canapés",
       description: "Refreshments are served.",
       icon: <LocalBar />,
     },
