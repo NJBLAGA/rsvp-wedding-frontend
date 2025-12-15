@@ -30,7 +30,7 @@ export default function Schedule() {
     canvas.height = window.innerHeight;
 
     if (!petalArrayRef.current.length) {
-      const TOTAL = 10;
+      const TOTAL = 12;
       const petalImg = new Image();
       petalImg.src = "https://djjjk9bjm164h.cloudfront.net/petal.png";
 
@@ -44,8 +44,8 @@ export default function Schedule() {
             Math.random() < 0.5
               ? Math.random() * canvas.height
               : -Math.random() * canvas.height;
-          this.w = 25 + Math.random() * 10;
-          this.h = 18 + Math.random() * 8;
+          this.w = 16 + Math.random() * 10;
+          this.h = 12 + Math.random() * 8;
           this.opacity = 0.8;
           this.ySpeed = 0.05 + Math.random() * 0.1;
           this.angle = Math.random() * Math.PI * 2;
@@ -100,37 +100,31 @@ export default function Schedule() {
 
   const schedule = [
     {
-      time: "2:00 PM",
+      time: "3:00 PM",
       label: "Arrival",
       description: "Please make your way to your seats.",
       icon: <Person />,
     },
     {
-      time: "2:30 PM",
+      time: "3:30 PM",
       label: "Ceremony",
       description: "The wedding ceremony begins.",
       icon: <Favorite />,
     },
     {
-      time: "3:30 PM",
-      label: "Canapes & Reception",
+      time: "4:30 PM",
+      label: "Canapes",
       description: "Refreshments are served.",
       icon: <LocalBar />,
     },
     {
-      time: "5:00 PM",
-      label: "Dinner",
+      time: "5:30 PM",
+      label: "Reception",
       description: "Dinner is served.",
       icon: <Restaurant />,
     },
     {
-      time: "7:00 PM",
-      label: "Dancing & Toasts",
-      description: "The celebrations continue.",
-      icon: <Celebration />,
-    },
-    {
-      time: "11:00 PM",
+      time: "10:30 PM",
       label: "Evening's End",
       description: "Event concludes.",
       icon: <EmojiEvents />,
