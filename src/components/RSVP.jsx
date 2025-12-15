@@ -373,7 +373,7 @@ export default function Rsvp({ token, onLogout, refreshAccessToken }) {
             <motion.div
               key="processing"
               role="alert"
-              className="alert w-full max-w-lg flex items-center gap-2 h-10 sm:h-12 text-sm sm:text-base md:text-lg"
+              className="alert flex items-center gap-2 h-10 sm:h-12 text-sm sm:text-base md:text-lg"
               initial={{ opacity: 0 }}
               animate={{ opacity: 0.8 }}
               exit={{ opacity: 0 }}
@@ -393,7 +393,7 @@ export default function Rsvp({ token, onLogout, refreshAccessToken }) {
             <motion.div
               key="success"
               role="alert"
-              className="alert w-full max-w-lg flex items-center gap-2 h-10 sm:h-12 text-sm sm:text-base md:text-lg"
+              className="alert flex items-center gap-2 h-10 sm:h-12 text-sm sm:text-base md:text-lg"
               initial={{ opacity: 0 }}
               animate={{ opacity: 0.9 }}
               exit={{ opacity: 0 }}
@@ -412,7 +412,7 @@ export default function Rsvp({ token, onLogout, refreshAccessToken }) {
             <motion.div
               key="error"
               role="alert"
-              className="alert w-full max-w-lg flex items-center gap-2 h-10 sm:h-12 text-sm sm:text-base md:text-lg"
+              className="alert flex items-center gap-2 h-10 sm:h-12 text-sm sm:text-base md:text-lg"
               initial={{ opacity: 0 }}
               animate={{ opacity: 0.9 }}
               exit={{ opacity: 0 }}
@@ -872,18 +872,13 @@ export default function Rsvp({ token, onLogout, refreshAccessToken }) {
           h2 { font-size: 1rem !important; }
           /* ALERTS */
   .alert {
-    height: 2rem !important;
-    max-width: 480px !important;
+    width: 420px !important;   /* 👈 HARD width */
+    max-width: 420px !important;
     margin-left: auto !important;
     margin-right: auto !important;
-    font-size: 1rem !important;
-
-    /* 👇 THIS is what actually makes margin visible */
-    max-width: 520px !important;
-    margin-left: auto !important;
-    margin-right: auto !important;
+    height: 2.1rem !important;
+    font-size: 0.9rem !important;
   }
-
   /* RSVP CARD WRAPPER */
   .cards-wrapper {
     padding-left: 7rem !important;
