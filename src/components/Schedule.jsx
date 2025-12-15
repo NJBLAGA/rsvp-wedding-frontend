@@ -268,7 +268,7 @@ export default function Schedule() {
 
       /* Desktop (≥1024px) */
       @media (min-width: 1024px) and (max-height: 820px) {
-       h1 { font-size: 3rem !important; margin-top: 4.1rem !important; margin-bottom: 0.5rem !important;}
+       h1 { font-size: 2rem !important; margin-top: 4.1rem !important; margin-bottom: 0.5rem !important;}
       .MuiTimelineConnector-root {
        height: 14px !important;
        }
