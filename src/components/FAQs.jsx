@@ -411,35 +411,11 @@ export default function FAQs() {
       font-size: 0.45rem;
     }
   }
-        /* Desktop (≥1024px) */
-         @media (min-width: 1024px) and (max-height: 820px) {
-          h1 { font-size: 2rem !important; margin-top: 4rem !important; }
-        
-  /* FAQ container narrower */
-  .faq-wrapper {
-    max-width: 420px !important;
-  }
-
-  /* Card spacing */
-  .collapse {
-    margin-left: 1rem;
-    margin-right: 1rem;
-  }
-
-  /* Question text */
-  .collapse-title {
-    font-size: 0.75rem !important;
-    padding-top: 0.6rem;
-    padding-bottom: 0.6rem;
-  }
-
-  /* Answer text */
-  .answer-text {
-    font-size: 0.65rem !important;
-    line-height: 1rem !important;
-  }
-}
-
+  
+  /* Desktop (≥1024px) */
+     @media (min-width: 1024px) and (max-height: 820px) {
+        h1 { font-size: 2rem !important; margin-top: 4rem !important; }
+    }
 `}</style>
     </div>
   );
