@@ -88,7 +88,7 @@ export default function Rsvp({ token, onLogout, refreshAccessToken }) {
     canvas.height = window.innerHeight;
 
     if (!petalArrayRef.current.length) {
-      const TOTAL = 10;
+      const TOTAL = 12;
       const petalImg = new Image();
       petalImg.src = "https://djjjk9bjm164h.cloudfront.net/petal.png";
 
@@ -102,8 +102,8 @@ export default function Rsvp({ token, onLogout, refreshAccessToken }) {
             Math.random() < 0.5
               ? Math.random() * canvas.height
               : -Math.random() * canvas.height;
-          this.w = 25 + Math.random() * 10;
-          this.h = 18 + Math.random() * 8;
+          this.w = 16 + Math.random() * 10;
+          this.h = 12 + Math.random() * 8;
           this.opacity = 0.8;
           this.ySpeed = 0.05 + Math.random() * 0.1;
           this.angle = Math.random() * Math.PI * 2;
@@ -359,6 +359,12 @@ export default function Rsvp({ token, onLogout, refreshAccessToken }) {
       >
         RSVP
       </h1>
+      <h2
+        className="relative z-20 text-center mt-2 sm:mt-3 text-sm sm:text-base md:text-lg text-gray-700"
+        style={{ fontFamily: "'Poppins', sans-serif" }}
+      >
+        Please RSVP by the <strong>7th February 2026</strong>.
+      </h2>
 
       {/* Alerts */}
       <div className="relative z-20 flex flex-col items-center mt-2 gap-4 min-h-[3rem]">

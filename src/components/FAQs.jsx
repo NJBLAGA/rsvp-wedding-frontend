@@ -54,7 +54,7 @@ const faqData = [
   {
     question: "When is the RSVP deadline?",
     answer:
-      "Please RSVP by 1 February 2026 to make sure we have an accurate headcount.",
+      "Please RSVP by 7 February 2026 to make sure we have an accurate headcount.",
   },
 ];
 
