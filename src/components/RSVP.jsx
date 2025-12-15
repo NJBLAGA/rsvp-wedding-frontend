@@ -873,7 +873,7 @@ export default function Rsvp({ token, onLogout, refreshAccessToken }) {
           /* ALERTS */
   .alert {
     width: 420px !important;   /* 👈 HARD width */
-    max-width: 420px !important;
+    max-width: 300px !important;
     margin-left: auto !important;
     margin-right: auto !important;
     height: 2.1rem !important;
