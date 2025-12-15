@@ -268,12 +268,24 @@ export default function Schedule() {
 
       /* Desktop (≥1024px) */
       @media (min-width: 1024px) and (max-height: 820px) {
-       h1 { font-size: 2rem !important; margin-top: 4.1rem !important; margin-bottom: 0.5rem !important;}
- /* Timeline spacing */
+       h1 { font-size: 2rem !important; margin-top: 4rem !important; margin-bottom: 0.1rem !important;}
+
+ * Reduce item height */
   .MuiTimelineItem-root {
-    min-height: 60px;
+    min-height: 48px !important;
   }
 
+  /* Remove extra vertical padding */
+  .MuiTimelineContent-root,
+  .MuiTimelineOppositeContent-root {
+    padding-top: 2px !important;
+    padding-bottom: 2px !important;
+  }
+
+  /* Slightly shorten connector */
+  .MuiTimelineConnector-root {
+    height: 14px !important;
+  }
   /* Circles */
   .MuiTimelineDot-root {
     width: 34px !important;
