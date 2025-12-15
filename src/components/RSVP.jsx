@@ -868,7 +868,7 @@ export default function Rsvp({ token, onLogout, refreshAccessToken }) {
         }
         /* Desktop (≥1024px) */
          @media (min-width: 1024px) and (max-height: 820px) {
-          h1 { font-size: 2rem !important; margin-top: 4rem !important; }
+          h1 { font-size: 2rem !important; margin-top: 3rem !important; }
           h2 { font-size: 1rem !important; }
           /* ALERTS */
   .alert {
@@ -883,6 +883,7 @@ export default function Rsvp({ token, onLogout, refreshAccessToken }) {
   .cards-wrapper {
     padding-left: 7rem !important;
     padding-right: 7rem !important;
+    margin-top: 0.2rem !important;
   }
 
   /* RSVP CARDS */
