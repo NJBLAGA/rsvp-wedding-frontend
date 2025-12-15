@@ -67,21 +67,7 @@ export default function FAQs() {
 
   useEffect(() => {
     const updateItemsPerPage = () => {
-      const width = window.innerWidth;
-      const height = window.innerHeight;
-
-      // 13–14 inch laptops
-      if (width >= 1280 && width <= 1440 && height <= 900) {
-        setItemsPerPage(4);
-      }
-      // Mobile
-      else if (width <= 639) {
-        setItemsPerPage(4);
-      }
-      // Everything else (15"+ laptops, desktops)
-      else {
-        setItemsPerPage(6);
-      }
+      setItemsPerPage(4);
     };
     updateItemsPerPage();
     window.addEventListener("resize", updateItemsPerPage);
