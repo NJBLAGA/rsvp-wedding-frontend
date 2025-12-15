@@ -414,6 +414,11 @@ export default function FAQs() {
       font-size: 0.45rem;
     }
   }
+
+        /* Desktop (≥1024px) */
+         @media (min-width: 1024px) and (max-height: 820px) {
+          h1 { font-size: 2rem !important; margin-top: 4rem !important; }
+        }
 `}</style>
     </div>
   );
