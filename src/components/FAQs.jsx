@@ -276,9 +276,6 @@ export default function FAQs() {
                         <span>{ans.email}</span>
                       </a>
                     )}{" "}
-                    <span>{ans.dir1}</span>
-                    <span></span>
-                    <span>{ans.dir2}</span>
                     {ans.mobile && (
                       <a
                         href={`tel:${ans.mobile}`}
@@ -289,6 +286,9 @@ export default function FAQs() {
                         <span>{ans.mobile}</span>
                       </a>
                     )}
+                    <span>
+                      {ans.dir1} {ans.dir2}
+                    </span>
                     {ans.address && (
                       <a
                         href="https://maps.app.goo.gl/6NaC3CQ7zaXYqhBQ7"
@@ -413,7 +413,19 @@ export default function FAQs() {
 
         /* Desktop (≥1024px) */
          @media (min-width: 1024px) and (max-height: 820px) {
-          h1 { font-size: 3rem !important; margin-top: 5rem !important; }
+          h1 { font-size: 2rem !important; margin-top: 4.5rem !important; }
+ .circle-btn {
+      width: 1rem;
+      height: 1rem;
+      font-size: 0.40rem;
+    }
+    .circle-btn-sm {
+      width: 0.8rem;
+      height: 0.8rem;
+      font-size: 0.20rem;
+    }
+    .collapse-title { font-size: 0.4rem !important; }
+    .answer-text { font-size: 0.2rem !important; line-height: 0.7rem; }
         }
 `}</style>
     </div>
