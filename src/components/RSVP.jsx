@@ -872,9 +872,11 @@ export default function Rsvp({ token, onLogout, refreshAccessToken }) {
           h2 { font-size: 1rem !important; }
           /* ALERTS */
   .alert {
-    height: 1rem !important;
-    max-width: 520px;
-    font-size: 0.85rem !important;
+    height: 2rem !important;
+    max-width: 480px !important;
+    margin-left: auto !important;
+    margin-right: auto !important;
+    font-size: 1rem !important;
 
     /* 👇 THIS is what actually makes margin visible */
     max-width: 520px !important;
