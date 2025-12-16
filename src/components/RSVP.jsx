@@ -190,11 +190,11 @@ export default function Rsvp({ token, onLogout, refreshAccessToken }) {
     }
 
     if (name === "song_input") {
-      // Limit song input to 50 chars
-      const newValue = value.slice(0, 50);
+      // Limit song input to 100 chars
+      const newValue = value.slice(0, 100);
       setSongInput(newValue);
 
-      if (newValue.length >= 50) {
+      if (newValue.length >= 100) {
         setFieldErrors((prev) => ({
           ...prev,
           song_input: "Max Characters Reached",
@@ -673,7 +673,7 @@ export default function Rsvp({ token, onLogout, refreshAccessToken }) {
                     placeholder="Add a song"
                     value={songInput}
                     onChange={handleChange}
-                    maxLength={50}
+                    maxLength={100}
                     className="input w-full px-2 py-1 sm:px-3 sm:py-2 border rounded-md text-sm sm:text-base"
                   />
                   <button
