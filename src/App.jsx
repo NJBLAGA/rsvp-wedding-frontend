@@ -12,6 +12,9 @@ import ListItem from "@mui/material/ListItem";
 import ListItemButton from "@mui/material/ListItemButton";
 import ListItemText from "@mui/material/ListItemText";
 
+const PINK = "#eda5a5";
+const TABS = ["Home", "RSVP", "Schedule", "FAQs"];
+
 export default function App() {
   const storedAccessToken = localStorage.getItem("accessToken");
   const storedTab = localStorage.getItem("activeTab");
@@ -22,23 +25,16 @@ export default function App() {
   const [menuOpen, setMenuOpen] = useState(false);
   const [logoutMessage, setLogoutMessage] = useState("");
 
-  const PETAL_PINK = "#d38c8c";
-
-  // Persist active tab while logged in
   useEffect(() => {
     if (isLoggedIn) localStorage.setItem("activeTab", activeTab);
   }, [activeTab, isLoggedIn]);
 
-  // Refresh token handler (uses cookie)
   const refreshAccessToken = useCallback(async () => {
     try {
-      const res = await fetch(
-        "https://rsvp-wedding-backend.onrender.com/token/refresh",
-        {
-          method: "POST",
-          credentials: "include", // 🔑 send cookie
-        },
-      );
+      const res = await fetch("https://rsvp-wedding-backend.onrender.com/token/refresh", {
+        method: "POST",
+        credentials: "include",
+      });
       if (!res.ok) return false;
       const data = await res.json();
       if (data.accessToken) {
@@ -54,32 +50,25 @@ export default function App() {
     }
   }, []);
 
-  // Try to refresh on mount if no valid accessToken
   useEffect(() => {
-    if (!storedAccessToken) {
-      refreshAccessToken();
-    }
+    if (!storedAccessToken) refreshAccessToken();
   }, [refreshAccessToken, storedAccessToken]);
 
-  // Login handler
   const handleLogin = async (inputPass) => {
     try {
-      const res = await fetch(
-        "https://rsvp-wedding-backend.onrender.com/login",
-        {
-          method: "POST",
-          headers: { "Content-Type": "application/json" },
-          credentials: "include", // 🔑 cookie will be set here
-          body: JSON.stringify({ pass_key: inputPass }),
-        },
-      );
+      const res = await fetch("https://rsvp-wedding-backend.onrender.com/login", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        credentials: "include",
+        body: JSON.stringify({ pass_key: inputPass }),
+      });
       if (!res.ok) return false;
       const data = await res.json();
       if (data.accessToken) {
         setAccessToken(data.accessToken);
         localStorage.setItem("accessToken", data.accessToken);
         setIsLoggedIn(true);
-        setLogoutMessage(""); // clear old alerts
+        setLogoutMessage("");
         return true;
       }
       return false;
@@ -89,12 +78,11 @@ export default function App() {
     }
   };
 
-  // Explicit logout
   const handleLogout = async (message = "") => {
     try {
       await fetch("https://rsvp-wedding-backend.onrender.com/logout", {
         method: "POST",
-        credentials: "include", // 🔑 clears cookie
+        credentials: "include",
       });
     } catch (err) {
       console.error("Logout failed:", err);
@@ -109,20 +97,16 @@ export default function App() {
 
     if (message) {
       setLogoutMessage(message);
-      setTimeout(() => setLogoutMessage(""), 8000); // auto clear after 8s
-      window.scrollTo(0, 0); // scroll up so user sees alert
+      setTimeout(() => setLogoutMessage(""), 8000);
+      window.scrollTo(0, 0);
     }
   };
 
-  // Session expired handler (called by Rsvp)
   const handleSessionExpired = async () => {
     const refreshed = await refreshAccessToken();
-    if (!refreshed) {
-      handleLogout("Your session has expired. Please log in again.");
-    }
+    if (!refreshed) handleLogout("Your session has expired. Please log in again.");
   };
 
-  // Drawer list
   const drawerList = (
     <Box
       sx={{
@@ -139,26 +123,22 @@ export default function App() {
       onKeyDown={() => setMenuOpen(false)}
     >
       <List>
-        {["Home", "RSVP", "Schedule", "FAQs"].map((text) => (
+        {TABS.map((text) => (
           <ListItem key={text} disablePadding>
             <ListItemButton
               sx={{
                 borderRadius: 2,
                 marginX: 2,
                 marginY: 0.5,
-                color: activeTab === text ? PETAL_PINK : "#000",
+                color: activeTab === text ? PINK : "#000",
                 fontWeight: activeTab === text ? "600" : "400",
                 background:
                   activeTab === text
-                    ? "linear-gradient(90deg, rgba(211,140,140,0.15), rgba(211,140,140,0.05))"
+                    ? "linear-gradient(90deg, rgba(237,165,165,0.15), rgba(237,165,165,0.05))"
                     : "transparent",
-                borderLeft:
-                  activeTab === text ? `4px solid ${PETAL_PINK}` : "none",
+                borderLeft: activeTab === text ? `4px solid ${PINK}` : "none",
                 transition: "all 0.3s ease",
-                "&:hover": {
-                  backgroundColor: "rgba(211,140,140,0.2)",
-                  color: PETAL_PINK,
-                },
+                "&:hover": { backgroundColor: "rgba(237,165,165,0.2)", color: PINK },
               }}
               onClick={() => setActiveTab(text)}
             >
@@ -176,11 +156,7 @@ export default function App() {
               marginX: 2,
               marginY: 0.5,
               color: "#000",
-              fontWeight: "400",
-              "&:hover": {
-                backgroundColor: "rgba(211,140,140,0.2)",
-                color: PETAL_PINK,
-              },
+              "&:hover": { backgroundColor: "rgba(237,165,165,0.2)", color: PINK },
             }}
             onClick={() => handleLogout()}
           >
@@ -192,28 +168,7 @@ export default function App() {
   );
 
   return (
-    <div
-      className="min-h-screen bg-gray-50"
-      style={{ fontFamily: "'Poppins', sans-serif" }}
-    >
-      <link
-        href="https://fonts.googleapis.com/css2?family=Dancing+Script:wght@400;700&family=Poppins:wght@300;400;500;600;700&display=swap"
-        rel="stylesheet"
-      />
-
-      {/* Navbar button font sizes */}
-      <style>{`
-        .navbar-desktop-btn {
-          font-size: 16px !important;
-        }
-        @media (min-width: 768px) {
-          .navbar-desktop-btn {
-            font-size: 20px !important;
-          }
-        }
-      `}</style>
-
-      {/* Login modal */}
+    <div className="min-h-screen bg-gray-50">
       {!isLoggedIn && (
         <LoginModal
           isOpen={!isLoggedIn}
@@ -225,47 +180,26 @@ export default function App() {
       {isLoggedIn && (
         <>
           <nav className="border-b p-4 bg-white shadow-sm">
-            {/* Desktop Navbar */}
+            {/* Desktop */}
             <div className="hidden md:flex justify-center space-x-8">
-              {["Home", "RSVP", "Schedule", "FAQs"].map((tab) => (
+              {TABS.map((tab) => (
                 <button
                   key={tab}
-                  className="navbar-desktop-btn pb-1 font-normal"
-                  style={{
-                    borderBottom:
-                      activeTab === tab ? `2px solid ${PETAL_PINK}` : "none",
-                    color: activeTab === tab ? PETAL_PINK : "#000",
-                    fontFamily: "'Poppins', sans-serif",
-                  }}
+                  className={`nav-btn ${activeTab === tab ? "active" : ""}`}
                   onClick={() => setActiveTab(tab)}
-                  onMouseOver={(e) => {
-                    if (activeTab !== tab)
-                      e.currentTarget.style.color = PETAL_PINK;
-                  }}
-                  onMouseOut={(e) => {
-                    if (activeTab !== tab)
-                      e.currentTarget.style.color =
-                        activeTab === tab ? PETAL_PINK : "#000";
-                  }}
                 >
                   {tab}
                 </button>
               ))}
               <button
+                className="nav-btn"
                 onClick={() => handleLogout()}
-                className="navbar-desktop-btn pb-1 font-normal"
-                style={{
-                  color: "#000",
-                  fontFamily: "'Poppins', sans-serif",
-                }}
-                onMouseOver={(e) => (e.currentTarget.style.color = PETAL_PINK)}
-                onMouseOut={(e) => (e.currentTarget.style.color = "#000")}
               >
                 Logout
               </button>
             </div>
 
-            {/* Mobile Navbar */}
+            {/* Mobile */}
             <div className="md:hidden flex justify-between items-center">
               <span
                 style={{

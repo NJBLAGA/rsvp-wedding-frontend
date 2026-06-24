@@ -1,21 +1,15 @@
-import { useState, useEffect, useRef } from "react";
+import { useState, useEffect } from "react";
 import { EyeIcon, EyeSlashIcon } from "@heroicons/react/24/outline";
-import BackgroundImage from "../assets/16264603_v839-my-10a.svg";
 import Alert from "@mui/material/Alert";
 import { motion, AnimatePresence } from "framer-motion";
+import PageBackground from "./PageBackground";
 
 export default function LoginModal({ isOpen, onSubmit, logoutMessage }) {
   const [password, setPassword] = useState("");
   const [error, setError] = useState("");
   const [showPass, setShowPass] = useState(false);
   const [isProcessing, setIsProcessing] = useState(false);
-  const canvasRef = useRef(null);
 
-  const PINK_COLOR = "#eda5a5";
-  const animationIdRef = useRef(null);
-  const petalArrayRef = useRef([]);
-
-  // Reset state when modal closes
   useEffect(() => {
     if (!isOpen) {
       setPassword("");
@@ -25,95 +19,16 @@ export default function LoginModal({ isOpen, onSubmit, logoutMessage }) {
     }
   }, [isOpen]);
 
-  // Petal animation
-  useEffect(() => {
-    const canvas = canvasRef.current;
-    if (!canvas) return;
-    const ctx = canvas.getContext("2d");
-    canvas.width = window.innerWidth;
-    canvas.height = window.innerHeight;
-
-    if (!petalArrayRef.current.length) {
-      const TOTAL = 12;
-      const petalImg = new Image();
-      petalImg.src = "https://djjjk9bjm164h.cloudfront.net/petal.png";
-
-      class Petal {
-        constructor() {
-          this.reset();
-        }
-        reset() {
-          this.x = Math.random() * canvas.width;
-          this.y =
-            Math.random() < 0.5
-              ? Math.random() * canvas.height
-              : -Math.random() * canvas.height;
-          this.w = 16 + Math.random() * 10;
-          this.h = 12 + Math.random() * 8;
-          this.opacity = 0.8;
-          this.ySpeed = 0.05 + Math.random() * 0.1;
-          this.angle = Math.random() * Math.PI * 2;
-          this.angleSpeed = 0.003 + Math.random() * 0.002;
-          this.swayDistance = 60;
-        }
-        draw() {
-          ctx.globalAlpha = this.opacity;
-          ctx.drawImage(
-            petalImg,
-            this.x + Math.sin(this.angle) * this.swayDistance,
-            this.y,
-            this.w,
-            this.h,
-          );
-        }
-        animate() {
-          this.y += this.ySpeed;
-          this.angle += this.angleSpeed;
-          if (this.y > canvas.height + 20) {
-            this.reset();
-            this.y = -20;
-          }
-          this.draw();
-        }
-      }
-
-      petalImg.addEventListener("load", () => {
-        for (let i = 0; i < TOTAL; i++) {
-          petalArrayRef.current.push(new Petal());
-        }
-        const render = () => {
-          ctx.clearRect(0, 0, canvas.width, canvas.height);
-          petalArrayRef.current.forEach((p) => p.animate());
-          animationIdRef.current = requestAnimationFrame(render);
-        };
-        render();
-      });
-    }
-
-    const handleResize = () => {
-      canvas.width = window.innerWidth;
-      canvas.height = window.innerHeight;
-    };
-    window.addEventListener("resize", handleResize);
-
-    return () => {
-      window.removeEventListener("resize", handleResize);
-      if (animationIdRef.current) cancelAnimationFrame(animationIdRef.current);
-    };
-  }, [isOpen]);
-
   if (!isOpen) return null;
 
-  // Handle login form submit
   const handleSubmit = async (e) => {
     e.preventDefault();
     setIsProcessing(true);
-
     const success = await onSubmit(password);
     if (!success) {
       setError("Incorrect password. Please try again.");
       setPassword("");
-      setTimeout(() => setError(""), 8000); // auto clear
+      setTimeout(() => setError(""), 8000);
     } else {
       setError("");
     }
@@ -121,28 +36,9 @@ export default function LoginModal({ isOpen, onSubmit, logoutMessage }) {
   };
 
   return (
-    <div
-      className="fixed inset-0 z-50 flex items-center justify-center overflow-hidden px-2 sm:px-4"
-      style={{ fontFamily: "'Poppins', sans-serif" }}
-    >
-      <link
-        href="https://fonts.googleapis.com/css2?family=Dancing+Script:wght@400;700&family=Poppins:wght@300;400;500;600;700&display=swap"
-        rel="stylesheet"
-      />
+    <div className="fixed inset-0 z-50 flex items-center justify-center overflow-hidden px-2 sm:px-4">
+      <PageBackground />
 
-      {/* Background */}
-      <div
-        className="absolute inset-0 z-0 bg-wedding"
-        style={{ backgroundImage: `url(${BackgroundImage})` }}
-      />
-
-      {/* Petals */}
-      <canvas
-        ref={canvasRef}
-        className="absolute top-0 left-0 w-full h-full z-10 pointer-events-none"
-      />
-
-      {/* Content */}
       <div className="relative z-20 w-full max-w-sm text-center px-4">
         <h2
           className="text-3xl sm:text-4xl mb-4"
@@ -151,7 +47,6 @@ export default function LoginModal({ isOpen, onSubmit, logoutMessage }) {
           Nicole & Nathan
         </h2>
 
-        {/* Alerts (stack vertically) */}
         <div className="w-full flex flex-col gap-2 mb-2">
           <AnimatePresence>
             {logoutMessage && (
@@ -202,12 +97,10 @@ export default function LoginModal({ isOpen, onSubmit, logoutMessage }) {
           </AnimatePresence>
         </div>
 
-        {/* Login form */}
         <form
           onSubmit={handleSubmit}
           className="flex flex-col items-center space-y-2 w-full"
         >
-          {/* Password Input */}
           <div className="relative w-full">
             <input
               type={showPass ? "text" : "password"}
@@ -216,16 +109,13 @@ export default function LoginModal({ isOpen, onSubmit, logoutMessage }) {
               onChange={(e) => setPassword(e.target.value)}
               required
               disabled={isProcessing}
-              className="w-full px-3 py-2 border rounded-lg focus:outline-none text-sm text-black"
-              style={{
-                borderColor: PINK_COLOR,
-                fontFamily: "'Poppins', sans-serif",
-              }}
+              className="login-input w-full px-3 py-2 border rounded-lg text-sm text-black"
+              style={{ borderColor: "var(--color-pink)", fontFamily: "'Poppins', sans-serif" }}
             />
             <button
               type="button"
               className="absolute right-2 top-1/2 -translate-y-1/2"
-              style={{ color: PINK_COLOR }}
+              style={{ color: "var(--color-pink)" }}
               onClick={() => setShowPass(!showPass)}
               disabled={isProcessing}
             >
@@ -237,24 +127,22 @@ export default function LoginModal({ isOpen, onSubmit, logoutMessage }) {
             </button>
           </div>
 
-          {/* Unlock Button */}
           <button
             type="submit"
             disabled={isProcessing}
             className="w-full py-2 rounded-lg text-sm font-semibold transition-colors"
             style={{
-              backgroundColor: isProcessing ? "#f7bfc1" : PINK_COLOR,
+              backgroundColor: isProcessing ? "#f7bfc1" : "var(--color-pink)",
               color: "white",
               fontFamily: "'Poppins', sans-serif",
               cursor: isProcessing ? "not-allowed" : "pointer",
-              border: `1px solid ${PINK_COLOR}`,
+              border: "1px solid var(--color-pink)",
               boxShadow: "0 0 8px rgba(237,165,165,0.4)",
             }}
           >
             {isProcessing ? "Processing..." : "Unlock"}
           </button>
 
-          {/* Request Password Link */}
           <div className="mt-4 sm:mt-6 text-center w-full">
             <a
               href="mailto:nandnblaga@gmail.com?cc=nathanblaga90@gmail.com&subject=Password%20Request&body=Dear%20Nathan%20%26%20Nicole,%0D%0A%0D%0ACould%20you%20please%20resend%20us%20our%20password%20again.%0D%0A%0D%0AKind%20Regards"
@@ -288,33 +176,6 @@ export default function LoginModal({ isOpen, onSubmit, logoutMessage }) {
           </div>
         </form>
       </div>
-
-      <style>{`
-        .bg-wedding {
-          background-position: center;
-          background-repeat: no-repeat;
-        }
-        @media (min-width: 1024px) {
-          .bg-wedding {
-            background-size: contain; /* Desktop: no stretching */
-            background-position: top center;
-          }
-        }
-        @media (max-width: 1023px) {
-          .bg-wedding {
-            background-size: cover; /* Mobile & tablet: fill */
-          }
-        }
-
-        input:focus {
-          outline: none !important;
-          border-color: ${PINK_COLOR};
-          background-color: #fff9f9;
-        }
-        .request-link:hover, .request-link:focus {
-          color: ${PINK_COLOR};
-        }
-      `}</style>
     </div>
   );
 }
