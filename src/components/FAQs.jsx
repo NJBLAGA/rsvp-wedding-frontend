@@ -79,7 +79,7 @@ export default function FAQs() {
     <div className="relative w-full min-h-screen flex flex-col items-center justify-start overflow-hidden">
       <PageBackground />
 
-      <h1 className="faqs-heading relative z-20">FAQs</h1>
+      <h1 className="page-heading relative z-20">FAQs</h1>
 
       <div className="relative z-20 flex flex-col items-center pagination-static">
         <div className="flex space-x-2 items-center">

@@ -28,7 +28,7 @@ export default function Schedule() {
     <div className="relative w-full min-h-screen flex flex-col items-center justify-start overflow-hidden px-4">
       <PageBackground />
 
-      <h1 className="schedule-heading relative z-20 text-center font-bold text-black">
+      <h1 className="page-heading relative z-20 text-black">
         Wedding Day Schedule
       </h1>
 

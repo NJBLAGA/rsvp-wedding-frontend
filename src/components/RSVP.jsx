@@ -222,7 +222,7 @@ export default function Rsvp({ token, onLogout, refreshAccessToken }) {
     <div className="relative w-full min-h-screen overflow-hidden px-4 py-6">
       <PageBackground />
 
-      <h1 className="rsvp-heading relative z-20">
+      <h1 className="page-heading relative z-20">
         RSVP
       </h1>
       <h2

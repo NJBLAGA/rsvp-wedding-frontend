@@ -7,7 +7,7 @@ export default function Home() {
       <PageBackground />
 
       <div className="relative z-20 flex flex-col items-center justify-start w-full px-4">
-        <h1 className="home-heading text-center text-black mb-2">
+        <h1 className="page-heading text-black">
           Our Special Day
         </h1>
 
