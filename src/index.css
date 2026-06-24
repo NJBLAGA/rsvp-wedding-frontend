@@ -69,13 +69,13 @@ button {
   .page-heading { font-size: 2.2rem; margin-top: 6.5rem; margin-bottom: 1.25rem; }
 }
 @media (max-width: 639px) {
-  .page-heading { font-size: 2rem; margin-top: 5.5rem; margin-bottom: 1rem; }
+  .page-heading { font-size: 2rem; margin-top: 7rem; margin-bottom: 1rem; }
 }
 @media (max-width: 380px) {
-  .page-heading { font-size: 1.6rem; }
+  .page-heading { font-size: 1.6rem; margin-top: 7.5rem; }
 }
 @media (max-width: 360px) {
-  .page-heading { font-size: 1.4rem; }
+  .page-heading { font-size: 1.4rem; margin-top: 7.5rem; }
 }
 
 /* ─── Home ─── */
